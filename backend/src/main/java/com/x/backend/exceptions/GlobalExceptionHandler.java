@@ -13,4 +13,9 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(UserDoesNotExistException.class)
+    public ResponseEntity<Object> handleUserDoesNotExistException(UserDoesNotExistException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
 }
