@@ -1,0 +1,11 @@
+services:
+  x-db:
+    container_name: x-db-container
+    image: postgres:17-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: x_db
+      POSTGRES_USER: capellax
+      POSTGRES_PASSWORD: capellax
+    ports:
+      - "5432:5432"
