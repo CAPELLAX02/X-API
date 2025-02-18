@@ -1,7 +1,6 @@
 package com.x.backend.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.x.backend.models.enums.Role;
 import jakarta.persistence.*;
 
 import java.sql.Date;

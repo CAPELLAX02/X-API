@@ -1,4 +1,4 @@
-package com.x.backend.models.enums;
+package com.x.backend.models;
 
 import jakarta.persistence.*;
 
@@ -8,8 +8,10 @@ public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "role_id")
     private Integer roleId;
 
+    @Column(name = "authority")
     private String authority;
 
     public Role() {}
