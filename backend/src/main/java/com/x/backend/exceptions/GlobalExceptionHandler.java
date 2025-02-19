@@ -18,4 +18,14 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(EmailFailedToSentException.class)
+    public ResponseEntity<Object> handleEmailFailedToSentException(EmailFailedToSentException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.SERVICE_UNAVAILABLE);
+    }
+
+    @ExceptionHandler(InvalidOrExpiredVerificationCode.class)
+    public ResponseEntity<Object> handleInvalidOrExpiredVerificationCode(InvalidOrExpiredVerificationCode e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
 }
