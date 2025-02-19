@@ -32,3 +32,7 @@ spring:
 
 server:
   port: 8888
+
+rsa:
+  public-key: classpath:certs/public.pem
+  private-key: classpath:certs/private.pem

@@ -9,15 +9,23 @@ import com.x.backend.models.ApplicationUser;
 import com.x.backend.models.Role;
 import com.x.backend.repositories.RoleRepository;
 import com.x.backend.repositories.UserRepository;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -31,12 +39,15 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public ApplicationUser updateUser(ApplicationUser user) {
-        try {
-            return userRepository.save(user);
-        } catch (Exception e) {
-            throw new EmailAlreadyTakenException();
-        }
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        ApplicationUser user = getUserByUsername(username);
+        Set<GrantedAuthority> authorities = user.getAuthorities()
+                .stream()
+                .map(authority -> new SimpleGrantedAuthority(authority.getAuthority()))
+                .collect(Collectors.toSet());
+        UserDetails userDetails = new User(user.getUsername(), user.getPassword(), authorities);
+        return userDetails;
     }
 
     public ApplicationUser getUserByUsername(String username) {
@@ -59,11 +70,11 @@ public class UserService {
 
         Set<Role> roles = user.getAuthorities();
         Role role = roleRepository.findByAuthority("USER")
-                        .orElseGet(() -> {
-                            Role newRole = new Role();
-                            newRole.setAuthority("USER");
-                            return roleRepository.save(newRole);
-                        });
+                .orElseGet(() -> {
+                    Role newRole = new Role();
+                    newRole.setAuthority("USER");
+                    return roleRepository.save(newRole);
+                });
 
         roles.add(role);
         user.setAuthorities(roles);
@@ -98,4 +109,13 @@ public class UserService {
         user.setPassword(encodedPassword);
         return userRepository.save(user);
     }
+
+    public ApplicationUser updateUser(ApplicationUser user) {
+        try {
+            return userRepository.save(user);
+        } catch (Exception e) {
+            throw new EmailAlreadyTakenException();
+        }
+    }
+
 }
