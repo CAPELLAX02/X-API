@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -29,7 +30,7 @@ public class ApplicationUser {
     private String phoneNumber;
 
     @Column(name = "dob")
-    private Date dateOfBirth;
+    private LocalDate dateOfBirth;
 
     @Column(name = "username", unique = true)
     private String username;
@@ -51,7 +52,7 @@ public class ApplicationUser {
 
     @Column(name = "verification_code", nullable = true)
     @JsonIgnore
-    private Long verificationCode;
+    private String verificationCode;
 
     public ApplicationUser() {
         this.authorities = new HashSet<>();
@@ -98,11 +99,11 @@ public class ApplicationUser {
         this.phoneNumber = phoneNumber;
     }
 
-    public Date getDateOfBirth() {
+    public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(Date dateOfBirth) {
+    public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 
@@ -138,11 +139,11 @@ public class ApplicationUser {
         this.enabled = enabled;
     }
 
-    public Long getVerificationCode() {
+    public String getVerificationCode() {
         return verificationCode;
     }
 
-    public void setVerificationCode(Long verificationCode) {
+    public void setVerificationCode(String verificationCode) {
         this.verificationCode = verificationCode;
     }
 

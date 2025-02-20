@@ -6,6 +6,7 @@ import com.x.backend.exceptions.EmailFailedToSentException;
 import com.x.backend.models.ApplicationUser;
 import com.x.backend.services.token.JwtService;
 import com.x.backend.services.user.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,12 +31,12 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ApplicationUser> registerUser(@RequestBody RegisterUserRequest registerUserRequest) {
+    public ResponseEntity<ApplicationUser> registerUser(@RequestBody @Valid RegisterUserRequest registerUserRequest) {
         return ResponseEntity.ok(userService.registerUser(registerUserRequest));
     }
 
     @PutMapping("/update/phone")
-    public ResponseEntity<ApplicationUser> updatePhoneNumber(@RequestBody UpdatePhoneNumberRequest updatePhoneNumberRequest) {
+    public ResponseEntity<ApplicationUser> updatePhoneNumber(@RequestBody @Valid UpdatePhoneNumberRequest updatePhoneNumberRequest) {
         String username = updatePhoneNumberRequest.username();
         String phoneNumber = updatePhoneNumberRequest.phoneNumber();
         ApplicationUser user = userService.getUserByUsername(username);
@@ -44,34 +45,33 @@ public class AuthenticationController {
     }
 
     @PostMapping("/email/code")
-    public ResponseEntity<String> startEmailVerification(@RequestBody StartEmailVerificationRequest startEmailVerificationRequest) throws EmailFailedToSentException {
+    public ResponseEntity<String> startEmailVerification(@RequestBody @Valid StartEmailVerificationRequest startEmailVerificationRequest) throws EmailFailedToSentException {
         userService.generateEmailVerification(startEmailVerificationRequest.username());
         return ResponseEntity.ok("Verification code generated, email sent");
     }
 
     @PostMapping("/email/verify")
-    public ResponseEntity<ApplicationUser> completeEmailVerification(@RequestBody CompleteEmailVerificationRequest completeEmailVerificationRequest) {
+    public ResponseEntity<ApplicationUser> completeEmailVerification(@RequestBody @Valid CompleteEmailVerificationRequest completeEmailVerificationRequest) {
         String username = completeEmailVerificationRequest.username();
-        Long verificationCode = Long.parseLong(completeEmailVerificationRequest.verificationCode());
+        String verificationCode = completeEmailVerificationRequest.verificationCode();
         return ResponseEntity.ok(userService.verifyEmail(username, verificationCode));
     }
 
     @PutMapping("/update/password")
-    public ResponseEntity<ApplicationUser> updatePassword(@RequestBody UpdatePasswordRequest updatePasswordRequest) {
+    public ResponseEntity<ApplicationUser> updatePassword(@RequestBody @Valid UpdatePasswordRequest updatePasswordRequest) {
         String username = updatePasswordRequest.username();
         String password = updatePasswordRequest.password();
         return ResponseEntity.ok(userService.setPassword(username, password));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> loginUser(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<LoginResponse> loginUser(@RequestBody @Valid LoginRequest loginRequest) {
         String username = loginRequest.username();
         String password = loginRequest.password();
         try {
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
             String accessToken = jwtService.generateToken(authentication);
             return ResponseEntity.ok(new LoginResponse(accessToken));
-
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse(null));
         }

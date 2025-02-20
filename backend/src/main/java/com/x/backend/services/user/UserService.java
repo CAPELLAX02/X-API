@@ -9,7 +9,7 @@ public interface UserService {
     ApplicationUser getUserByUsername(String username);
     ApplicationUser registerUser(RegisterUserRequest registerUserRequest);
     void generateEmailVerification(String username) throws EmailFailedToSentException;
-    ApplicationUser verifyEmail(String username, Long verificationCode);
+    ApplicationUser verifyEmail(String username, String verificationCode);
     ApplicationUser setPassword(String username, String password);
     ApplicationUser updateUser(ApplicationUser user);
 

@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,6 +56,10 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                 .orElseThrow(UserDoesNotExistException::new);
     }
 
+    private String generateUsername(String firstName, String lastName) {
+        return firstName + lastName + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+    }
+
     @Override
     public ApplicationUser registerUser(RegisterUserRequest registerUserRequest) {
         if (userRepository.existsByEmail(registerUserRequest.email())) {
@@ -67,7 +72,8 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         user.setEmail(registerUserRequest.email());
         user.setDateOfBirth(registerUserRequest.dateOfBirth());
 
-        user.setUsername(user.getFirstName() + user.getLastName() + (long) Math.floor(Math.random() * 1_000_000));
+        String uniqueUsername = generateUsername(registerUserRequest.firstName(), registerUserRequest.lastName());
+        user.setUsername(uniqueUsername);
 
         Set<Role> roles = user.getAuthorities();
         Role role = roleRepository.findByAuthority("USER")
@@ -87,16 +93,16 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     public void generateEmailVerification(String username) throws EmailFailedToSentException {
         ApplicationUser user = getUserByUsername(username);
         user.setVerificationCode(generateVerificationCode());
-        mailService.sendVerificationCodeViaEmail(user.getEmail(), user.getVerificationCode().toString());
+        mailService.sendVerificationCodeViaEmail(user.getEmail(), user.getVerificationCode());
         userRepository.save(user);
     }
 
-    private Long generateVerificationCode() {
-        return (long) Math.floor(Math.random() * 100_000_000);
+    private String generateVerificationCode() {
+        return UUID.randomUUID().toString().substring(0, 6).toUpperCase();
     }
 
     @Override
-    public ApplicationUser verifyEmail(String username, Long verificationCode) {
+    public ApplicationUser verifyEmail(String username, String verificationCode) {
         ApplicationUser user = getUserByUsername(username);
         if (!user.getVerificationCode().equals(verificationCode)) {
             throw new InvalidOrExpiredVerificationCode();
