@@ -54,21 +54,22 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers(HttpMethod.POST, "/auth/register").permitAll();
-                    auth.requestMatchers(HttpMethod.PUT,  "/auth/update/phone").permitAll();
-                    auth.requestMatchers(HttpMethod.POST, "/auth/email/code").permitAll();
-                    auth.requestMatchers(HttpMethod.POST, "/auth/email/verify").permitAll();
-                    auth.requestMatchers(HttpMethod.PUT,  "/auth/update/password").permitAll();
-                    auth.requestMatchers(HttpMethod.POST, "/auth/login").permitAll();
+                .authorizeHttpRequests(auth -> auth
+                    .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
+                    .requestMatchers(HttpMethod.PUT,  "/auth/update/phone").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/auth/email/code").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/auth/email/verify").permitAll()
+                    .requestMatchers(HttpMethod.PUT,  "/auth/update/password").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
 
-                    auth.requestMatchers(HttpMethod.GET,  "/user/verify").authenticated();
-                    auth.requestMatchers(HttpMethod.POST, "/user/upload/pp").authenticated();
+                    .requestMatchers(HttpMethod.GET,  "/user/verify").authenticated()
+                    .requestMatchers(HttpMethod.POST, "/user/upload/pp").authenticated()
+                    .requestMatchers(HttpMethod.POST, "/user/upload/banner").authenticated()
 
-                    auth.requestMatchers(HttpMethod.GET,  "/image/{imageName}").authenticated();
+                    .requestMatchers(HttpMethod.GET,  "/image/{imageName}").authenticated()
 
-                    auth.anyRequest().authenticated();
-                })
+                    .anyRequest().authenticated()
+                )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();

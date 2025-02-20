@@ -38,4 +38,9 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
     }
 
+    @ExceptionHandler(InvalidImagePrefixException.class)
+    public ResponseEntity<Object> handleInvalidImagePrefixException(InvalidImagePrefixException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
 }

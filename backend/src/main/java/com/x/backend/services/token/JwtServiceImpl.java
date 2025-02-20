@@ -42,7 +42,7 @@ public class JwtServiceImpl implements JwtService {
     @Override
     public String getUsernameFromToken(String token) {
         if (!token.startsWith("Bearer")) {
-            throw new InvalidBearerTokenException("JWT token is invalid");
+            throw new InvalidBearerTokenException("JWT (access token) is invalid");
         }
         String strippedToken = token.substring(7);
         Jwt decodedJwt = jwtDecoder.decode(strippedToken);

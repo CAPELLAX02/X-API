@@ -26,14 +26,29 @@ public class UserController {
     }
 
     @GetMapping("/verify")
-    public ResponseEntity<ApplicationUser> verifyIdentity(@RequestHeader(HttpHeaders.AUTHORIZATION) String accessToken) {
+    public ResponseEntity<ApplicationUser> verifyIdentity(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String accessToken
+    ) {
         String username = jwtService.getUsernameFromToken(accessToken);
         return ResponseEntity.ok(userService.getUserByUsername(username));
     }
 
     @PostMapping("/upload/pp")
-    public ResponseEntity<String> uploadProfilePicture(@RequestParam("image") MultipartFile file) {
-        return ResponseEntity.ok(imageService.uploadImage(file, "profile_picture"));
+    public ResponseEntity<ApplicationUser> uploadProfilePicture(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String accessToken,
+            @RequestParam("image") MultipartFile file
+    ) {
+        String username = jwtService.getUsernameFromToken(accessToken);
+        return ResponseEntity.ok(userService.setProfileOrBanner(username, file, "profile_picture"));
+    }
+
+    @PostMapping("/upload/banner")
+    public ResponseEntity<ApplicationUser> uploadBannerPicture(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String accessToken,
+            @RequestParam("image") MultipartFile file
+    ) {
+        String username = jwtService.getUsernameFromToken(accessToken);
+        return ResponseEntity.ok(userService.setProfileOrBanner(username, file, "banner_picture"));
     }
 
 }

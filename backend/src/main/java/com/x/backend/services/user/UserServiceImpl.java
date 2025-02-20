@@ -1,14 +1,13 @@
 package com.x.backend.services.user;
 
 import com.x.backend.dto.authentication.request.RegisterUserRequest;
-import com.x.backend.exceptions.EmailAlreadyTakenException;
-import com.x.backend.exceptions.EmailFailedToSentException;
-import com.x.backend.exceptions.InvalidOrExpiredVerificationCode;
-import com.x.backend.exceptions.UserDoesNotExistException;
+import com.x.backend.exceptions.*;
 import com.x.backend.models.ApplicationUser;
+import com.x.backend.models.Image;
 import com.x.backend.models.Role;
 import com.x.backend.repositories.RoleRepository;
 import com.x.backend.repositories.UserRepository;
+import com.x.backend.services.image.ImageService;
 import com.x.backend.services.mail.MailService;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,6 +18,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Set;
 import java.util.UUID;
@@ -31,13 +31,21 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final MailService mailService;
+    private final ImageService imageService;
     private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, MailService mailService, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(
+            UserRepository userRepository,
+            RoleRepository roleRepository,
+            MailService mailService,
+            PasswordEncoder passwordEncoder,
+            ImageService imageService
+    ) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.mailService = mailService;
         this.passwordEncoder = passwordEncoder;
+        this.imageService = imageService;
     }
 
     @Override
@@ -127,6 +135,16 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         } catch (Exception e) {
             throw new EmailAlreadyTakenException();
         }
+    }
+
+    @Override
+    public ApplicationUser setProfileOrBanner(String username, MultipartFile file, String prefix) {
+        ApplicationUser user = getUserByUsername(username);
+        Image image = imageService.uploadImage(file, prefix);
+        if (prefix.equals("profile_picture")) user.setProfilePicture(image);
+        else if (prefix.equals("banner_picture")) user.setBannerPicture(image);
+        else throw new InvalidImagePrefixException();
+        return userRepository.save(user);
     }
 
 }
