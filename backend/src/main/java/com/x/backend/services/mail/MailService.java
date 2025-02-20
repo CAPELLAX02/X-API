@@ -1,4 +1,4 @@
-package com.x.backend.services;
+package com.x.backend.services.mail;
 
 import com.x.backend.exceptions.EmailFailedToSentException;
 

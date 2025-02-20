@@ -1,11 +1,12 @@
 package com.x.backend.controllers;
 
-import com.x.backend.services.JwtService;
-import com.x.backend.services.UserService;
+import com.x.backend.models.ApplicationUser;
+import com.x.backend.services.token.JwtService;
+import com.x.backend.services.user.UserService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
@@ -20,7 +21,12 @@ public class UserController {
         this.jwtService = jwtService;
     }
 
-    // TODO
-
+    @GetMapping("/verify")
+    public ResponseEntity<ApplicationUser> verifyIdentity(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String accessToken
+    ) {
+        String username = jwtService.getUsernameFromToken(accessToken);
+        return ResponseEntity.ok(userService.getUserByUsername(username));
+    }
 
 }

@@ -61,6 +61,9 @@ public class SecurityConfiguration {
                     auth.requestMatchers(HttpMethod.POST, "/auth/email/verify").permitAll();
                     auth.requestMatchers(HttpMethod.PUT,  "/auth/update/password").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/auth/login").permitAll();
+
+                    auth.requestMatchers(HttpMethod.GET,  "/user/verify").authenticated();
+
                     auth.anyRequest().authenticated();
                 })
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))

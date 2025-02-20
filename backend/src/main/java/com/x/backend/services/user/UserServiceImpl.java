@@ -1,6 +1,6 @@
-package com.x.backend.services;
+package com.x.backend.services.user;
 
-import com.x.backend.dto.request.RegistrationRequest;
+import com.x.backend.dto.authentication.request.RegisterUserRequest;
 import com.x.backend.exceptions.EmailAlreadyTakenException;
 import com.x.backend.exceptions.EmailFailedToSentException;
 import com.x.backend.exceptions.InvalidOrExpiredVerificationCode;
@@ -9,6 +9,7 @@ import com.x.backend.models.ApplicationUser;
 import com.x.backend.models.Role;
 import com.x.backend.repositories.RoleRepository;
 import com.x.backend.repositories.UserRepository;
+import com.x.backend.services.mail.MailService;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -55,16 +56,16 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public ApplicationUser registerUser(RegistrationRequest registrationRequest) {
-        if (userRepository.existsByEmail(registrationRequest.email())) {
+    public ApplicationUser registerUser(RegisterUserRequest registerUserRequest) {
+        if (userRepository.existsByEmail(registerUserRequest.email())) {
             throw new EmailAlreadyTakenException();
         }
 
         ApplicationUser user = new ApplicationUser();
-        user.setFirstName(registrationRequest.firstName());
-        user.setLastName(registrationRequest.lastName());
-        user.setEmail(registrationRequest.email());
-        user.setDateOfBirth(registrationRequest.dateOfBirth());
+        user.setFirstName(registerUserRequest.firstName());
+        user.setLastName(registerUserRequest.lastName());
+        user.setEmail(registerUserRequest.email());
+        user.setDateOfBirth(registerUserRequest.dateOfBirth());
 
         user.setUsername(user.getFirstName() + user.getLastName() + (long) Math.floor(Math.random() * 1_000_000));
 

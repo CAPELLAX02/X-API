@@ -1,11 +1,11 @@
 package com.x.backend.controllers;
 
-import com.x.backend.dto.request.RegistrationRequest;
-import com.x.backend.dto.response.LoginResponse;
+import com.x.backend.dto.authentication.request.*;
+import com.x.backend.dto.authentication.response.LoginResponse;
 import com.x.backend.exceptions.EmailFailedToSentException;
 import com.x.backend.models.ApplicationUser;
-import com.x.backend.services.JwtService;
-import com.x.backend.services.UserService;
+import com.x.backend.services.token.JwtService;
+import com.x.backend.services.user.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,8 +13,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.LinkedHashMap;
 
 @RestController
 @RequestMapping("/auth")
@@ -32,50 +30,50 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ApplicationUser> registerUser(@RequestBody RegistrationRequest registrationRequest) {
-        return ResponseEntity.ok(userService.registerUser(registrationRequest));
+    public ResponseEntity<ApplicationUser> registerUser(@RequestBody RegisterUserRequest registerUserRequest) {
+        return ResponseEntity.ok(userService.registerUser(registerUserRequest));
     }
 
     @PutMapping("/update/phone")
-    public ResponseEntity<ApplicationUser> updatePhoneNumber(@RequestBody LinkedHashMap<String, String> updatePhoneRequest) {
-        String username = updatePhoneRequest.get("username");
-        String phoneNumber = updatePhoneRequest.get("phoneNumber");
+    public ResponseEntity<ApplicationUser> updatePhoneNumber(@RequestBody UpdatePhoneNumberRequest updatePhoneNumberRequest) {
+        String username = updatePhoneNumberRequest.username();
+        String phoneNumber = updatePhoneNumberRequest.phoneNumber();
         ApplicationUser user = userService.getUserByUsername(username);
         user.setPhoneNumber(phoneNumber);
         return ResponseEntity.ok(userService.updateUser(user));
     }
 
     @PostMapping("/email/code")
-    public ResponseEntity<String> createEmailVerification(@RequestBody LinkedHashMap<String, String> createEmailVerificationRequest) throws EmailFailedToSentException {
-        userService.generateEmailVerification(createEmailVerificationRequest.get("username"));
+    public ResponseEntity<String> startEmailVerification(@RequestBody StartEmailVerificationRequest startEmailVerificationRequest) throws EmailFailedToSentException {
+        userService.generateEmailVerification(startEmailVerificationRequest.username());
         return ResponseEntity.ok("Verification code generated, email sent");
     }
 
     @PostMapping("/email/verify")
-    public ResponseEntity<ApplicationUser> verifyEmail(@RequestBody LinkedHashMap<String, String> verifyEmailRequest) {
-        String username = verifyEmailRequest.get("username");
-        Long verificationCode = Long.parseLong(verifyEmailRequest.get("verificationCode"));
+    public ResponseEntity<ApplicationUser> completeEmailVerification(@RequestBody CompleteEmailVerificationRequest completeEmailVerificationRequest) {
+        String username = completeEmailVerificationRequest.username();
+        Long verificationCode = Long.parseLong(completeEmailVerificationRequest.verificationCode());
         return ResponseEntity.ok(userService.verifyEmail(username, verificationCode));
     }
 
     @PutMapping("/update/password")
-    public ResponseEntity<ApplicationUser> updatePassword(@RequestBody LinkedHashMap<String, String> updatePasswordRequest) {
-        String username = updatePasswordRequest.get("username");
-        String password = updatePasswordRequest.get("password");
+    public ResponseEntity<ApplicationUser> updatePassword(@RequestBody UpdatePasswordRequest updatePasswordRequest) {
+        String username = updatePasswordRequest.username();
+        String password = updatePasswordRequest.password();
         return ResponseEntity.ok(userService.setPassword(username, password));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> loginUser(@RequestBody LinkedHashMap<String, String> loginRequest) {
-        String username = loginRequest.get("username");
-        String password = loginRequest.get("password");
+    public ResponseEntity<LoginResponse> loginUser(@RequestBody LoginRequest loginRequest) {
+        String username = loginRequest.username();
+        String password = loginRequest.password();
         try {
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
             String accessToken = jwtService.generateToken(authentication);
-            return ResponseEntity.ok(new LoginResponse(userService.getUserByUsername(username), accessToken));
+            return ResponseEntity.ok(new LoginResponse(accessToken));
 
         } catch (AuthenticationException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse(null, ""));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse(null));
         }
     }
 
