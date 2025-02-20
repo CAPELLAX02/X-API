@@ -28,4 +28,14 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(ImageNotFoundException.class)
+    public ResponseEntity<Object> handleImageNotFoundException(ImageNotFoundException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler({ UnableToUploadFileException.class, UnableToDownloadFileException.class })
+    public ResponseEntity<Object> handlePhotoExceptions() {
+        return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
+    }
+
 }

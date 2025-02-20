@@ -11,11 +11,8 @@ public record UpdatePasswordRequest(
         String username,
 
         @NotBlank(message = "Password cannot be blank")
-        @Size(min = 8, max = 64, message = "Password must be between 8 and 64 characters")
-        @Pattern(
-                regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,64}$",
-                message = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
-        )
+        @Size(min = 8, message = "Password must be at least 8 characters")
+        @Size(max = 64, message = "Password must be at maximum 64 characters")
         String password
 ) {
 }

@@ -63,6 +63,9 @@ public class SecurityConfiguration {
                     auth.requestMatchers(HttpMethod.POST, "/auth/login").permitAll();
 
                     auth.requestMatchers(HttpMethod.GET,  "/user/verify").authenticated();
+                    auth.requestMatchers(HttpMethod.POST, "/user/upload/pp").authenticated();
+
+                    auth.requestMatchers(HttpMethod.GET,  "/image/{imageName}").authenticated();
 
                     auth.anyRequest().authenticated();
                 })
@@ -76,7 +79,6 @@ public class SecurityConfiguration {
         JWK jwk = new RSAKey.Builder(rsaKeyProperties.getPublicKey()).privateKey(rsaKeyProperties.getPrivateKey()).build();
         JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
         return new NimbusJwtEncoder(jwks);
-
     }
 
     @Bean
