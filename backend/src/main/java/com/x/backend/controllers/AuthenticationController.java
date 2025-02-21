@@ -4,15 +4,10 @@ import com.x.backend.dto.authentication.request.*;
 import com.x.backend.dto.authentication.response.LoginResponse;
 import com.x.backend.exceptions.EmailFailedToSentException;
 import com.x.backend.models.ApplicationUser;
-import com.x.backend.services.token.JwtService;
 import com.x.backend.services.user.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,13 +16,9 @@ import org.springframework.web.bind.annotation.*;
 public class AuthenticationController {
 
     private final UserService userService;
-    private final JwtService jwtService;
-    private final AuthenticationManager authenticationManager;
 
-    public AuthenticationController(UserService userService, JwtService jwtService, AuthenticationManager authenticationManager) {
+    public AuthenticationController(UserService userService) {
         this.userService = userService;
-        this.jwtService = jwtService;
-        this.authenticationManager = authenticationManager;
     }
 
     @PostMapping("/register")
@@ -37,44 +28,29 @@ public class AuthenticationController {
 
     @PutMapping("/update/phone")
     public ResponseEntity<ApplicationUser> updatePhoneNumber(@RequestBody @Valid UpdatePhoneNumberRequest updatePhoneNumberRequest) {
-        String username = updatePhoneNumberRequest.username();
-        String phoneNumber = updatePhoneNumberRequest.phoneNumber();
-        ApplicationUser user = userService.getUserByUsername(username);
-        user.setPhoneNumber(phoneNumber);
-        return ResponseEntity.ok(userService.updateUser(user));
+        return ResponseEntity.ok(userService.updateUserPhoneNumber(updatePhoneNumberRequest));
     }
 
     @PostMapping("/email/code")
     public ResponseEntity<String> startEmailVerification(@RequestBody @Valid StartEmailVerificationRequest startEmailVerificationRequest) throws EmailFailedToSentException {
-        userService.generateEmailVerification(startEmailVerificationRequest.username());
-        return ResponseEntity.ok("Verification code generated, email sent");
+        return ResponseEntity.ok(userService.startEmailVerification(startEmailVerificationRequest));
     }
 
     @PostMapping("/email/verify")
-    public ResponseEntity<ApplicationUser> completeEmailVerification(@RequestBody @Valid CompleteEmailVerificationRequest completeEmailVerificationRequest) {
-        String username = completeEmailVerificationRequest.username();
-        String verificationCode = completeEmailVerificationRequest.verificationCode();
-        return ResponseEntity.ok(userService.verifyEmail(username, verificationCode));
+    public ResponseEntity<ApplicationUser> completeEmailVerification(@RequestBody @Valid CompleteEmailVerificationRequest completeEmailVerificationRequest) throws EmailFailedToSentException {
+        return ResponseEntity.ok(userService.completeEmailVerification(completeEmailVerificationRequest));
     }
 
     @PutMapping("/update/password")
     public ResponseEntity<ApplicationUser> updatePassword(@RequestBody @Valid UpdatePasswordRequest updatePasswordRequest) {
-        String username = updatePasswordRequest.username();
-        String password = updatePasswordRequest.password();
-        return ResponseEntity.ok(userService.setPassword(username, password));
+        return ResponseEntity.ok(userService.updateUserPassword(updatePasswordRequest));
     }
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> loginUser(@RequestBody @Valid LoginRequest loginRequest) {
-        String username = loginRequest.username();
-        String password = loginRequest.password();
-        try {
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-            String accessToken = jwtService.generateToken(authentication);
-            return ResponseEntity.ok(new LoginResponse(accessToken));
-        } catch (AuthenticationException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse(null));
-        }
+        LoginResponse loginResponse = userService.loginUser(loginRequest);
+        if (loginResponse.accessToken() != null) return ResponseEntity.ok(loginResponse);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(loginResponse);
     }
 
 }

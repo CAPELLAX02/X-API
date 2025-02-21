@@ -1,6 +1,7 @@
 package com.x.backend.services.user;
 
-import com.x.backend.dto.authentication.request.RegisterUserRequest;
+import com.x.backend.dto.authentication.request.*;
+import com.x.backend.dto.authentication.response.LoginResponse;
 import com.x.backend.exceptions.*;
 import com.x.backend.models.ApplicationUser;
 import com.x.backend.models.Image;
@@ -9,6 +10,10 @@ import com.x.backend.repositories.RoleRepository;
 import com.x.backend.repositories.UserRepository;
 import com.x.backend.services.image.ImageService;
 import com.x.backend.services.mail.MailService;
+import com.x.backend.services.token.JwtService;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -30,22 +35,29 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+
     private final MailService mailService;
     private final ImageService imageService;
+    private final JwtService jwtService;
+
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
 
     public UserServiceImpl(
             UserRepository userRepository,
             RoleRepository roleRepository,
             MailService mailService,
             PasswordEncoder passwordEncoder,
-            ImageService imageService
-    ) {
+            ImageService imageService,
+            JwtService jwtService,
+            AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.mailService = mailService;
         this.passwordEncoder = passwordEncoder;
         this.imageService = imageService;
+        this.jwtService = jwtService;
+        this.authenticationManager = authenticationManager;
     }
 
     @Override
@@ -98,11 +110,12 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public void generateEmailVerification(String username) throws EmailFailedToSentException {
-        ApplicationUser user = getUserByUsername(username);
+    public String startEmailVerification(StartEmailVerificationRequest startEmailVerificationRequest) throws EmailFailedToSentException {
+        ApplicationUser user = getUserByUsername(startEmailVerificationRequest.username());
         user.setVerificationCode(generateVerificationCode());
         mailService.sendVerificationCodeViaEmail(user.getEmail(), user.getVerificationCode());
         userRepository.save(user);
+        return "Verification code has been generated and sent to " + user.getEmail();
     }
 
     private String generateVerificationCode() {
@@ -110,9 +123,9 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public ApplicationUser verifyEmail(String username, String verificationCode) {
-        ApplicationUser user = getUserByUsername(username);
-        if (!user.getVerificationCode().equals(verificationCode)) {
+    public ApplicationUser completeEmailVerification(CompleteEmailVerificationRequest completeEmailVerificationRequest) {
+        ApplicationUser user = getUserByUsername(completeEmailVerificationRequest.username());
+        if (!user.getVerificationCode().equals(completeEmailVerificationRequest.verificationCode())) {
             throw new InvalidOrExpiredVerificationCode();
         }
         user.setEnabled(true);
@@ -121,9 +134,9 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public ApplicationUser setPassword(String username, String password) {
-        ApplicationUser user = getUserByUsername(username);
-        String encodedPassword = passwordEncoder.encode(password);
+    public ApplicationUser updateUserPassword(UpdatePasswordRequest updatePasswordRequest) {
+        ApplicationUser user = getUserByUsername(updatePasswordRequest.username());
+        String encodedPassword = passwordEncoder.encode(updatePasswordRequest.password());
         user.setPassword(encodedPassword);
         return userRepository.save(user);
     }
@@ -138,6 +151,14 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
+    public ApplicationUser updateUserPhoneNumber(UpdatePhoneNumberRequest updatePhoneNumberRequest) {
+        String phoneNumber = updatePhoneNumberRequest.phoneNumber();
+        ApplicationUser user = getUserByUsername(updatePhoneNumberRequest.username());
+        user.setPhoneNumber(phoneNumber);
+        return userRepository.save(user);
+    }
+
+    @Override
     public ApplicationUser setProfileOrBanner(String username, MultipartFile file, String prefix) {
         ApplicationUser user = getUserByUsername(username);
         Image image = imageService.uploadImage(file, prefix);
@@ -145,6 +166,21 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         else if (prefix.equals("banner_picture")) user.setBannerPicture(image);
         else throw new InvalidImagePrefixException();
         return userRepository.save(user);
+    }
+
+    @Override
+    public LoginResponse loginUser(LoginRequest loginRequest) {
+        String username = loginRequest.username();
+        String password = loginRequest.password();
+
+        try {
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+            String accessToken = jwtService.generateToken(authentication);
+            return new LoginResponse(accessToken);
+
+        } catch (Exception e) {
+            return new LoginResponse(null);
+        }
     }
 
 }
