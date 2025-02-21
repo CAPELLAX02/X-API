@@ -11,6 +11,7 @@ import com.x.backend.repositories.UserRepository;
 import com.x.backend.services.image.ImageService;
 import com.x.backend.services.mail.MailService;
 import com.x.backend.services.token.JwtService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -50,7 +51,8 @@ public class UserServiceImpl implements UserDetailsService, UserService {
             PasswordEncoder passwordEncoder,
             ImageService imageService,
             JwtService jwtService,
-            AuthenticationManager authenticationManager) {
+            @Lazy AuthenticationManager authenticationManager
+    ) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.mailService = mailService;
