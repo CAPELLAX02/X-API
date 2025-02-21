@@ -3,6 +3,8 @@ package com.x.backend.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.Objects;
+
 @Entity
 @Table(name = "images")
 public class Image {
@@ -80,6 +82,27 @@ public class Image {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Image image)) return false;
+        return Objects.equals(getImageId(), image.getImageId())
+                && Objects.equals(getImageName(), image.getImageName())
+                && Objects.equals(getImageType(), image.getImageType())
+                && Objects.equals(getImagePath(), image.getImagePath())
+                && Objects.equals(getImageUrl(), image.getImageUrl());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(
+                getImageId(),
+                getImageName(),
+                getImageType(),
+                getImagePath(),
+                getImageUrl()
+        );
     }
 
     @Override

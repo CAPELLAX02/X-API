@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -253,6 +254,51 @@ public class ApplicationUser implements UserDetails {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof ApplicationUser user)) return false;
+        return Objects.equals(getUserId(), user.getUserId())
+                && Objects.equals(getFirstName(), user.getFirstName())
+                && Objects.equals(getLastName(), user.getLastName())
+                && Objects.equals(getEmail(), user.getEmail())
+                && Objects.equals(getPhoneNumber(), user.getPhoneNumber())
+                && Objects.equals(getDateOfBirth(), user.getDateOfBirth())
+                && Objects.equals(getUsername(), user.getUsername())
+                && Objects.equals(getPassword(), user.getPassword())
+                && Objects.equals(getBio(), user.getBio())
+                && Objects.equals(getNickname(), user.getNickname())
+                && Objects.equals(getProfilePicture(), user.getProfilePicture())
+                && Objects.equals(getBannerPicture(), user.getBannerPicture())
+                && Objects.equals(getFollowing(), user.getFollowing())
+                && Objects.equals(getFollowers(), user.getFollowers())
+                && Objects.equals(getAuthorities(), user.getAuthorities())
+                && Objects.equals(isEnabled(), user.isEnabled())
+                && Objects.equals(getVerificationCode(), user.getVerificationCode());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(
+                getUserId(),
+                getFirstName(),
+                getLastName(),
+                getEmail(),
+                getPhoneNumber(),
+                getDateOfBirth(),
+                getUsername(),
+                getPassword(),
+                getBio(),
+                getNickname(),
+                getProfilePicture(),
+                getBannerPicture(),
+                getFollowing(),
+                getFollowers(),
+                getAuthorities(),
+                isEnabled(),
+                getVerificationCode()
+        );
+    }
+
+    @Override
     public String toString() {
         return "ApplicationUser{" +
                 "userId=" + userId +
@@ -267,8 +313,8 @@ public class ApplicationUser implements UserDetails {
                 ", nickname='" + nickname + '\'' +
                 ", profilePicture=" + profilePicture +
                 ", bannerPicture=" + bannerPicture +
-                ", following=" + following.size() +
-                ", followers=" + followers.size() +
+                ", following=" + following +
+                ", followers=" + followers +
                 ", authorities=" + authorities +
                 ", enabled=" + enabled +
                 ", verificationCode='" + verificationCode + '\'' +

@@ -2,6 +2,8 @@ package com.x.backend.models;
 
 import jakarta.persistence.*;
 
+import java.util.Objects;
+
 @Entity
 @Table(name = "roles")
 public class Role {
@@ -38,10 +40,22 @@ public class Role {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Role role)) return false;
+        return Objects.equals(getRoleId(), role.getRoleId()) && Objects.equals(getAuthority(), role.getAuthority());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getRoleId(), getAuthority());
+    }
+
+    @Override
     public String toString() {
         return "Role{" +
                 "roleId=" + roleId +
                 ", authority='" + authority + '\'' +
                 '}';
     }
+
 }
