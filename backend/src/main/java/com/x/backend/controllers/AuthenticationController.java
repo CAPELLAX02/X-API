@@ -1,7 +1,6 @@
 package com.x.backend.controllers;
 
-import com.x.backend.dto.authentication.request.*;
-import com.x.backend.dto.authentication.response.LoginResponse;
+import com.x.backend.dto.*;
 import com.x.backend.exceptions.EmailFailedToSentException;
 import com.x.backend.models.ApplicationUser;
 import com.x.backend.services.user.UserService;

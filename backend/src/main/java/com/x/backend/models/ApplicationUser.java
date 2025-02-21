@@ -2,14 +2,18 @@ package com.x.backend.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
-public class ApplicationUser {
+public class ApplicationUser implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,7 +63,7 @@ public class ApplicationUser {
             inverseJoinColumns = { @JoinColumn(name = "following_id") }
     )
     @JsonIgnore
-    private Set<ApplicationUser> following;
+    private Set<ApplicationUser> following = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -68,7 +72,7 @@ public class ApplicationUser {
             inverseJoinColumns = { @JoinColumn(name = "follower_id") }
     )
     @JsonIgnore
-    private Set<ApplicationUser> followers;
+    private Set<ApplicationUser> followers = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -76,20 +80,40 @@ public class ApplicationUser {
             joinColumns = { @JoinColumn(name = "user_id") },
             inverseJoinColumns = { @JoinColumn(name = "role_id") }
     )
-    private Set<Role> authorities;
+    private Set<Role> authorities = new HashSet<>();
 
     @Column(name = "enabled")
-    private Boolean enabled;
+    private Boolean enabled = false;
 
-    @Column(name = "verification_code", nullable = true)
+    @Column(name = "verification_code")
     @JsonIgnore
     private String verificationCode;
 
-    public ApplicationUser() {
-        this.authorities = new HashSet<>();
-        this.following = new HashSet<>();
-        this.followers = new HashSet<>();
-        this.enabled = false;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return authorities.stream()
+                .map(role -> (GrantedAuthority) role::getAuthority)
+                .collect(Collectors.toUnmodifiableSet());
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return this.enabled;
     }
 
     public Integer getUserId() {
@@ -121,7 +145,7 @@ public class ApplicationUser {
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        this.email = email.toLowerCase();
     }
 
     public String getPhoneNumber() {
@@ -145,7 +169,7 @@ public class ApplicationUser {
     }
 
     public void setUsername(String username) {
-        this.username = username;
+        this.username = username.toLowerCase();
     }
 
     public String getPassword() {
@@ -156,28 +180,28 @@ public class ApplicationUser {
         this.password = password;
     }
 
-    public Set<Role> getAuthorities() {
-        return authorities;
+    public Set<ApplicationUser> getFollowing() {
+        return following;
+    }
+
+    public void setFollowing(Set<ApplicationUser> following) {
+        this.following = following;
+    }
+
+    public Set<ApplicationUser> getFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(Set<ApplicationUser> followers) {
+        this.followers = followers;
+    }
+
+    public Set<Role> getAuthoritiesSet() {
+        return new HashSet<>(authorities);
     }
 
     public void setAuthorities(Set<Role> authorities) {
         this.authorities = authorities;
-    }
-
-    public Boolean getEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public String getVerificationCode() {
-        return verificationCode;
-    }
-
-    public void setVerificationCode(String verificationCode) {
-        this.verificationCode = verificationCode;
     }
 
     public String getBio() {
@@ -212,20 +236,20 @@ public class ApplicationUser {
         this.bannerPicture = bannerPicture;
     }
 
-    public Set<ApplicationUser> getFollowing() {
-        return following;
+    public Boolean getEnabled() {
+        return enabled;
     }
 
-    public void setFollowing(Set<ApplicationUser> following) {
-        this.following = following;
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 
-    public Set<ApplicationUser> getFollowers() {
-        return followers;
+    public String getVerificationCode() {
+        return verificationCode;
     }
 
-    public void setFollowers(Set<ApplicationUser> followers) {
-        this.followers = followers;
+    public void setVerificationCode(String verificationCode) {
+        this.verificationCode = verificationCode;
     }
 
     @Override
@@ -250,4 +274,5 @@ public class ApplicationUser {
                 ", verificationCode='" + verificationCode + '\'' +
                 '}';
     }
+
 }

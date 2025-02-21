@@ -1,4 +1,4 @@
-package com.x.backend.dto.authentication.request;
+package com.x.backend.dto;
 
 import com.x.backend.utils.validation.AgeLimit;
 import jakarta.validation.constraints.*;

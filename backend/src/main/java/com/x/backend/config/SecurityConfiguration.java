@@ -65,6 +65,8 @@ public class SecurityConfiguration {
                     .requestMatchers(HttpMethod.GET,  "/user/verify").authenticated()
                     .requestMatchers(HttpMethod.POST, "/user/upload/pp").authenticated()
                     .requestMatchers(HttpMethod.POST, "/user/upload/banner").authenticated()
+                    .requestMatchers(HttpMethod.GET,  "/user/followings/{username}").authenticated()
+                    .requestMatchers(HttpMethod.GET,  "/user/followers/{username}").authenticated()
 
                     .requestMatchers(HttpMethod.GET,  "/image/{imageName}").authenticated()
 

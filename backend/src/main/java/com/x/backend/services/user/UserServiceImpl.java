@@ -1,7 +1,7 @@
 package com.x.backend.services.user;
 
-import com.x.backend.dto.authentication.request.*;
-import com.x.backend.dto.authentication.response.LoginResponse;
+import com.x.backend.dto.*;
+import com.x.backend.dto.LoginResponse;
 import com.x.backend.exceptions.*;
 import com.x.backend.models.ApplicationUser;
 import com.x.backend.models.Image;
@@ -26,6 +26,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -97,7 +101,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         String uniqueUsername = generateUsername(registerUserRequest.firstName(), registerUserRequest.lastName());
         user.setUsername(uniqueUsername);
 
-        Set<Role> roles = user.getAuthorities();
+        Set<Role> roles = user.getAuthoritiesSet();
         Role role = roleRepository.findByAuthority("USER")
                 .orElseGet(() -> {
                     Role newRole = new Role();
@@ -164,9 +168,28 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     public ApplicationUser setProfileOrBanner(String username, MultipartFile file, String prefix) {
         ApplicationUser user = getUserByUsername(username);
         Image image = imageService.uploadImage(file, prefix);
-        if (prefix.equals("profile_picture")) user.setProfilePicture(image);
-        else if (prefix.equals("banner_picture")) user.setBannerPicture(image);
-        else throw new InvalidImagePrefixException();
+        try {
+            if (prefix.equals("profile_picture")) {
+                if (user.getProfilePicture() != null || !user.getProfilePicture().getImageName().equals("default_profile_picture.png")) {
+                    Path path = Paths.get(user.getProfilePicture().getImagePath());
+                    Files.deleteIfExists(path);
+                }
+                user.setProfilePicture(image);
+            }
+            else if (prefix.equals("banner_picture")) {
+                if (user.getBannerPicture() != null || !user.getBannerPicture().getImageName().equals("default_banner_picture.png")) {
+                    Path path = Paths.get(user.getBannerPicture().getImagePath());
+                    Files.deleteIfExists(path);
+                }
+                user.setBannerPicture(image);
+            }
+            else {
+                throw new InvalidImagePrefixException();
+            }
+        }
+        catch (IOException e) {
+            throw new UnableToUploadFileException();
+        }
         return userRepository.save(user);
     }
 
@@ -184,5 +207,38 @@ public class UserServiceImpl implements UserDetailsService, UserService {
             return new LoginResponse(null);
         }
     }
+
+    @Override
+    public Set<ApplicationUser> followUser(String followerUsername, String followeeUsername) {
+        ApplicationUser loggedInUser = getUserByUsername(followerUsername);
+        ApplicationUser followedUser = getUserByUsername(followeeUsername);
+
+        if (loggedInUser.equals(followedUser)) {
+            throw new CannotFollowThemselvesException();
+        }
+
+        if (!loggedInUser.getFollowing().contains(followedUser)) {
+            loggedInUser.getFollowing().add(followedUser);
+            followedUser.getFollowers().add(loggedInUser);
+
+            userRepository.save(loggedInUser);
+            userRepository.save(followedUser);
+        }
+
+        return loggedInUser.getFollowing();
+    }
+
+    @Override
+    public Set<ApplicationUser> getFollowings(String username) {
+        ApplicationUser user = getUserByUsername(username);
+        return user.getFollowing();
+    }
+
+    @Override
+    public Set<ApplicationUser> getFollowers(String username) {
+        ApplicationUser user = getUserByUsername(username);
+        return user.getFollowers();
+    }
+
 
 }
