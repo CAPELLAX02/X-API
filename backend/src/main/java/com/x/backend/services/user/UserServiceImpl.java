@@ -77,6 +77,12 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
+    public ApplicationUser getUserById(Integer userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(UserDoesNotExistException::new);
+    }
+
+    @Override
     public ApplicationUser getUserByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(UserDoesNotExistException::new);
@@ -239,6 +245,8 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         ApplicationUser user = getUserByUsername(username);
         return user.getFollowers();
     }
+
+
 
 
 }

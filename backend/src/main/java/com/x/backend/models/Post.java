@@ -1,5 +1,6 @@
 package com.x.backend.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.x.backend.models.enums.Audience;
 import com.x.backend.models.enums.ReplyRestriction;
 import jakarta.persistence.*;
@@ -8,83 +9,89 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
-@Table(name = "posts")
+@Table(
+        name = "posts",
+        indexes =  {
+                @Index(name = "idx_post_author", columnList = "author_id"),
+                @Index(name = "idx_post_date", columnList = "posted_date"),
+                @Index(name = "idx_post_reply_to", columnList = "reply_to")
+        }
+)
 public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "post_id")
+    @Column(name="post_id")
     private Integer postId;
 
-    @Column(name = "content", nullable = false, length = 256)
+    @Column(name = "content", length=256, nullable=false)
     private String content;
 
-    @Column(name = "posted_date")
+    @Column(name="posted_date", nullable=false)
     private LocalDateTime postedDate;
 
-    @Column(name = "is_reply", nullable = true)
-    private Boolean isReply;
+    @Column(name="is_reply")
+    private Boolean reply;
 
-    @Column(name = "reply_to")
+    @Column(name="reply_to")
     private Integer replyTo;
 
-    @ManyToOne
-    @JoinColumn(name = "author_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="author_id", nullable=false)
     private ApplicationUser author;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @JsonIgnore
+    @ManyToMany(fetch=FetchType.LAZY)
     @JoinTable(
-            name = "post_likes_junction",
-            joinColumns = { @JoinColumn(name = "post_id") },
-            inverseJoinColumns = { @JoinColumn(name = "user_id") }
+            name="post_likes_junction",
+            joinColumns = { @JoinColumn(name="post_id") },
+            inverseJoinColumns = { @JoinColumn(name="user_id") }
     )
-    @Column(name = "likes")
     private Set<ApplicationUser> likes = new HashSet<>();
 
     @OneToMany
-    @Column(name = "images")
     private List<Image> images = new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @JsonIgnore
+    @ManyToMany(fetch=FetchType.LAZY)
     @JoinTable(
-            name = "post_reply_junction",
-            joinColumns = { @JoinColumn(name = "post_id") },
-            inverseJoinColumns = { @JoinColumn(name = "reply_id") }
+            name="post_reply_junction",
+            joinColumns= { @JoinColumn(name="post_id") },
+            inverseJoinColumns = { @JoinColumn(name="reply_id") }
     )
-    @Column(name = "replies")
     private Set<Post> replies = new HashSet<>();
 
-    @ManyToMany(fetch=FetchType.EAGER)
+    @JsonIgnore
+    @ManyToMany(fetch=FetchType.LAZY)
     @JoinTable(
             name="post_repost_junction",
             joinColumns = { @JoinColumn(name="post_id") },
             inverseJoinColumns = { @JoinColumn(name="user_id") }
     )
-    @Column(name = "reposts")
     private Set<ApplicationUser> reposts = new HashSet<>();
 
-    @ManyToMany(fetch=FetchType.EAGER)
+    @JsonIgnore
+    @ManyToMany(fetch=FetchType.LAZY)
     @JoinTable(
             name="post_bookmark_junction",
             joinColumns= { @JoinColumn(name="post_id") },
-            inverseJoinColumns  = { @JoinColumn(name="user_id") }
+            inverseJoinColumns = { @JoinColumn(name="user_id") }
     )
-    @Column(name = "bookmarks")
     private Set<ApplicationUser> bookmarks = new HashSet<>();
 
-    @ManyToMany(fetch=FetchType.EAGER)
+    @JsonIgnore
+    @ManyToMany(fetch=FetchType.LAZY)
     @JoinTable(
             name="post_view_junction",
             joinColumns= { @JoinColumn(name="post_id") },
             inverseJoinColumns = { @JoinColumn(name="user_id") }
     )
-    @Column(name = "views")
     private Set<ApplicationUser> views = new HashSet<>();
 
     @Column(name = "scheduled")
     private Boolean scheduled;
 
-    @Column(name = "scheduled_date")
+    @Column(name="scheduled_date")
     private LocalDateTime scheduledDate;
 
     @Enumerated(EnumType.ORDINAL)
@@ -92,52 +99,17 @@ public class Post {
     private Audience audience;
 
     @Enumerated(EnumType.ORDINAL)
-    @Column(name = "reply_restriction")
+    @Column(name="reply_restriction")
     private ReplyRestriction replyRestriction;
 
     public Post() {}
 
-    public Post(
-            Integer postId,
-            String content,
-            LocalDateTime postedDate,
-            Boolean reply,
-            Integer replyTo,
-            ApplicationUser author,
-            Set<ApplicationUser> likes,
-            List<Image> images,
-            Set<Post> replies,
-            Set<ApplicationUser> reposts,
-            Set<ApplicationUser> bookmarks,
-            Set<ApplicationUser> views,
-            Boolean scheduled,
-            LocalDateTime scheduledDate,
-            Audience audience,
-            ReplyRestriction replyRestriction
-    ) {
-        this.postId = postId;
-        this.content = content;
-        this.postedDate = postedDate;
-        this.replyTo = replyTo;
+    public ApplicationUser getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(ApplicationUser author) {
         this.author = author;
-        this.likes = likes;
-        this.images = images;
-        this.replies = replies;
-        this.reposts = reposts;
-        this.bookmarks = bookmarks;
-        this.views = views;
-        this.scheduled = scheduled;
-        this.scheduledDate = scheduledDate;
-        this.audience = audience;
-        this.replyRestriction = replyRestriction;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
     }
 
     public Integer getPostId() {
@@ -146,6 +118,14 @@ public class Post {
 
     public void setPostId(Integer postId) {
         this.postId = postId;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public LocalDateTime getPostedDate() {
@@ -157,11 +137,11 @@ public class Post {
     }
 
     public Boolean getReply() {
-        return isReply;
+        return reply;
     }
 
     public void setReply(Boolean reply) {
-        isReply = reply;
+        this.reply = reply;
     }
 
     public Integer getReplyTo() {
@@ -170,14 +150,6 @@ public class Post {
 
     public void setReplyTo(Integer replyTo) {
         this.replyTo = replyTo;
-    }
-
-    public ApplicationUser getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(ApplicationUser author) {
-        this.author = author;
     }
 
     public Set<ApplicationUser> getLikes() {
@@ -266,7 +238,7 @@ public class Post {
         return Objects.equals(getPostId(), post.getPostId())
                 && Objects.equals(getContent(), post.getContent())
                 && Objects.equals(getPostedDate(), post.getPostedDate())
-                && Objects.equals(isReply, post.isReply)
+                && Objects.equals(getReply(), post.getReply())
                 && Objects.equals(getReplyTo(), post.getReplyTo())
                 && Objects.equals(getAuthor(), post.getAuthor())
                 && Objects.equals(getLikes(), post.getLikes())
@@ -309,7 +281,7 @@ public class Post {
                 "postId=" + postId +
                 ", content='" + content + '\'' +
                 ", postedDate=" + postedDate +
-                ", isReply=" + isReply +
+                ", reply=" + reply +
                 ", replyTo=" + replyTo +
                 ", author=" + author +
                 ", likes=" + likes +

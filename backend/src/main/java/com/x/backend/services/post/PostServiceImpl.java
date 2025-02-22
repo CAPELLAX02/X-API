@@ -6,12 +6,11 @@ import com.x.backend.models.ApplicationUser;
 import com.x.backend.models.Post;
 import com.x.backend.repositories.PostRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @Transactional
@@ -24,51 +23,49 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Post createPost(CreatePostRequest createPostRequest) {
         Post post = new Post();
-
-        if (createPostRequest.scheduled()) {
-            post.setPostedDate(createPostRequest.scheduledDate());
-        } else {
-            post.setPostedDate(LocalDateTime.now());
-        }
-
+        post.setPostedDate(
+                createPostRequest.scheduled() ?
+                createPostRequest.scheduledDate() :
+                LocalDateTime.now()
+        );
         post.setContent(createPostRequest.content());
         post.setAuthor(createPostRequest.author());
-        post.setReplies(createPostRequest.replies());
         post.setScheduled(createPostRequest.scheduled());
         post.setScheduledDate(createPostRequest.scheduledDate());
         post.setAudience(createPostRequest.audience());
         post.setReplyRestriction(createPostRequest.replyRestriction());
-
-        try {
-            return postRepository.save(post);
-        } catch (Exception e) {
-            // TODO: custom exception
-            return null;
-        }
+        return postRepository.save(post);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Post> getAllPosts() {
-        return postRepository.findAll();
+        return postRepository.findAllWithRelations();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Post getPostById(Integer id) {
-        return postRepository.findById(id)
+        return postRepository.findByIdWithRelations(id)
                 .orElseThrow(() -> new PostNotFoundException(id));
     }
 
     @Override
-    public Set<Post> getAllPostsByAuthor(ApplicationUser author) {
-        return postRepository.findByAuthor(author)
-                .orElse(new HashSet<>());
+    @Transactional(readOnly = true)
+    public List<Post> getAllPostsByAuthor(ApplicationUser author) {
+        Set<Post> userPosts = postRepository.findByAuthor(author);
+        List<Post> sortedPosts = new ArrayList<>(userPosts);
+        sortedPosts.sort(Comparator.comparing(Post::getPostedDate).reversed());
+        return sortedPosts;
     }
 
     @Override
     public void deletePost(Integer id) {
-        postRepository.deleteById(id);
+        Post post = getPostById(id);
+        postRepository.delete(post);
     }
 
 }

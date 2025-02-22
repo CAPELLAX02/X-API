@@ -21,5 +21,6 @@ public interface UserService {
     Set<ApplicationUser> followUser(String followerUsername, String followeeUsername);
     Set<ApplicationUser> getFollowings(String username);
     Set<ApplicationUser> getFollowers(String username);
+    ApplicationUser getUserById(Integer userId);
 
 }

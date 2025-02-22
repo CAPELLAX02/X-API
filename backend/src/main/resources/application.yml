@@ -9,13 +9,18 @@ spring:
     driver-class-name: org.postgresql.Driver
 
   jpa:
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
     show-sql: false
     properties:
-      hibernate.format_sql: true
-    database: postgresql
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
+      hibernate:
+        format_sql: true
+        order_updates: true
+        order_inserts: true
+        jdbc:
+          batch_size: 50
 
   mail:
     host: smtp.gmail.com
