@@ -35,6 +35,12 @@ spring:
             enable: true
           starttls.required: true
 
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 5MB
+      max-request-size: 20MB
+
 server:
   port: 8888
 

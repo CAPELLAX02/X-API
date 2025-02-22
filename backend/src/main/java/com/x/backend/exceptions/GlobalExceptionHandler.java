@@ -53,4 +53,9 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(UnableToCreatePostException.class)
+    public ResponseEntity<Object> handleUnableToCreatePostException(UnableToCreatePostException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+    }
+
 }

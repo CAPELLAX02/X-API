@@ -29,7 +29,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     private static final File IMAGE_BUCKET_DIRECTORY = new File("/home/capellax/projects/JavaProjects/X/backend/img");
-    private static final String IMAGE_ENDPOINT_URL = "http://localhost:8888/image";
+    private static final String IMAGE_ENDPOINT_URL = "http://localhost:8888/image/";
     private static final List<String> ALLOWED_MIME_TYPES = List.of("image/jpeg", "image/png", "image/gif");
 
     @Override

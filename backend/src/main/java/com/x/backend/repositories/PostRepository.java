@@ -29,8 +29,4 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     @Query("SELECT p FROM Post p WHERE p.author = :author")
     Set<Post> findByAuthor(@Param("author") ApplicationUser author);
 
-    @Modifying
-    @Query("DELETE FROM Post p WHERE p.postId = :id")
-    void deletePostById(@Param("id") Integer id);
-
 }
