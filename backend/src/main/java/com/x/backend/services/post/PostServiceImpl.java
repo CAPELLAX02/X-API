@@ -7,9 +7,11 @@ import com.x.backend.exceptions.PostNotFoundException;
 import com.x.backend.exceptions.UnableToCreatePostException;
 import com.x.backend.models.ApplicationUser;
 import com.x.backend.models.Image;
+import com.x.backend.models.Poll;
 import com.x.backend.models.Post;
 import com.x.backend.repositories.PostRepository;
 import com.x.backend.services.image.ImageService;
+import com.x.backend.services.poll.PollService;
 import com.x.backend.services.user.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -19,6 +21,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Transactional
@@ -28,12 +32,14 @@ public class PostServiceImpl implements PostService {
     private final ObjectMapper objectMapper;
     private final UserService userService;
     private final ImageService imageService;
+    private final PollService pollService;
 
-    public PostServiceImpl(PostRepository postRepository, ObjectMapper objectMapper, UserService userService, ImageService imageService) {
+    public PostServiceImpl(PostRepository postRepository, ObjectMapper objectMapper, UserService userService, ImageService imageService, PollService pollService) {
         this.postRepository = postRepository;
         this.objectMapper = objectMapper;
         this.userService = userService;
         this.imageService = imageService;
+        this.pollService = pollService;
     }
 
     @Override
@@ -42,9 +48,10 @@ public class PostServiceImpl implements PostService {
         Post post = new Post();
         try {
             post.setPostedDate(
-                    createPostRequest.scheduled() ?
-                            createPostRequest.scheduledDate() :
-                            LocalDateTime.now()
+                    Boolean.TRUE.equals(
+                            createPostRequest.scheduled())
+                            ? createPostRequest.scheduledDate()
+                            : LocalDateTime.now()
             );
             post.setContent(createPostRequest.content());
             post.setAuthor(createPostRequest.author());
@@ -52,12 +59,25 @@ public class PostServiceImpl implements PostService {
             post.setScheduledDate(createPostRequest.scheduledDate());
             post.setAudience(createPostRequest.audience());
             post.setReplyRestriction(createPostRequest.replyRestriction());
-            return postRepository.save(post);
+
+            if (createPostRequest.poll() != null) {
+                Poll savedPoll = pollService.generatePoll(createPostRequest.poll());
+                post.setPoll(savedPoll);
+            }
+
+            Set<ApplicationUser> mentionedUsers = extractMentionedUsers(createPostRequest.content());
+
+            Post savedPost = postRepository.save(post);
+            // TODO: Send notification to the users that have been mentioned in the particular post
+            // As: sendNotification(savedPost, mentionedUsers);
+            return savedPost;
         }
         catch (Exception e) {
             throw new UnableToCreatePostException();
         }
     }
+
+
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -70,7 +90,7 @@ public class PostServiceImpl implements PostService {
             Post post = new Post();
             post.setContent(createPostRequest.content());
             // Determine the mentioned users in the post
-            List<ApplicationUser> mentionedUsers = extractMentionedUsers(createPostRequest.content());
+            Set<ApplicationUser> mentionedUsers = extractMentionedUsers(createPostRequest.content());
             // Determine the timing considering the scheduling state
             if (Boolean.TRUE.equals(createPostRequest.scheduled())) {
                 post.setPostedDate(createPostRequest.scheduledDate());
@@ -101,22 +121,13 @@ public class PostServiceImpl implements PostService {
         }
     }
 
-    private List<ApplicationUser> extractMentionedUsers(String postContent) {
-        List<ApplicationUser> mentionedUsers = new ArrayList<>();
-        if (postContent != null || postContent.trim().isEmpty()) {
-            return mentionedUsers;
-        }
-        String[] words = postContent.split(",");
-        for (String word : words) {
-            if (word.startsWith("@")) {
-                String username = word.substring(1).replaceAll("[^a-zA-Z0-9]*$", "");
-                ApplicationUser mentionedUser = userService.getUserByUsername(username);
-                if (mentionedUser != null) {
-                    mentionedUsers.add(mentionedUser);
-                }
-            }
-        }
-        return mentionedUsers;
+    private Set<ApplicationUser> extractMentionedUsers(String postContentJson) {
+        return Stream.of(postContentJson.split(" "))
+                .filter(word -> word.startsWith("@"))
+                .map(word -> word.substring(1).replaceAll("[^a-zA-Z0-9]*$", ""))
+                .map(userService::getUserByUsername)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
     }
 
     @Override

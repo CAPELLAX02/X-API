@@ -5,6 +5,7 @@ import com.x.backend.models.ApplicationUser;
 import com.x.backend.models.Post;
 import com.x.backend.services.post.PostService;
 import com.x.backend.services.user.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,7 @@ public class PostController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Post> createPost(@RequestBody CreatePostRequest createPostRequest) {
+    public ResponseEntity<Post> createPost(@RequestBody @Valid CreatePostRequest createPostRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(postService.createPost(createPostRequest));
     }
 

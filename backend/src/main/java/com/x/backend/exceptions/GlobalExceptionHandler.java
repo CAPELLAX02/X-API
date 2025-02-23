@@ -58,4 +58,19 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(InvalidPollEndDateException.class)
+    public ResponseEntity<Object> handleInvalidPollEndDateException(InvalidPollEndDateException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(PollChoiceNotFoundException.class)
+    public ResponseEntity<Object> handlePollChoiceNotFoundException(PollChoiceNotFoundException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(PollExpiredException.class)
+    public ResponseEntity<Object> handlePollExpiredException(PollExpiredException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+    }
+
 }

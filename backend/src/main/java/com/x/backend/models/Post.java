@@ -102,6 +102,10 @@ public class Post {
     @Column(name="reply_restriction")
     private ReplyRestriction replyRestriction;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "poll_id", referencedColumnName = "poll_id")
+    private Poll poll;
+
     public Post() {}
 
     public ApplicationUser getAuthor() {
@@ -232,6 +236,14 @@ public class Post {
         this.replyRestriction = replyRestriction;
     }
 
+    public Poll getPoll() {
+        return poll;
+    }
+
+    public void setPoll(Poll poll) {
+        this.poll = poll;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Post post)) return false;
@@ -250,7 +262,8 @@ public class Post {
                 && Objects.equals(getScheduled(), post.getScheduled())
                 && Objects.equals(getScheduledDate(), post.getScheduledDate())
                 && getAudience() == post.getAudience()
-                && getReplyRestriction() == post.getReplyRestriction();
+                && getReplyRestriction() == post.getReplyRestriction()
+                && getPoll() == post.getPoll();
     }
 
     @Override
@@ -271,7 +284,8 @@ public class Post {
                 getScheduled(),
                 getScheduledDate(),
                 getAudience(),
-                getReplyRestriction()
+                getReplyRestriction(),
+                getPoll()
         );
     }
 
@@ -294,6 +308,7 @@ public class Post {
                 ", scheduledDate=" + scheduledDate +
                 ", audience=" + audience +
                 ", replyRestriction=" + replyRestriction +
+                ", poll=" + poll +
                 '}';
     }
 
