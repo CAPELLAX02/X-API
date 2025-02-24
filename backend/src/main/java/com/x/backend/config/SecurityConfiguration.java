@@ -72,6 +72,7 @@ public class SecurityConfiguration {
 
                      // TODO: Enhance the granularity of the permissions for "/posts/**"-derived endpoints.
                     .requestMatchers("/posts/**").permitAll()
+                    .requestMatchers("/poll/**").permitAll()
 
                     .anyRequest().authenticated()
                 )
