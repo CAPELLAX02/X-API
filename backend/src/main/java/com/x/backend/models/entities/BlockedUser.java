@@ -1,6 +1,5 @@
 package com.x.backend.models.entities;
 
-import com.x.backend.models.AbstractBaseEntity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -22,7 +21,12 @@ import java.time.LocalDateTime;
                 )
         }
 )
-public class BlockedUser extends AbstractBaseEntity {
+public class BlockedUser {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "block_id", nullable = false, updatable = false, unique = true)
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "blocking_user_id", nullable = false)
@@ -38,13 +42,23 @@ public class BlockedUser extends AbstractBaseEntity {
     public BlockedUser() {}
 
     public BlockedUser(
+            Long id,
             ApplicationUser blockingUser,
             ApplicationUser blockedUser,
             LocalDateTime blockedAt
     ) {
+        this.id = id;
         this.blockingUser = blockingUser;
         this.blockedUser = blockedUser;
         this.blockedAt = blockedAt;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public ApplicationUser getBlockingUser() {

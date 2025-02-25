@@ -1,7 +1,6 @@
 package com.x.backend.models.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.x.backend.models.AbstractBaseEntity;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -18,7 +17,12 @@ import java.util.Set;
                 @Index(name = "idx_comment_created_at", columnList = "created_at")
         }
 )
-public class Comment extends AbstractBaseEntity {
+public class Comment {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "comment_id", nullable = false, updatable = false, unique = true)
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
@@ -59,6 +63,7 @@ public class Comment extends AbstractBaseEntity {
     public Comment() {}
 
     public Comment(
+            Long id,
             Post post,
             ApplicationUser author,
             String content,
@@ -68,6 +73,7 @@ public class Comment extends AbstractBaseEntity {
             boolean isDeleted,
             LocalDateTime createdAt
     ) {
+        this.id = id;
         this.post = post;
         this.author = author;
         this.content = content;
@@ -76,6 +82,14 @@ public class Comment extends AbstractBaseEntity {
         this.likes = likes;
         this.isDeleted = isDeleted;
         this.createdAt = createdAt;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Post getPost() {

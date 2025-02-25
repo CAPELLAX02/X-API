@@ -1,7 +1,6 @@
 package com.x.backend.models.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.x.backend.models.AbstractBaseEntity;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -16,7 +15,12 @@ import java.time.LocalDateTime;
                 @Index(name = "idx_message_", columnList = "is_read")
         }
 )
-public class Message extends AbstractBaseEntity {
+public class Message {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "message_id", nullable = false, updatable = false, unique = true)
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "conversation_id", nullable = false)
@@ -56,6 +60,7 @@ public class Message extends AbstractBaseEntity {
     public Message() {}
 
     public Message(
+            Long id,
             Conversation conversation,
             ApplicationUser user,
             String content,
@@ -66,6 +71,7 @@ public class Message extends AbstractBaseEntity {
             Message replyTo,
             LocalDateTime sentAt
     ) {
+        this.id = id;
         this.conversation = conversation;
         this.user = user;
         this.content = content;
@@ -75,6 +81,14 @@ public class Message extends AbstractBaseEntity {
         this.isDeletedForReceiver = isDeletedForReceiver;
         this.replyTo = replyTo;
         this.sentAt = sentAt;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Conversation getConversation() {

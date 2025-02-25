@@ -1,6 +1,5 @@
 package com.x.backend.models.entities;
 
-import com.x.backend.models.AbstractBaseEntity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -14,11 +13,11 @@ import java.util.*;
                 @Index(name = "idx_poll_expiration", columnList = "expires_at")
         }
 )
-public class Poll extends AbstractBaseEntity {
+public class Poll {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "poll_id")
+    @Column(name = "poll_id", nullable = false, updatable = false, unique = true)
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -36,11 +35,20 @@ public class Poll extends AbstractBaseEntity {
 
     public Poll() {}
 
-    public Poll(Post post, List<PollOption> options, LocalDateTime expiresAt, List<PollVote> votes) {
+    public Poll(Long id, Post post, List<PollOption> options, LocalDateTime expiresAt, List<PollVote> votes) {
+        this.id = id;
         this.post = post;
         this.options = options;
         this.expiresAt = expiresAt;
         this.votes = votes;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Post getPost() {

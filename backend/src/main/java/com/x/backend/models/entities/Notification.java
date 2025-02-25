@@ -1,6 +1,5 @@
 package com.x.backend.models.entities;
 
-import com.x.backend.models.AbstractBaseEntity;
 import com.x.backend.models.enums.NotificationType;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -16,7 +15,12 @@ import java.time.LocalDateTime;
                 @Index(name = "idx_notification_read", columnList = "is_read")
         }
 )
-public class Notification extends AbstractBaseEntity {
+public class Notification {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "notification_id", nullable = false, updatable = false, unique = true)
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipient_id", nullable = false)
@@ -43,6 +47,7 @@ public class Notification extends AbstractBaseEntity {
     public Notification() {}
 
     public Notification(
+            Long id,
             ApplicationUser recipient,
             ApplicationUser triggeredBy,
             NotificationType type,
@@ -50,12 +55,21 @@ public class Notification extends AbstractBaseEntity {
             boolean isRead,
             LocalDateTime createdAt
     ) {
+        this.id = id;
         this.recipient = recipient;
         this.triggeredBy = triggeredBy;
         this.type = type;
         this.messageTemplate = messageTemplate;
         this.isRead = isRead;
         this.createdAt = createdAt;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public ApplicationUser getRecipient() {

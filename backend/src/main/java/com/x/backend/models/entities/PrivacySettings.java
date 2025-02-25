@@ -1,12 +1,16 @@
 package com.x.backend.models.entities;
 
-import com.x.backend.models.AbstractBaseEntity;
 import com.x.backend.models.enums.PrivacyLevel;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "user_privacy_settings")
-public class PrivacySettings extends AbstractBaseEntity {
+public class PrivacySettings {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "privacy_settings_id", nullable = false, updatable = false, unique = true)
+    private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -27,15 +31,25 @@ public class PrivacySettings extends AbstractBaseEntity {
     public PrivacySettings() {}
 
     public PrivacySettings(
+            Long id,
             ApplicationUser user,
             PrivacyLevel messagePrivacy,
             PrivacyLevel mentionPrivacy,
             PrivacyLevel postVisibility
     ) {
+        this.id = id;
         this.user = user;
         this.messagePrivacy = messagePrivacy;
         this.mentionPrivacy = mentionPrivacy;
         this.postVisibility = postVisibility;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public ApplicationUser getUser() {

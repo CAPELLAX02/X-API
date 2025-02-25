@@ -1,7 +1,6 @@
 package com.x.backend.models.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.x.backend.models.AbstractBaseEntity;
 import com.x.backend.models.enums.Audience;
 import com.x.backend.models.enums.ReplyRestriction;
 import jakarta.persistence.*;
@@ -16,14 +15,14 @@ import java.util.*;
         indexes = {
                 @Index(name = "idx_post_author", columnList = "author_id"),
                 @Index(name = "idx_post_created_at", columnList = "created_at"),
-                @Index(name = "idx_post_scheduled", columnList = "scheduled, scheduled_date")
+                @Index(name = "idx_post_scheduled", columnList = "scheduled_date")
         }
 )
-public class Post extends AbstractBaseEntity {
+public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "post_id")
+    @Column(name = "post_id", nullable = false, updatable = false, unique = true)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -101,6 +100,7 @@ public class Post extends AbstractBaseEntity {
     public Post() {}
 
     public Post(
+            Long id,
             ApplicationUser author,
             String content,
             LocalDateTime createdAt,
@@ -118,6 +118,7 @@ public class Post extends AbstractBaseEntity {
             ReplyRestriction replyRestriction,
             Poll poll
     ) {
+        this.id = id;
         this.author = author;
         this.content = content;
         this.createdAt = createdAt;
@@ -134,6 +135,14 @@ public class Post extends AbstractBaseEntity {
         this.audience = audience;
         this.replyRestriction = replyRestriction;
         this.poll = poll;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public ApplicationUser getAuthor() {

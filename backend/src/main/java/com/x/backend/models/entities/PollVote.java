@@ -1,6 +1,5 @@
 package com.x.backend.models.entities;
 
-import com.x.backend.models.AbstractBaseEntity;
 import jakarta.persistence.*;
 
 @Entity
@@ -12,7 +11,12 @@ import jakarta.persistence.*;
                 @Index(name = "idx_poll_vote_option", columnList = "option_index")
         }
 )
-public class PollVote extends AbstractBaseEntity {
+public class PollVote {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "poll_vote_id", nullable = false, updatable = false, unique = true)
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "poll_id", nullable = false)
@@ -27,10 +31,19 @@ public class PollVote extends AbstractBaseEntity {
 
     public PollVote() {}
 
-    public PollVote(Poll poll, ApplicationUser user, int optionIndex) {
+    public PollVote(Long id, Poll poll, ApplicationUser user, int optionIndex) {
+        this.id = id;
         this.poll = poll;
         this.user = user;
         this.optionIndex = optionIndex;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Poll getPoll() {

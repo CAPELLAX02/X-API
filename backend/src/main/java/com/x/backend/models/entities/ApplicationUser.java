@@ -1,7 +1,6 @@
 package com.x.backend.models.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.x.backend.models.AbstractBaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.CreationTimestamp;
@@ -27,7 +26,12 @@ import java.util.Set;
                 @UniqueConstraint(name = "uq_username", columnNames = "username")
         }
 )
-public class ApplicationUser extends AbstractBaseEntity implements UserDetails {
+public class ApplicationUser implements UserDetails {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id", nullable = false, updatable = false, unique = true)
+    private Long id;
 
     @Column(name = "first_name", nullable = false, length = 50)
     private String firstName;
@@ -156,6 +160,7 @@ public class ApplicationUser extends AbstractBaseEntity implements UserDetails {
     public ApplicationUser() {}
 
     public ApplicationUser(
+            Long id,
             String email,
             String firstName,
             String lastName,
@@ -180,6 +185,7 @@ public class ApplicationUser extends AbstractBaseEntity implements UserDetails {
             Boolean enabled,
             String verificationCode
     ) {
+        this.id = id;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -203,6 +209,14 @@ public class ApplicationUser extends AbstractBaseEntity implements UserDetails {
         this.authorities = authorities;
         this.enabled = enabled;
         this.verificationCode = verificationCode;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getFirstName() {

@@ -1,6 +1,5 @@
 package com.x.backend.models.entities;
 
-import com.x.backend.models.AbstractBaseEntity;
 import com.x.backend.models.enums.ImageType;
 import jakarta.persistence.*;
 
@@ -14,7 +13,12 @@ import java.time.LocalDateTime;
                 @Index(name = "idx_image_type", columnList = "image_type")
         }
 )
-public class Image extends AbstractBaseEntity {
+public class Image {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "image_id", nullable = false, updatable = false, unique = true)
+    private Long id;
 
     @Column(name = "image_url", nullable = false, unique = true)
     private String imageUrl;
@@ -38,6 +42,7 @@ public class Image extends AbstractBaseEntity {
     public Image() {}
 
     public Image(
+            Long id,
             String imageUrl,
             ImageType imageType,
             Long sizeInKb,
@@ -45,12 +50,21 @@ public class Image extends AbstractBaseEntity {
             int height,
             LocalDateTime uploadedAt
     ) {
+        this.id = id;
         this.imageUrl = imageUrl;
         this.imageType = imageType;
         this.sizeInKb = sizeInKb;
         this.width = width;
         this.height = height;
         this.uploadedAt = uploadedAt;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getImageUrl() {
