@@ -1,5 +1,6 @@
-package com.x.backend.models;
+package com.x.backend.models.entities;
 
+import com.x.backend.models.AbstractBaseEntity;
 import jakarta.persistence.*;
 
 @Entity
@@ -27,12 +28,7 @@ import jakarta.persistence.*;
                 )
         }
 )
-public class Like {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+public class Like extends AbstractBaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -48,19 +44,10 @@ public class Like {
 
     public Like() {}
 
-    public Like(Long id, ApplicationUser user, Post post, Comment comment) {
-        this.id = id;
+    public Like(ApplicationUser user, Post post, Comment comment) {
         this.user = user;
         this.post = post;
         this.comment = comment;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public ApplicationUser getUser() {

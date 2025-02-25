@@ -1,8 +1,8 @@
-package com.x.backend.models;
+package com.x.backend.models.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.x.backend.models.AbstractBaseEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -13,7 +13,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -28,12 +27,7 @@ import java.util.Set;
                 @UniqueConstraint(name = "uq_username", columnNames = "username")
         }
 )
-public class ApplicationUser implements UserDetails {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, updatable = false, unique = true)
-    private Long id;
+public class ApplicationUser extends AbstractBaseEntity implements UserDetails {
 
     @Column(name = "first_name", nullable = false, length = 50)
     private String firstName;
@@ -163,7 +157,6 @@ public class ApplicationUser implements UserDetails {
 
     public ApplicationUser(
             String email,
-            Long id,
             String firstName,
             String lastName,
             String phone,
@@ -188,7 +181,6 @@ public class ApplicationUser implements UserDetails {
             String verificationCode
     ) {
         this.email = email;
-        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
@@ -211,14 +203,6 @@ public class ApplicationUser implements UserDetails {
         this.authorities = authorities;
         this.enabled = enabled;
         this.verificationCode = verificationCode;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getFirstName() {
@@ -391,21 +375,6 @@ public class ApplicationUser implements UserDetails {
 
     public void setVerificationCode(String verificationCode) {
         this.verificationCode = verificationCode;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        ApplicationUser that = (ApplicationUser) o;
-        return Objects.equals(id, that.id) || Objects.equals(email, that.email);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, email);
     }
 
 }

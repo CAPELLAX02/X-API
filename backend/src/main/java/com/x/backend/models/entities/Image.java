@@ -1,9 +1,10 @@
-package com.x.backend.models;
+package com.x.backend.models.entities;
 
+import com.x.backend.models.AbstractBaseEntity;
+import com.x.backend.models.enums.ImageType;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 @Entity
 @Table(
@@ -13,12 +14,7 @@ import java.util.Objects;
                 @Index(name = "idx_image_type", columnList = "image_type")
         }
 )
-public class Image {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+public class Image extends AbstractBaseEntity {
 
     @Column(name = "image_url", nullable = false, unique = true)
     private String imageUrl;
@@ -42,7 +38,6 @@ public class Image {
     public Image() {}
 
     public Image(
-            Long id,
             String imageUrl,
             ImageType imageType,
             Long sizeInKb,
@@ -50,21 +45,12 @@ public class Image {
             int height,
             LocalDateTime uploadedAt
     ) {
-        this.id = id;
         this.imageUrl = imageUrl;
         this.imageType = imageType;
         this.sizeInKb = sizeInKb;
         this.width = width;
         this.height = height;
         this.uploadedAt = uploadedAt;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getImageUrl() {
@@ -113,21 +99,6 @@ public class Image {
 
     public void setUploadedAt(LocalDateTime uploadedAt) {
         this.uploadedAt = uploadedAt;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        Image image = (Image) o;
-        return Objects.equals(id, image.id) && Objects.equals(imageUrl, image.imageUrl);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, imageUrl);
     }
 
 }

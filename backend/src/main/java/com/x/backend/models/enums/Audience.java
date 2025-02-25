@@ -1,4 +1,4 @@
-package com.x.backend.models;
+package com.x.backend.models.enums;
 
 public enum Audience {
 

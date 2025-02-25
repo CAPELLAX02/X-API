@@ -1,7 +1,7 @@
 package com.x.backend.repositories;
 
 import com.x.backend.AbstractPostgreSQLTestContainer;
-import com.x.backend.models.ApplicationUser;
+import com.x.backend.models.entities.ApplicationUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

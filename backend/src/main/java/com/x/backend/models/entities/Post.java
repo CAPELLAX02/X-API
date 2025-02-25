@@ -1,6 +1,9 @@
-package com.x.backend.models;
+package com.x.backend.models.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.x.backend.models.AbstractBaseEntity;
+import com.x.backend.models.enums.Audience;
+import com.x.backend.models.enums.ReplyRestriction;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -16,7 +19,7 @@ import java.util.*;
                 @Index(name = "idx_post_scheduled", columnList = "scheduled, scheduled_date")
         }
 )
-public class Post {
+public class Post extends AbstractBaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -98,7 +101,6 @@ public class Post {
     public Post() {}
 
     public Post(
-            Long id,
             ApplicationUser author,
             String content,
             LocalDateTime createdAt,
@@ -116,7 +118,6 @@ public class Post {
             ReplyRestriction replyRestriction,
             Poll poll
     ) {
-        this.id = id;
         this.author = author;
         this.content = content;
         this.createdAt = createdAt;
@@ -133,14 +134,6 @@ public class Post {
         this.audience = audience;
         this.replyRestriction = replyRestriction;
         this.poll = poll;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public ApplicationUser getAuthor() {
@@ -269,21 +262,6 @@ public class Post {
 
     public void setPoll(Poll poll) {
         this.poll = poll;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        Post post = (Post) o;
-        return Objects.equals(id, post.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
     }
 
 }

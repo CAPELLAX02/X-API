@@ -1,5 +1,6 @@
-package com.x.backend.models;
+package com.x.backend.models.entities;
 
+import com.x.backend.models.AbstractBaseEntity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -27,12 +28,7 @@ import java.time.LocalDateTime;
                 )
         }
 )
-public class MessageRead {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+public class MessageRead extends AbstractBaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -47,19 +43,10 @@ public class MessageRead {
 
     public MessageRead() {}
 
-    public MessageRead(Long id, ApplicationUser user, Message message, LocalDateTime readAt) {
-        this.id = id;
+    public MessageRead(ApplicationUser user, Message message, LocalDateTime readAt) {
         this.user = user;
         this.message = message;
         this.readAt = readAt;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public ApplicationUser getUser() {

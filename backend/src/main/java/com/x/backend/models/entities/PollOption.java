@@ -1,15 +1,11 @@
-package com.x.backend.models;
+package com.x.backend.models.entities;
 
+import com.x.backend.models.AbstractBaseEntity;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "poll_options")
-public class PollOption {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+public class PollOption extends AbstractBaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "poll_id", nullable = false)
@@ -20,18 +16,9 @@ public class PollOption {
 
     public PollOption() {}
 
-    public PollOption(Long id, Poll poll, String optionText) {
-        this.id = id;
+    public PollOption(Poll poll, String optionText) {
         this.poll = poll;
         this.optionText = optionText;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public Poll getPoll() {

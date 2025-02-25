@@ -1,5 +1,6 @@
-package com.x.backend.models;
+package com.x.backend.models.entities;
 
+import com.x.backend.models.AbstractBaseEntity;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -21,12 +22,7 @@ import java.util.Set;
                 )
         }
 )
-public class Conversation {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+public class Conversation extends AbstractBaseEntity {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -55,7 +51,6 @@ public class Conversation {
     public Conversation() {}
 
     public Conversation(
-            Long id,
             Set<ApplicationUser> participants,
             Set<Message> messages,
             boolean isGroupChat,
@@ -63,21 +58,12 @@ public class Conversation {
             LocalDateTime createdAt,
             LocalDateTime lastMessageSentAt
     ) {
-        this.id = id;
         this.participants = participants;
         this.messages = messages;
         this.isGroupChat = isGroupChat;
         this.groupName = groupName;
         this.createdAt = createdAt;
         this.lastMessageSentAt = lastMessageSentAt;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public Set<ApplicationUser> getParticipants() {

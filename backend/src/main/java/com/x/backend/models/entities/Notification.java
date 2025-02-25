@@ -1,10 +1,11 @@
-package com.x.backend.models;
+package com.x.backend.models.entities;
 
+import com.x.backend.models.AbstractBaseEntity;
+import com.x.backend.models.enums.NotificationType;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 @Entity
 @Table(
@@ -15,12 +16,7 @@ import java.util.Objects;
                 @Index(name = "idx_notification_read", columnList = "is_read")
         }
 )
-public class Notification {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+public class Notification extends AbstractBaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipient_id", nullable = false)
@@ -47,7 +43,6 @@ public class Notification {
     public Notification() {}
 
     public Notification(
-            Long id,
             ApplicationUser recipient,
             ApplicationUser triggeredBy,
             NotificationType type,
@@ -55,21 +50,12 @@ public class Notification {
             boolean isRead,
             LocalDateTime createdAt
     ) {
-        this.id = id;
         this.recipient = recipient;
         this.triggeredBy = triggeredBy;
         this.type = type;
         this.messageTemplate = messageTemplate;
         this.isRead = isRead;
         this.createdAt = createdAt;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public ApplicationUser getRecipient() {
@@ -118,21 +104,6 @@ public class Notification {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        Notification notification = (Notification) o;
-        return Objects.equals(id, notification.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, recipient);
     }
 
 }

@@ -1,5 +1,7 @@
-package com.x.backend.models;
+package com.x.backend.models.entities;
 
+import com.x.backend.models.AbstractBaseEntity;
+import com.x.backend.models.enums.ReportStatus;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -13,12 +15,7 @@ import java.time.LocalDateTime;
                 @Index(name = "idx_report_comment", columnList = "reported_comment_id")
         }
 )
-public class Report {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+public class Report extends AbstractBaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reported_by", nullable = false)
@@ -49,7 +46,6 @@ public class Report {
     public Report() {}
 
     public Report(
-            Long id,
             ApplicationUser reportedBy,
             ApplicationUser reportedUser,
             Post reportedPost,
@@ -58,7 +54,6 @@ public class Report {
             ReportStatus status,
             LocalDateTime reportedAt
     ) {
-        this.id = id;
         this.reportedBy = reportedBy;
         this.reportedUser = reportedUser;
         this.reportedPost = reportedPost;
@@ -66,14 +61,6 @@ public class Report {
         this.reason = reason;
         this.status = status;
         this.reportedAt = reportedAt;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public ApplicationUser getReportedBy() {

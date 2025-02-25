@@ -1,12 +1,12 @@
-package com.x.backend.models;
+package com.x.backend.models.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.x.backend.models.AbstractBaseEntity;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -18,12 +18,7 @@ import java.util.Set;
                 @Index(name = "idx_comment_created_at", columnList = "created_at")
         }
 )
-public class Comment {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+public class Comment extends AbstractBaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
@@ -64,7 +59,6 @@ public class Comment {
     public Comment() {}
 
     public Comment(
-            Long id,
             Post post,
             ApplicationUser author,
             String content,
@@ -74,7 +68,6 @@ public class Comment {
             boolean isDeleted,
             LocalDateTime createdAt
     ) {
-        this.id = id;
         this.post = post;
         this.author = author;
         this.content = content;
@@ -83,14 +76,6 @@ public class Comment {
         this.likes = likes;
         this.isDeleted = isDeleted;
         this.createdAt = createdAt;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public Post getPost() {
@@ -155,21 +140,6 @@ public class Comment {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        Comment comment = (Comment) o;
-        return Objects.equals(id, comment.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
     }
 
 }
