@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
                 )
         }
 )
-public class BlockedUser {
+public class UserBlock {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,9 +39,9 @@ public class BlockedUser {
     @Column(name = "blocked_at", nullable = false)
     private LocalDateTime blockedAt;
 
-    public BlockedUser() {}
+    public UserBlock() {}
 
-    public BlockedUser(
+    public UserBlock(
             Long id,
             ApplicationUser blockingUser,
             ApplicationUser blockedUser,

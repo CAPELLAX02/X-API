@@ -1,6 +1,9 @@
 package com.x.backend.models.entities;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(
@@ -46,13 +49,18 @@ public class Like {
     @JoinColumn(name = "comment_id")
     private Comment comment;
 
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
     public Like() {}
 
-    public Like(Long id, ApplicationUser user, Post post, Comment comment) {
+    public Like(Long id, ApplicationUser user, Post post, Comment comment, LocalDateTime createdAt) {
         this.id = id;
         this.user = user;
         this.post = post;
         this.comment = comment;
+        this.createdAt = createdAt;
     }
 
     public Long getId() {
@@ -85,6 +93,14 @@ public class Like {
 
     public void setComment(Comment comment) {
         this.comment = comment;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
 }
