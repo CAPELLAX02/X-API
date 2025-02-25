@@ -130,6 +130,4 @@ public class Image {
         return Objects.hash(id, imageUrl);
     }
 
-    // TODO: @Override toString() method
-
 }

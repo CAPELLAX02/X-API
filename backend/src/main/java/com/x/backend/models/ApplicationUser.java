@@ -2,13 +2,14 @@ package com.x.backend.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.awt.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
@@ -44,15 +45,14 @@ public class ApplicationUser implements UserDetails {
     @Size(max = 100)
     private String email;
 
-    @Column(name = "phone", nullable = false, unique = true, length = 15)
+    @Column(name = "phone", nullable = false, length = 15)
     @Size(min = 10, max = 15)
     private String phone;
 
     @Column(name = "dob", nullable = false)
-    @Temporal(TemporalType.DATE)
-    private LocalDateTime dateOfBirth;
+    private LocalDate dateOfBirth;
 
-    @Column(name = "username", nullable = false, unique = true, length = 50)
+    @Column(name = "username", nullable = false, updatable = false, unique = true, length = 50)
     private String username;
 
     @JsonIgnore
@@ -83,10 +83,6 @@ public class ApplicationUser implements UserDetails {
 
     @Column(name = "is_private_account", nullable = false)
     private boolean isPrivateAccount = false;
-
-    @ManyToOne
-    @JoinColumn(name = "organization_id")
-    private Organization organization;
 
     @Column(name = "business", length = 100)
     private String business;
@@ -121,8 +117,8 @@ public class ApplicationUser implements UserDetails {
     )
     private Set<Role> authorities = new HashSet<>();
 
-    @Column(name = "enabled", nullable = false)
-    private Boolean enabled = false;
+    @Column(name = "enabled", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private Boolean enabled;
 
     @JsonIgnore
     @Column(name = "verification_code")
@@ -171,7 +167,7 @@ public class ApplicationUser implements UserDetails {
             String firstName,
             String lastName,
             String phone,
-            LocalDateTime dateOfBirth,
+            LocalDate dateOfBirth,
             String username,
             String password,
             String bio,
@@ -181,7 +177,6 @@ public class ApplicationUser implements UserDetails {
             Image bannerPicture,
             boolean isVerifiedAccount,
             boolean isPrivateAccount,
-            Organization organization,
             String business,
             String location,
             String websiteUrl,
@@ -207,7 +202,6 @@ public class ApplicationUser implements UserDetails {
         this.bannerPicture = bannerPicture;
         this.isVerifiedAccount = isVerifiedAccount;
         this.isPrivateAccount = isPrivateAccount;
-        this.organization = organization;
         this.business = business;
         this.location = location;
         this.websiteUrl = websiteUrl;
@@ -216,6 +210,186 @@ public class ApplicationUser implements UserDetails {
         this.followers = followers;
         this.authorities = authorities;
         this.enabled = enabled;
+        this.verificationCode = verificationCode;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Image getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(Image profilePicture) {
+        this.profilePicture = profilePicture;
+    }
+
+    public Image getBannerPicture() {
+        return bannerPicture;
+    }
+
+    public void setBannerPicture(Image bannerPicture) {
+        this.bannerPicture = bannerPicture;
+    }
+
+    public boolean isVerifiedAccount() {
+        return isVerifiedAccount;
+    }
+
+    public void setVerifiedAccount(boolean verifiedAccount) {
+        isVerifiedAccount = verifiedAccount;
+    }
+
+    public boolean isPrivateAccount() {
+        return isPrivateAccount;
+    }
+
+    public void setPrivateAccount(boolean privateAccount) {
+        isPrivateAccount = privateAccount;
+    }
+
+    public String getBusiness() {
+        return business;
+    }
+
+    public void setBusiness(String business) {
+        this.business = business;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getWebsiteUrl() {
+        return websiteUrl;
+    }
+
+    public void setWebsiteUrl(String websiteUrl) {
+        this.websiteUrl = websiteUrl;
+    }
+
+    public Boolean getDisplayDateOfBirth() {
+        return displayDateOfBirth;
+    }
+
+    public void setDisplayDateOfBirth(Boolean displayDateOfBirth) {
+        this.displayDateOfBirth = displayDateOfBirth;
+    }
+
+    public Set<ApplicationUser> getFollowing() {
+        return following;
+    }
+
+    public void setFollowing(Set<ApplicationUser> following) {
+        this.following = following;
+    }
+
+    public Set<ApplicationUser> getFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(Set<ApplicationUser> followers) {
+        this.followers = followers;
+    }
+
+    public void setAuthorities(Set<Role> authorities) {
+        this.authorities = authorities;
+    }
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public String getVerificationCode() {
+        return verificationCode;
+    }
+
+    public void setVerificationCode(String verificationCode) {
         this.verificationCode = verificationCode;
     }
 
@@ -234,34 +408,4 @@ public class ApplicationUser implements UserDetails {
         return Objects.hash(id, email);
     }
 
-    @Override
-    public String toString() {
-        return "ApplicationUser{" +
-                "id=" + id +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", email='" + email + '\'' +
-                ", phone='" + phone + '\'' +
-                ", dateOfBirth=" + dateOfBirth +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", bio='" + bio + '\'' +
-                ", nickname='" + nickname + '\'' +
-                ", createdAt=" + createdAt +
-                ", profilePicture=" + profilePicture +
-                ", bannerPicture=" + bannerPicture +
-                ", isVerifiedAccount=" + isVerifiedAccount +
-                ", isPrivateAccount=" + isPrivateAccount +
-                ", organization=" + organization +
-                ", business='" + business + '\'' +
-                ", location='" + location + '\'' +
-                ", websiteUrl='" + websiteUrl + '\'' +
-                ", displayDateOfBirth=" + displayDateOfBirth +
-                ", following=" + following +
-                ", followers=" + followers +
-                ", authorities=" + authorities +
-                ", enabled=" + enabled +
-                ", verificationCode='" + verificationCode + '\'' +
-                '}';
-    }
 }

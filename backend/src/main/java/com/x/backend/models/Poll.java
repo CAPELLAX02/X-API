@@ -24,20 +24,18 @@ public class Poll {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
-    @ElementCollection
-    @CollectionTable(name = "poll_options", joinColumns = @JoinColumn(name = "poll_id"))
-    @Column(name = "option_text", nullable = false, length = 100)
-    private List<String> options;
+    @OneToMany(mappedBy = "poll", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<PollOption> options = new ArrayList<>();
 
     @Column(name = "expires_at", nullable = false)
     private LocalDateTime expiresAt;
 
     @OneToMany(mappedBy = "poll", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PollVote> votes;
+    private List<PollVote> votes = new ArrayList<>();
 
     public Poll() {}
 
-    public Poll(Long id, Post post, List<String> options, LocalDateTime expiresAt, List<PollVote> votes) {
+    public Poll(Long id, Post post, List<PollOption> options, LocalDateTime expiresAt, List<PollVote> votes) {
         this.id = id;
         this.post = post;
         this.options = options;
@@ -61,11 +59,11 @@ public class Poll {
         this.post = post;
     }
 
-    public List<String> getOptions() {
+    public List<PollOption> getOptions() {
         return options;
     }
 
-    public void setOptions(List<String> options) {
+    public void setOptions(List<PollOption> options) {
         this.options = options;
     }
 
@@ -84,4 +82,5 @@ public class Poll {
     public void setVotes(List<PollVote> votes) {
         this.votes = votes;
     }
+
 }

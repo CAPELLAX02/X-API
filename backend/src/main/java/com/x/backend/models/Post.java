@@ -12,7 +12,6 @@ import java.util.*;
         name = "posts",
         indexes = {
                 @Index(name = "idx_post_author", columnList = "author_id"),
-                @Index(name = "idx_post_privacy", columnList = "privacy_level"),
                 @Index(name = "idx_post_created_at", columnList = "created_at"),
                 @Index(name = "idx_post_scheduled", columnList = "scheduled, scheduled_date")
         }
@@ -21,8 +20,13 @@ public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "post_id")
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_id", nullable = false)
+    @JsonIgnore
+    private ApplicationUser author;
 
     @Column(name = "content", nullable = false, length = 500)
     private String content;
@@ -39,21 +43,14 @@ public class Post {
     @JsonIgnore
     private Post replyTo;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "author_id", nullable = false)
-    @JsonIgnore
-    private ApplicationUser author;
-
     @OneToMany(mappedBy = "replyTo", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Post> replies = new HashSet<>();
 
-    @ManyToMany
-    @JoinTable(
-            name = "post_likes",
-            joinColumns = @JoinColumn(name = "post_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    private Set<ApplicationUser> likes = new HashSet<>();
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<Like> likes = new HashSet<>();
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<Comment> comments = new HashSet<>();
 
     @ManyToMany
     @JoinTable(
@@ -83,11 +80,12 @@ public class Post {
     @JoinColumn(name = "post_id")
     private List<Image> mediaAttachments = new ArrayList<>();
 
-    @Column(name = "scheduled", nullable = false)
-    private boolean scheduled = false;
-
     @Column(name = "scheduled_date")
     private LocalDateTime scheduledDate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "audience", nullable = false, length = 20)
+    private Audience audience = Audience.EVERYONE;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "reply_restriction", nullable = false, length = 20)
@@ -101,36 +99,38 @@ public class Post {
 
     public Post(
             Long id,
+            ApplicationUser author,
             String content,
             LocalDateTime createdAt,
             boolean isReply,
             Post replyTo,
-            ApplicationUser author,
             Set<Post> replies,
-            Set<ApplicationUser> likes,
+            Set<Like> likes,
+            Set<Comment> comments,
             Set<ApplicationUser> reposts,
             Set<ApplicationUser> bookmarks,
             Set<ApplicationUser> views,
             List<Image> mediaAttachments,
-            boolean scheduled,
             LocalDateTime scheduledDate,
+            Audience audience,
             ReplyRestriction replyRestriction,
             Poll poll
     ) {
         this.id = id;
+        this.author = author;
         this.content = content;
         this.createdAt = createdAt;
         this.isReply = isReply;
         this.replyTo = replyTo;
-        this.author = author;
         this.replies = replies;
         this.likes = likes;
+        this.comments = comments;
         this.reposts = reposts;
         this.bookmarks = bookmarks;
         this.views = views;
         this.mediaAttachments = mediaAttachments;
-        this.scheduled = scheduled;
         this.scheduledDate = scheduledDate;
+        this.audience = audience;
         this.replyRestriction = replyRestriction;
         this.poll = poll;
     }
@@ -141,6 +141,14 @@ public class Post {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public ApplicationUser getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(ApplicationUser author) {
+        this.author = author;
     }
 
     public String getContent() {
@@ -175,14 +183,6 @@ public class Post {
         this.replyTo = replyTo;
     }
 
-    public ApplicationUser getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(ApplicationUser author) {
-        this.author = author;
-    }
-
     public Set<Post> getReplies() {
         return replies;
     }
@@ -191,12 +191,20 @@ public class Post {
         this.replies = replies;
     }
 
-    public Set<ApplicationUser> getLikes() {
+    public Set<Like> getLikes() {
         return likes;
     }
 
-    public void setLikes(Set<ApplicationUser> likes) {
+    public void setLikes(Set<Like> likes) {
         this.likes = likes;
+    }
+
+    public Set<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(Set<Comment> comments) {
+        this.comments = comments;
     }
 
     public Set<ApplicationUser> getReposts() {
@@ -231,20 +239,20 @@ public class Post {
         this.mediaAttachments = mediaAttachments;
     }
 
-    public boolean isScheduled() {
-        return scheduled;
-    }
-
-    public void setScheduled(boolean scheduled) {
-        this.scheduled = scheduled;
-    }
-
     public LocalDateTime getScheduledDate() {
         return scheduledDate;
     }
 
     public void setScheduledDate(LocalDateTime scheduledDate) {
         this.scheduledDate = scheduledDate;
+    }
+
+    public Audience getAudience() {
+        return audience;
+    }
+
+    public void setAudience(Audience audience) {
+        this.audience = audience;
     }
 
     public ReplyRestriction getReplyRestriction() {
@@ -276,28 +284,6 @@ public class Post {
     @Override
     public int hashCode() {
         return Objects.hash(id);
-    }
-
-    @Override
-    public String toString() {
-        return "Post{" +
-                "id=" + id +
-                ", content='" + content + '\'' +
-                ", createdAt=" + createdAt +
-                ", isReply=" + isReply +
-                ", replyTo=" + replyTo +
-                ", author=" + author +
-                ", replies=" + replies +
-                ", likes=" + likes +
-                ", reposts=" + reposts +
-                ", bookmarks=" + bookmarks +
-                ", views=" + views +
-                ", mediaAttachments=" + mediaAttachments +
-                ", scheduled=" + scheduled +
-                ", scheduledDate=" + scheduledDate +
-                ", replyRestriction=" + replyRestriction +
-                ", poll=" + poll +
-                '}';
     }
 
 }
