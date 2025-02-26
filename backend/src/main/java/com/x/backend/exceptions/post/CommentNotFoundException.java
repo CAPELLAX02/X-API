@@ -1,4 +1,6 @@
-package com.x.backend.exceptions;
+package com.x.backend.exceptions.post;
+
+import com.x.backend.exceptions.NotFoundException;
 
 public class CommentNotFoundException extends NotFoundException {
     public CommentNotFoundException(Long id) {
