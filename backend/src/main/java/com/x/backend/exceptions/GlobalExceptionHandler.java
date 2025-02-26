@@ -24,6 +24,12 @@ import java.util.Objects;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<BaseApiResponse<String>> handleNotFoundException(NotFoundException e) {
+        BaseApiResponse<String> response = new BaseApiResponse<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<BaseApiResponse<Object>> handleEntityNotFoundException(EntityNotFoundException e) {
         return ResponseEntity
