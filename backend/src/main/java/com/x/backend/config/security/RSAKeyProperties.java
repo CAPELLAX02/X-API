@@ -1,4 +1,4 @@
-package com.x.backend.config;
+package com.x.backend.config.security;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
