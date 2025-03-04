@@ -82,9 +82,6 @@ public class ApplicationUser implements UserDetails {
     @Column(name = "is_private_account", nullable = false)
     private boolean isPrivateAccount = false;
 
-    @Column(name = "business", length = 100)
-    private String business;
-
     @Column(name = "location", length = 100)
     private String location;
 
@@ -92,7 +89,7 @@ public class ApplicationUser implements UserDetails {
     private String websiteUrl;
 
     @Column(name = "display_dob", nullable = false)
-    private Boolean displayDateOfBirth;
+    private boolean displayDateOfBirth;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -116,7 +113,7 @@ public class ApplicationUser implements UserDetails {
     private Set<Role> authorities = new HashSet<>();
 
     @Column(name = "enabled", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
-    private Boolean enabled;
+    private boolean enabled;
 
     @JsonIgnore
     @Column(name = "verification_code")
@@ -175,14 +172,13 @@ public class ApplicationUser implements UserDetails {
             Image bannerPicture,
             boolean isVerifiedAccount,
             boolean isPrivateAccount,
-            String business,
             String location,
             String websiteUrl,
-            Boolean displayDateOfBirth,
+            boolean displayDateOfBirth,
             Set<ApplicationUser> following,
             Set<ApplicationUser> followers,
             Set<Role> authorities,
-            Boolean enabled,
+            boolean enabled,
             String verificationCode
     ) {
         this.id = id;
@@ -200,7 +196,6 @@ public class ApplicationUser implements UserDetails {
         this.bannerPicture = bannerPicture;
         this.isVerifiedAccount = isVerifiedAccount;
         this.isPrivateAccount = isPrivateAccount;
-        this.business = business;
         this.location = location;
         this.websiteUrl = websiteUrl;
         this.displayDateOfBirth = displayDateOfBirth;
@@ -323,14 +318,6 @@ public class ApplicationUser implements UserDetails {
         isPrivateAccount = privateAccount;
     }
 
-    public String getBusiness() {
-        return business;
-    }
-
-    public void setBusiness(String business) {
-        this.business = business;
-    }
-
     public String getLocation() {
         return location;
     }
@@ -347,11 +334,11 @@ public class ApplicationUser implements UserDetails {
         this.websiteUrl = websiteUrl;
     }
 
-    public Boolean getDisplayDateOfBirth() {
+    public boolean getDisplayDateOfBirth() {
         return displayDateOfBirth;
     }
 
-    public void setDisplayDateOfBirth(Boolean displayDateOfBirth) {
+    public void setDisplayDateOfBirth(boolean displayDateOfBirth) {
         this.displayDateOfBirth = displayDateOfBirth;
     }
 
@@ -375,11 +362,11 @@ public class ApplicationUser implements UserDetails {
         this.authorities = authorities;
     }
 
-    public Boolean getEnabled() {
+    public boolean getEnabled() {
         return enabled;
     }
 
-    public void setEnabled(Boolean enabled) {
+    public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
 

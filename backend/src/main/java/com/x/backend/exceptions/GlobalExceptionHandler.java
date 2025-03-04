@@ -113,7 +113,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.METHOD_NOT_ALLOWED)
                 .body(BaseApiResponse.error(
-                        "HTTP method not supported: " + e.getMethod(),
+                        "Provided HTTP method not supported",
                         HttpStatus.METHOD_NOT_ALLOWED
                 ));
     }
@@ -123,7 +123,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(BaseApiResponse.error(
-                        "Email sending failed: " + e.getMessage(),
+                        e.getMessage(),
                         HttpStatus.INTERNAL_SERVER_ERROR
                 ));
     }
