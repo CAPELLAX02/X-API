@@ -13,6 +13,7 @@ import java.util.Optional;
 public interface ApplicationUserRepository extends BaseRepository<ApplicationUser, Long> {
 
     boolean existsByEmail(String email);
+    boolean existsByUsername(String username);
 
     Optional<ApplicationUser> findByUsername(String username);
 
@@ -28,4 +29,5 @@ public interface ApplicationUserRepository extends BaseRepository<ApplicationUse
     @EntityGraph(attributePaths = {"following", "followers"})
     @Query("SELECT u FROM ApplicationUser u WHERE u.id = :id")
     Optional<ApplicationUser> findUserWithFollowersAndFollowing(@Param("id") Long id);
+
 }

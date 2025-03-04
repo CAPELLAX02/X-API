@@ -1,25 +1,23 @@
 package com.x.backend.services.auth;
 
-import com.x.backend.dto.AuthTokenResponse;
-import com.x.backend.dto.RegisterRequest;
-import com.x.backend.dto.UserResponse;
+import com.x.backend.dto.*;
 import com.x.backend.utils.api.BaseApiResponse;
 import org.springframework.http.ResponseEntity;
 
 public interface AuthenticationService {
 
-    ResponseEntity<BaseApiResponse<UserResponse>> register(RegisterRequest registerRequest);
-    ResponseEntity<BaseApiResponse<String>> sendVerificationEmail(String username, String email);
-    ResponseEntity<BaseApiResponse<String>> resendVerificationEmail(String username, String email);
-    ResponseEntity<BaseApiResponse<UserResponse>> completeEmailVerification(String username, String email, String verificationCode);
-    ResponseEntity<BaseApiResponse<UserResponse>> setPhoneNumber(String username, String phoneNumber);
-    ResponseEntity<BaseApiResponse<UserResponse>> changePhoneNumber(String username, String oldPhoneNumber, String newPhoneNumber);
-    ResponseEntity<BaseApiResponse<UserResponse>> setPassword(String username, String password);
-    ResponseEntity<BaseApiResponse<String>> sendPasswordRecoveryEmail(String username, String email);
-    ResponseEntity<BaseApiResponse<String>> resendPasswordRecoveryEmail(String username, String email);
-    ResponseEntity<BaseApiResponse<UserResponse>> recoverPassword(String username, String newPassword);
-    ResponseEntity<BaseApiResponse<UserResponse>> changePassword(String username, String oldPassword, String newPassword);
-    ResponseEntity<BaseApiResponse<AuthTokenResponse>> login(String username, String password);
-    ResponseEntity<BaseApiResponse<AuthTokenResponse>> refreshToken(String refreshToken);
+    ResponseEntity<BaseApiResponse<UserResponse>> register(RegisterRequest req);
+    ResponseEntity<BaseApiResponse<String>> sendVerificationEmail(SendVerificationEmailRequest req);
+    ResponseEntity<BaseApiResponse<String>> resendVerificationEmail(SendVerificationEmailRequest req);
+    ResponseEntity<BaseApiResponse<UserResponse>> completeEmailVerification(CompleteEmailVerificationRequest req);
+    ResponseEntity<BaseApiResponse<UserResponse>> setPhoneNumber(SetPhoneNumberRequest req);
+    ResponseEntity<BaseApiResponse<UserResponse>> changePhoneNumber(String username, ChangePhoneNumberRequest req);
+    ResponseEntity<BaseApiResponse<UserResponse>> setPassword(SetPasswordRequest req);
+    ResponseEntity<BaseApiResponse<String>> sendPasswordRecoveryEmail(SendPasswordRecoveryEmailRequest req);
+    ResponseEntity<BaseApiResponse<String>> resendPasswordRecoveryEmail(SendPasswordRecoveryEmailRequest req);
+    ResponseEntity<BaseApiResponse<UserResponse>> recoverPassword(RecoverPasswordRequest req);
+    ResponseEntity<BaseApiResponse<UserResponse>> changePassword(String username, ChangePasswordRequest req);
+    ResponseEntity<BaseApiResponse<AuthTokenResponse>> login(LoginRequest req);
+    ResponseEntity<BaseApiResponse<AuthTokenResponse>> refreshToken(RefreshTokenRequest req);
 
 }
