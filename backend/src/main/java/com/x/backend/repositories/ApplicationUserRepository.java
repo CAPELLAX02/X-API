@@ -15,6 +15,7 @@ public interface ApplicationUserRepository extends BaseRepository<ApplicationUse
     boolean existsByEmail(String email);
     boolean existsByUsername(String username);
 
+    Optional<ApplicationUser> findByEmail(String email);
     Optional<ApplicationUser> findByUsername(String username);
 
     @Query(value = "SELECT * FROM x_db.public.users ORDER BY created_at DESC LIMIT :limit", nativeQuery = true)
