@@ -26,8 +26,22 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<BaseApiResponse<String>> handleNotFoundException(NotFoundException e) {
-        BaseApiResponse<String> response = new BaseApiResponse<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        return ResponseEntity.
+                status(HttpStatus.NOT_FOUND)
+                .body(BaseApiResponse.error(
+                        e.getMessage(),
+                        HttpStatus.NOT_FOUND
+                ));
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<BaseApiResponse<String>> handleIllegalArgumentException(IllegalArgumentException e) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(BaseApiResponse.error(
+                        e.getMessage(),
+                        HttpStatus.BAD_REQUEST
+                ));
     }
 
     @ExceptionHandler(EntityNotFoundException.class)

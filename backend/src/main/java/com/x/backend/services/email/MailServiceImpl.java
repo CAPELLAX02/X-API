@@ -12,12 +12,12 @@ import org.thymeleaf.context.Context;
 
 @Service
 @Transactional
-public class EmailServiceImpl implements EmailService {
+public class MailServiceImpl implements MailService {
 
     private final JavaMailSender javaMailSender;
     private final TemplateEngine templateEngine;
 
-    public EmailServiceImpl(JavaMailSender javaMailSender, TemplateEngine templateEngine) {
+    public MailServiceImpl(JavaMailSender javaMailSender, TemplateEngine templateEngine) {
         this.javaMailSender = javaMailSender;
         this.templateEngine = templateEngine;
     }
