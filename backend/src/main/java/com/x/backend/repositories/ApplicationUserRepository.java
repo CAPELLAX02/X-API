@@ -14,6 +14,7 @@ public interface ApplicationUserRepository extends BaseRepository<ApplicationUse
 
     boolean existsByEmail(String email);
     boolean existsByUsername(String username);
+    boolean existsByPhone(String phone);
 
     Optional<ApplicationUser> findByEmail(String email);
     Optional<ApplicationUser> findByUsername(String username);

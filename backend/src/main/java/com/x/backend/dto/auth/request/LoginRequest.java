@@ -1,4 +1,4 @@
-package com.x.backend.dto;
+package com.x.backend.dto.auth.request;
 
 import com.x.backend.exceptions.auth.InvalidLoginRequestKeyException;
 import jakarta.validation.constraints.NotBlank;

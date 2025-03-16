@@ -1,5 +1,6 @@
 package com.x.backend.exceptions;
 
+import com.x.backend.dto.auth.response.UserResponse;
 import com.x.backend.utils.api.BaseApiResponse;
 import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityNotFoundException;
@@ -23,6 +24,16 @@ import java.util.Objects;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(AlreadyExistsException.class)
+    public ResponseEntity<BaseApiResponse<UserResponse>> handleAlreadyExistsException(AlreadyExistsException e) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(BaseApiResponse.error(
+                        e.getMessage(),
+                        HttpStatus.CONFLICT
+                ));
+    }
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<BaseApiResponse<String>> handleNotFoundException(NotFoundException e) {

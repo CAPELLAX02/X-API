@@ -8,14 +8,14 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class BaseApiResponse<T> {
 
-    private boolean success;
-    private HttpStatus status;
-    private String message;
+    private final boolean success;
+    private final HttpStatus status;
+    private final String message;
     private T data;
-    private LocalDateTime timestamp;
+    private final LocalDateTime timestamp;
 
     public BaseApiResponse(T data, String message, HttpStatus status) {
-        this.success = true;
+        this.success = status.is2xxSuccessful();
         this.status = status;
         this.message = message;
         this.data = data;
@@ -29,8 +29,20 @@ public class BaseApiResponse<T> {
         this.timestamp = LocalDateTime.now();
     }
 
+    public static <T> BaseApiResponse<T> success(T data, String message, HttpStatus status) {
+        return new BaseApiResponse<>(data, message, status);
+    }
+
     public static <T> BaseApiResponse<T> success(T data, String message) {
         return new BaseApiResponse<>(data, message, HttpStatus.OK);
+    }
+
+    public static <T> BaseApiResponse<T> success(String message) {
+        return new BaseApiResponse<>(message, HttpStatus.OK);
+    }
+
+    public static <T> BaseApiResponse<T> success(T data) {
+        return new BaseApiResponse<>(data, "Success", HttpStatus.OK);
     }
 
     public static <T> BaseApiResponse<T> error(String errorMessage, HttpStatus status) {
@@ -41,40 +53,19 @@ public class BaseApiResponse<T> {
         return success;
     }
 
-    public void setSuccess(boolean success) {
-        this.success = success;
-    }
-
     public HttpStatus getStatus() {
         return status;
-    }
-
-    public void setStatus(HttpStatus status) {
-        this.status = status;
     }
 
     public String getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
     public T getData() {
         return data;
-    }
-
-    public void setData(T data) {
-        this.data = data;
     }
 
     public LocalDateTime getTimestamp() {
         return timestamp;
     }
-
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
-    }
-
 }

@@ -23,16 +23,16 @@ public class MailServiceImpl implements MailService {
     }
 
     @Override
-    public void sendActivationCodeViaEmail(String to, String username, String activationCode) throws MessagingException {
-        sendEmailWithTemplate(to, username, activationCode, "Your Verification Code", "activation-email-template.html");
+    public void sendVerificationCodeViaEmail(String to, String username, String verificationCode) throws EmailFailedToSentException {
+        sendEmailWithTemplate(to, username, verificationCode, "Your Verification Code", "activation-email-template.html");
     }
 
     @Override
-    public void sendPasswordRecoveryCodeViaEmail(String to, String username, String activationCode) throws MessagingException {
-        sendEmailWithTemplate(to, username, activationCode, "Your Password Recovery", "password-recovery-email-template");
+    public void sendPasswordRecoveryCodeViaEmail(String to, String username, String passwordRecoveryCode) throws EmailFailedToSentException {
+        sendEmailWithTemplate(to, username, passwordRecoveryCode, "Your Password Recovery", "password-recovery-email-template");
     }
 
-    private void sendEmailWithTemplate(String to, String username, String code, String subject, String templateName) throws MessagingException {
+    private void sendEmailWithTemplate(String to, String username, String code, String subject, String templateName) throws EmailFailedToSentException {
         String content = buildEmailContent(templateName, username, code);
         sendEmail(to, subject, content);
     }
@@ -44,7 +44,7 @@ public class MailServiceImpl implements MailService {
         return templateEngine.process(templateName, context);
     }
 
-    private void sendEmail(String to, String subject, String content) throws MessagingException {
+    private void sendEmail(String to, String subject, String content) throws EmailFailedToSentException {
         try {
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
@@ -56,7 +56,5 @@ public class MailServiceImpl implements MailService {
             throw new EmailFailedToSentException();
         }
     }
-
-
 
 }

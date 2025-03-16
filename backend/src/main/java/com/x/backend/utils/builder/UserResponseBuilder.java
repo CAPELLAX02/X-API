@@ -1,6 +1,6 @@
 package com.x.backend.utils.builder;
 
-import com.x.backend.dto.UserResponse;
+import com.x.backend.dto.auth.response.UserResponse;
 import com.x.backend.models.entities.ApplicationUser;
 import org.springframework.stereotype.Component;
 

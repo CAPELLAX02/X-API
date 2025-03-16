@@ -1,4 +1,4 @@
-package com.x.backend.utils.common;
+package com.x.backend.utils.auth;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;

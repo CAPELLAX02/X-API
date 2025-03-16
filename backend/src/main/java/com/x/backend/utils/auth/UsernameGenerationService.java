@@ -1,4 +1,4 @@
-package com.x.backend.utils.common;
+package com.x.backend.utils.auth;
 
 import com.x.backend.repositories.ApplicationUserRepository;
 import org.apache.commons.lang3.RandomStringUtils;

@@ -1,4 +1,4 @@
-package com.x.backend.dto;
+package com.x.backend.dto.auth.request;
 
 import com.x.backend.utils.validation.AgeLimit;
 import jakarta.validation.constraints.Email;
@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 
-public record RegisterRequest(
+public record StartRegistrationRequest(
 
         @NotBlank(message = "First name is required.")
         @Size(max = 50, message = "First name can be at most 50 characters.")

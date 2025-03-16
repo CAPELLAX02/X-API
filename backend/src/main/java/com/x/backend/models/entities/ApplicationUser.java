@@ -8,6 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -89,7 +90,6 @@ public class ApplicationUser implements UserDetails {
     private String websiteUrl;
 
     @Column(name = "display_dob", nullable = false)
-    private boolean displayDateOfBirth;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -119,9 +119,19 @@ public class ApplicationUser implements UserDetails {
     @Column(name = "verification_code")
     private String verificationCode;
 
+    @Column(name = "verification_code_expiry")
+    private Instant verificationCodeExpiry;
+
+    @JsonIgnore
+    @Column(name = "password_recovery_code")
+    private String passwordRecoveryCode;
+
+    @Column(name = "password_recovery_code_expiry")
+    private Instant passwordRecoveryCodeExpiry;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.authorities;
+        return new HashSet<>(this.authorities);
     }
 
     @Override
@@ -174,12 +184,14 @@ public class ApplicationUser implements UserDetails {
             boolean isPrivateAccount,
             String location,
             String websiteUrl,
-            boolean displayDateOfBirth,
             Set<ApplicationUser> following,
             Set<ApplicationUser> followers,
             Set<Role> authorities,
             boolean enabled,
-            String verificationCode
+            String verificationCode,
+            Instant verificationCodeExpiry,
+            String passwordRecoveryCode,
+            Instant passwordRecoveryCodeExpiry
     ) {
         this.id = id;
         this.email = email;
@@ -198,12 +210,14 @@ public class ApplicationUser implements UserDetails {
         this.isPrivateAccount = isPrivateAccount;
         this.location = location;
         this.websiteUrl = websiteUrl;
-        this.displayDateOfBirth = displayDateOfBirth;
         this.following = following;
         this.followers = followers;
         this.authorities = authorities;
         this.enabled = enabled;
         this.verificationCode = verificationCode;
+        this.verificationCodeExpiry = verificationCodeExpiry;
+        this.passwordRecoveryCode = passwordRecoveryCode;
+        this.passwordRecoveryCodeExpiry = passwordRecoveryCodeExpiry;
     }
 
     public Long getId() {
@@ -334,14 +348,6 @@ public class ApplicationUser implements UserDetails {
         this.websiteUrl = websiteUrl;
     }
 
-    public boolean getDisplayDateOfBirth() {
-        return displayDateOfBirth;
-    }
-
-    public void setDisplayDateOfBirth(boolean displayDateOfBirth) {
-        this.displayDateOfBirth = displayDateOfBirth;
-    }
-
     public Set<ApplicationUser> getFollowing() {
         return following;
     }
@@ -378,4 +384,27 @@ public class ApplicationUser implements UserDetails {
         this.verificationCode = verificationCode;
     }
 
+    public Instant getVerificationCodeExpiry() {
+        return verificationCodeExpiry;
+    }
+
+    public void setVerificationCodeExpiry(Instant verificationCodeExpiry) {
+        this.verificationCodeExpiry = verificationCodeExpiry;
+    }
+
+    public String getPasswordRecoveryCode() {
+        return passwordRecoveryCode;
+    }
+
+    public void setPasswordRecoveryCode(String passwordRecoveryCode) {
+        this.passwordRecoveryCode = passwordRecoveryCode;
+    }
+
+    public Instant getPasswordRecoveryCodeExpiry() {
+        return passwordRecoveryCodeExpiry;
+    }
+
+    public void setPasswordRecoveryCodeExpiry(Instant passwordRecoveryCodeExpiry) {
+        this.passwordRecoveryCodeExpiry = passwordRecoveryCodeExpiry;
+    }
 }
