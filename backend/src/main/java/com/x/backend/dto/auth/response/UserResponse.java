@@ -17,7 +17,6 @@ public record UserResponse(
         String nickname,
         String location,
         String websiteUrl,
-        boolean displayDateOfBirth,
         LocalDateTime createdAt,
         int followerCount,
         int followingCount

@@ -2,7 +2,9 @@ package com.x.backend.controllers;
 
 import com.x.backend.dto.auth.request.*;
 import com.x.backend.dto.auth.response.AuthTokenResponse;
-import com.x.backend.dto.auth.response.UserResponse;
+import com.x.backend.dto.auth.response.SendPasswordRecoveryEmailResponse;
+import com.x.backend.dto.auth.response.SendVerificationEmailResponse;
+import com.x.backend.dto.auth.response.StartRegistrationResponse;
 import com.x.backend.exceptions.email.EmailFailedToSentException;
 import com.x.backend.services.auth.AuthenticationService;
 import com.x.backend.utils.api.BaseApiResponse;
@@ -23,76 +25,76 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<BaseApiResponse<String>> startRegistration(@Valid @RequestBody StartRegistrationRequest req){
-        BaseApiResponse<String> res = authenticationService.startRegistration(req);
+    public ResponseEntity<BaseApiResponse<StartRegistrationResponse>> startRegistration(@Valid @RequestBody StartRegistrationRequest req){
+        BaseApiResponse<StartRegistrationResponse> res = authenticationService.startRegistration(req);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
     @PostMapping("/email/verification/send")
-    public ResponseEntity<BaseApiResponse<String>> sendVerificationEmail(@Valid @RequestBody SendVerificationEmailRequest req) throws EmailFailedToSentException {
-        BaseApiResponse<String> res = authenticationService.sendVerificationEmail(req);
+    public ResponseEntity<BaseApiResponse<SendVerificationEmailResponse>> sendVerificationEmail(@Valid @RequestBody SendVerificationEmailRequest req) throws EmailFailedToSentException {
+        BaseApiResponse<SendVerificationEmailResponse> res = authenticationService.sendVerificationEmail(req);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
     @PostMapping("/email/verification/resend")
-    public ResponseEntity<BaseApiResponse<String>> resendVerificationEmail(@Valid @RequestBody SendVerificationEmailRequest req) throws EmailFailedToSentException  {
-        BaseApiResponse<String> res = authenticationService.resendVerificationEmail(req);
+    public ResponseEntity<BaseApiResponse<SendVerificationEmailResponse>> resendVerificationEmail(@Valid @RequestBody SendVerificationEmailRequest req) throws EmailFailedToSentException  {
+        BaseApiResponse<SendVerificationEmailResponse> res = authenticationService.resendVerificationEmail(req);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
     @PutMapping("/verify")
-    public ResponseEntity<BaseApiResponse<UserResponse>> completeEmailVerification(@Valid @RequestBody CompleteEmailVerificationRequest req) {
-        BaseApiResponse<UserResponse> res = authenticationService.completeEmailVerification(req);
+    public ResponseEntity<BaseApiResponse<String>> completeEmailVerification(@Valid @RequestBody CompleteEmailVerificationRequest req) {
+        BaseApiResponse<String> res = authenticationService.completeEmailVerification(req);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
     @PutMapping("/phone")
-    public ResponseEntity<BaseApiResponse<UserResponse>> setPhoneNumber(@Valid @RequestBody SetPhoneNumberRequest req) {
-        BaseApiResponse<UserResponse> res = authenticationService.setPhoneNumber(req);
+    public ResponseEntity<BaseApiResponse<String>> setPhoneNumber(@Valid @RequestBody SetPhoneNumberRequest req) {
+        BaseApiResponse<String> res = authenticationService.setPhoneNumber(req);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
     @PutMapping("/update/phone")
-    public ResponseEntity<BaseApiResponse<UserResponse>> changePhoneNumber(
+    public ResponseEntity<BaseApiResponse<String>> changePhoneNumber(
             @Valid @RequestBody ChangePhoneNumberRequest req,
             @AuthenticationPrincipal UserDetails userDetails
     ) {
         String authenticatedUsername = userDetails.getUsername();
-        BaseApiResponse<UserResponse> res = authenticationService.changePhoneNumber(authenticatedUsername, req);
+        BaseApiResponse<String> res = authenticationService.changePhoneNumber(authenticatedUsername, req);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
     @PutMapping("/password")
-    public ResponseEntity<BaseApiResponse<UserResponse>> setPassword(@Valid @RequestBody SetPasswordRequest req) {
-        BaseApiResponse<UserResponse> res = authenticationService.setPassword(req);
+    public ResponseEntity<BaseApiResponse<String>> setPassword(@Valid @RequestBody SetPasswordRequest req) {
+        BaseApiResponse<String> res = authenticationService.setPassword(req);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
     @PostMapping("/email/password-recovery/send")
-    public ResponseEntity<BaseApiResponse<String>> sendPasswordRecoveryEmail(@Valid @RequestBody SendPasswordRecoveryEmailRequest req) throws EmailFailedToSentException  {
-        BaseApiResponse<String> res = authenticationService.sendPasswordRecoveryEmail(req);
+    public ResponseEntity<BaseApiResponse<SendPasswordRecoveryEmailResponse>> sendPasswordRecoveryEmail(@Valid @RequestBody SendPasswordRecoveryEmailRequest req) throws EmailFailedToSentException  {
+        BaseApiResponse<SendPasswordRecoveryEmailResponse> res = authenticationService.sendPasswordRecoveryEmail(req);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
     @PostMapping("/email/password-recovery/resend")
-    public ResponseEntity<BaseApiResponse<String>> resendPasswordRecoveryEmail(@Valid @RequestBody SendPasswordRecoveryEmailRequest req) throws EmailFailedToSentException  {
-        BaseApiResponse<String> res = authenticationService.resendPasswordRecoveryEmail(req);
+    public ResponseEntity<BaseApiResponse<SendPasswordRecoveryEmailResponse>> resendPasswordRecoveryEmail(@Valid @RequestBody SendPasswordRecoveryEmailRequest req) throws EmailFailedToSentException  {
+        BaseApiResponse<SendPasswordRecoveryEmailResponse> res = authenticationService.resendPasswordRecoveryEmail(req);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
     @PutMapping("/recover-password")
-    public ResponseEntity<BaseApiResponse<UserResponse>> recoverPassword(@Valid @RequestBody RecoverPasswordRequest req) {
-        BaseApiResponse<UserResponse> res = authenticationService.recoverPassword(req);
+    public ResponseEntity<BaseApiResponse<String>> recoverPassword(@Valid @RequestBody RecoverPasswordRequest req) {
+        BaseApiResponse<String> res = authenticationService.recoverPassword(req);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
     @PutMapping("/update/password")
-    public ResponseEntity<BaseApiResponse<UserResponse>> changePassword(
+    public ResponseEntity<BaseApiResponse<String>> changePassword(
             @Valid @RequestBody ChangePasswordRequest req,
             @AuthenticationPrincipal UserDetails userDetails
     ) {
         String authenticatedUsername = userDetails.getUsername();
-        BaseApiResponse<UserResponse> res = authenticationService.changePassword(authenticatedUsername, req);
+        BaseApiResponse<String> res = authenticationService.changePassword(authenticatedUsername, req);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 

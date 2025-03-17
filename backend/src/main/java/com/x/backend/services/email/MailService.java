@@ -1,7 +1,6 @@
 package com.x.backend.services.email;
 
 import com.x.backend.exceptions.email.EmailFailedToSentException;
-import jakarta.mail.MessagingException;
 
 public interface MailService {
 

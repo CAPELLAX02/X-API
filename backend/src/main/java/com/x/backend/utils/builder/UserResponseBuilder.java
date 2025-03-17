@@ -25,7 +25,6 @@ public class UserResponseBuilder {
                 u.getNickname(),
                 u.getLocation(),
                 u.getWebsiteUrl(),
-                u.getDisplayDateOfBirth(),
                 u.getCreatedAt(),
                 u.getFollowers().size(),
                 u.getFollowing().size()
