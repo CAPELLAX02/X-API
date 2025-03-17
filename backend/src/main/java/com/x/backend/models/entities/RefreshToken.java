@@ -1,11 +1,10 @@
 package com.x.backend.models.entities;
 
 import jakarta.persistence.*;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 import java.time.Instant;
 
-@EntityScan
+@Entity
 @Table(name = "refresh_tokens")
 public class RefreshToken {
 
