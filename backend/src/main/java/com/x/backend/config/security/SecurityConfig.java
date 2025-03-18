@@ -61,4 +61,9 @@ public class SecurityConfig {
                 .build();
     }
 
+    @Bean
+    public SecureRandom secureRandom() {
+        return new SecureRandom();
+    }
+
 }
