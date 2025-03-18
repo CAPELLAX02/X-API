@@ -1,10 +1,8 @@
 package com.x.backend.exceptions.auth;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import com.x.backend.exceptions.AlreadyExistsException;
 
-@ResponseStatus(HttpStatus.CONFLICT)
-public class PhoneNumberAlreadyInUseException extends RuntimeException {
+public class PhoneNumberAlreadyInUseException extends AlreadyExistsException {
     public PhoneNumberAlreadyInUseException(String phone) {
         super("Phone number \"" + phone + "\" already in use");
     }

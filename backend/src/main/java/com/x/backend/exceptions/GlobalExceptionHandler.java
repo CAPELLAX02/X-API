@@ -15,7 +15,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.nio.file.AccessDeniedException;
 import java.util.HashMap;
@@ -85,7 +84,8 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(BaseApiResponse.error(
                         "Validation failed",
-                        HttpStatus.BAD_REQUEST
+                        HttpStatus.BAD_REQUEST,
+                        errors
                 ));
     }
 
@@ -99,7 +99,8 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(BaseApiResponse.error(
                         "Validation failed",
-                        HttpStatus.BAD_REQUEST
+                        HttpStatus.BAD_REQUEST,
+                        errors
                 ));
     }
 
@@ -149,36 +150,6 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(BaseApiResponse.error(
                         e.getMessage(),
-                        HttpStatus.INTERNAL_SERVER_ERROR
-                ));
-    }
-
-    @ExceptionHandler(ResponseStatusException.class)
-    public ResponseEntity<BaseApiResponse<Object>> handleResponseStatusException(ResponseStatusException e) {
-        return ResponseEntity
-                .status(e.getStatusCode())
-                .body(BaseApiResponse.error(
-                        e.getReason(),
-                        (HttpStatus) e.getStatusCode()
-                ));
-    }
-
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<BaseApiResponse<Object>> handleRuntimeException(RuntimeException e) {
-        return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(BaseApiResponse.error(
-                        "An unexpected error occurred",
-                        HttpStatus.INTERNAL_SERVER_ERROR
-                ));
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<BaseApiResponse<Object>> handleGenericException(Exception e) {
-        return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(BaseApiResponse.error(
-                        "Internal server error",
                         HttpStatus.INTERNAL_SERVER_ERROR
                 ));
     }

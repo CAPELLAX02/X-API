@@ -1,10 +1,8 @@
 package com.x.backend.exceptions.auth;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import com.x.backend.exceptions.AlreadyExistsException;
 
-@ResponseStatus(HttpStatus.CONFLICT)
-public class EmailAlreadyInUseException extends RuntimeException {
+public class EmailAlreadyInUseException extends AlreadyExistsException {
     public EmailAlreadyInUseException(String email) {
         super("Email \"" + email + "\" already in use");
     }

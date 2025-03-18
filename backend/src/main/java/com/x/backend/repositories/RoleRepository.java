@@ -11,7 +11,9 @@ import java.util.Optional;
 public interface RoleRepository extends BaseRepository<Role, Long> {
 
     Optional<Role> findByAuthority(RoleType authority);
+    boolean existsByAuthority(RoleType authority);
 
     @Query("SELECT COUNT(r) FROM Role r WHERE r.authority = :authority")
     long countByRoleType(RoleType authority);
+
 }

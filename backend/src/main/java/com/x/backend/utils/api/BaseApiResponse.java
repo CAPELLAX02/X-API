@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class BaseApiResponse<T> {
@@ -12,6 +13,7 @@ public class BaseApiResponse<T> {
     private final HttpStatus status;
     private final String message;
     private T data;
+    private Map<String, String> errors;
     private final LocalDateTime timestamp;
 
     public BaseApiResponse(T data, String message, HttpStatus status) {
@@ -26,6 +28,14 @@ public class BaseApiResponse<T> {
         this.success = false;
         this.status = status;
         this.message = errorMessage;
+        this.timestamp = LocalDateTime.now();
+    }
+
+    public BaseApiResponse(String errorMessage, HttpStatus status, Map<String, String> errors) {
+        this.success = false;
+        this.status = status;
+        this.message = errorMessage;
+        this.errors = errors;
         this.timestamp = LocalDateTime.now();
     }
 
@@ -49,6 +59,10 @@ public class BaseApiResponse<T> {
         return new BaseApiResponse<>(errorMessage, status);
     }
 
+    public static <T> BaseApiResponse<T> error(String errorMessage, HttpStatus status, Map<String, String> errors) {
+        return new BaseApiResponse<>(errorMessage, status, errors);
+    }
+
     public boolean isSuccess() {
         return success;
     }
@@ -63,6 +77,10 @@ public class BaseApiResponse<T> {
 
     public T getData() {
         return data;
+    }
+
+    public Map<String, String> getErrors() {
+        return errors;
     }
 
     public LocalDateTime getTimestamp() {

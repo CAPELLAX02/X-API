@@ -9,7 +9,6 @@ import com.x.backend.dto.auth.response.StartRegistrationResponse;
 import com.x.backend.exceptions.auth.*;
 import com.x.backend.exceptions.common.TooManyRequestsException;
 import com.x.backend.exceptions.email.EmailFailedToSentException;
-import com.x.backend.exceptions.user.RoleNotFoundException;
 import com.x.backend.exceptions.user.UserNotFoundByEmailException;
 import com.x.backend.models.entities.ApplicationUser;
 import com.x.backend.models.entities.RefreshToken;
@@ -29,10 +28,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 @Service
 @Transactional
@@ -90,9 +88,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
+    @Transactional
     public BaseApiResponse<StartRegistrationResponse> startRegistration(StartRegistrationRequest req) {
         if (applicationUserRepository.existsByEmail(req.email())) {
             throw new EmailAlreadyInUseException(req.email());
+        }
+
+        String generatedUsername = usernameGenerationService.generateUniqueUsername(req.firstName(), req.lastName());
+
+        if (applicationUserRepository.existsByUsername(generatedUsername)) {
+            throw new UsernameAlreadyInUseException();
         }
 
         ApplicationUser user = new ApplicationUser();
@@ -100,14 +105,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setLastName(req.lastName());
         user.setEmail(req.email());
         user.setDateOfBirth(req.dateOfBirth());
-        user.setUsername(usernameGenerationService.generateUniqueUsername(req.firstName(), req.lastName()));
+        user.setUsername(generatedUsername);
         user.setEnabled(false);
 
         Role userRole = roleRepository.findByAuthority(RoleType.ROLE_USER)
-                .orElseThrow(() -> new RoleNotFoundException(String.valueOf(RoleType.ROLE_USER)));
-        Set<Role> roles = new HashSet<>();
-        roles.add(userRole);
-        user.setAuthorities(roles);
+                .orElseGet(() ->  {
+                    Role newRole = new Role();
+                    newRole.setAuthority(RoleType.ROLE_USER);
+                    return roleRepository.save(newRole);
+                });
+
+        user.setAuthorities(Collections.singleton(userRole));
 
         applicationUserRepository.save(user);
 

@@ -44,8 +44,7 @@ public class ApplicationUser implements UserDetails {
     @Size(max = 100)
     private String email;
 
-    @Column(name = "phone", nullable = false, length = 15)
-    @Size(min = 10, max = 15)
+    @Column(name = "phone")
     private String phone;
 
     @Column(name = "dob", nullable = false)
@@ -55,13 +54,13 @@ public class ApplicationUser implements UserDetails {
     private String username;
 
     @JsonIgnore
-    @Column(name = "password", nullable = false)
+    @Column(name = "password")
     private String password;
 
     @Column(name = "bio", length = 200)
     private String bio;
 
-    @Column(name = "nickname", nullable = false, length = 50)
+    @Column(name = "nickname", length = 50)
     private String nickname;
 
     @CreationTimestamp
@@ -88,8 +87,6 @@ public class ApplicationUser implements UserDetails {
 
     @Column(name = "website_url", length = 120)
     private String websiteUrl;
-
-    @Column(name = "display_dob", nullable = false)
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
