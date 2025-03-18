@@ -43,12 +43,12 @@ public class BaseApiResponse<T> {
         return new BaseApiResponse<>(data, message, status);
     }
 
-    public static <T> BaseApiResponse<T> success(T data, String message) {
-        return new BaseApiResponse<>(data, message, HttpStatus.OK);
+    public static <T> BaseApiResponse<T> success(String message) {
+        return new BaseApiResponse<>(null, message, HttpStatus.OK);
     }
 
-    public static <T> BaseApiResponse<T> success(String message) {
-        return new BaseApiResponse<>(message, HttpStatus.OK);
+    public static <T> BaseApiResponse<T> success(T data, String message) {
+        return new BaseApiResponse<>(data, message, HttpStatus.OK);
     }
 
     public static <T> BaseApiResponse<T> success(T data) {

@@ -6,6 +6,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class InvalidLoginRequestKeyException extends IllegalArgumentException {
     public InvalidLoginRequestKeyException() {
-        super("Invalid login request key. Available keys are: [\"email\", \"username\", \"phone\"]");
+        super("Invalid login request key. Available keys are: ['email', 'username', 'phone']");
     }
 }
