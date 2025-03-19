@@ -2,11 +2,14 @@ package com.x.backend.services.token;
 
 import com.x.backend.config.security.RSAKeyProperties;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.time.Instant;
 import java.util.Date;
 import java.util.HashMap;
@@ -16,13 +19,15 @@ import java.util.function.Function;
 @Service
 public class JwtServiceImpl implements JwtService {
 
-    private final RSAKeyProperties rsaKeyProperties;
+    private final PrivateKey privateKey;
+    private final PublicKey publicKey;
 
     private static final long ACCESS_TOKEN_EXPIRATION = 900; // 15 minutes
     private static final long REFRESH_TOKEN_EXPIRATION = 604800; // 7 days
 
     public JwtServiceImpl(RSAKeyProperties rsaKeyProperties) {
-        this.rsaKeyProperties = rsaKeyProperties;
+        this.privateKey = rsaKeyProperties.getPrivateKey();
+        this.publicKey = rsaKeyProperties.getPublicKey();
     }
 
     @Override
@@ -37,7 +42,7 @@ public class JwtServiceImpl implements JwtService {
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(Date.from(Instant.now()))
                 .setExpiration(Date.from(Instant.now().plusSeconds(ACCESS_TOKEN_EXPIRATION)))
-                .signWith(rsaKeyProperties.getPrivateKey(), SignatureAlgorithm.RS256)
+                .signWith(privateKey, SignatureAlgorithm.RS256)
                 .compact();
     }
 
@@ -47,7 +52,7 @@ public class JwtServiceImpl implements JwtService {
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(Date.from(Instant.now()))
                 .setExpiration(Date.from(Instant.now().plusSeconds(REFRESH_TOKEN_EXPIRATION)))
-                .signWith(rsaKeyProperties.getPrivateKey(), SignatureAlgorithm.RS256)
+                .signWith(privateKey, SignatureAlgorithm.RS256)
                 .compact();
     }
 
@@ -63,11 +68,15 @@ public class JwtServiceImpl implements JwtService {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(rsaKeyProperties.getPublicKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(publicKey)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (JwtException e) {
+            throw new JwtException("Invalid JWT: " + e.getMessage());
+        }
     }
 
     @Override
@@ -86,5 +95,4 @@ public class JwtServiceImpl implements JwtService {
         Date expiration = extractClaim(token, Claims::getExpiration);
         return (expiration.getTime() - System.currentTimeMillis()) / 1000;
     }
-
 }
