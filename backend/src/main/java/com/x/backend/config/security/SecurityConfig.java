@@ -15,6 +15,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.security.SecureRandom;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -23,7 +25,11 @@ public class SecurityConfig {
     private final PasswordEncodingConfig passwordEncodingConfig;
     private final UserServiceImpl userServiceImpl;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, PasswordEncodingConfig passwordEncodingConfig, UserServiceImpl userServiceImpl) {
+    public SecurityConfig(
+            JwtAuthenticationFilter jwtAuthenticationFilter,
+            PasswordEncodingConfig passwordEncodingConfig,
+            UserServiceImpl userServiceImpl
+    ) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.passwordEncodingConfig = passwordEncodingConfig;
         this.userServiceImpl = userServiceImpl;
@@ -43,18 +49,19 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers(HttpMethod.POST,  "/auth/register").permitAll()
-                        .requestMatchers(HttpMethod.POST,  "/auth/email/verification/send").permitAll()
-                        .requestMatchers(HttpMethod.POST,  "/auth/email/verification/resend").permitAll()
-                        .requestMatchers(HttpMethod.PUT,   "/auth/verify").permitAll()
-                        .requestMatchers(HttpMethod.PUT,   "/auth/phone").permitAll()
-                        .requestMatchers(HttpMethod.PUT,   "/auth/update/phone").permitAll()
-                        .requestMatchers(HttpMethod.PUT,   "/auth/password").permitAll()
-                        .requestMatchers(HttpMethod.POST,  "/auth/email/password-recovery/send").permitAll()
-                        .requestMatchers(HttpMethod.POST,  "/auth/email/password-recovery/resend").permitAll()
-                        .requestMatchers(HttpMethod.PUT,   "/auth/recover-password").permitAll()
-                        .requestMatchers(HttpMethod.POST,  "/auth/token/refresh").permitAll()
-                        .requestMatchers(HttpMethod.POST,  "/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/email/verification/send").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/email/verification/resend").permitAll()
+                        .requestMatchers(HttpMethod.PUT,  "/auth/verify").permitAll()
+                        .requestMatchers(HttpMethod.PUT,  "/auth/phone").permitAll()
+                        .requestMatchers(HttpMethod.PUT,  "/auth/update/phone").hasAuthority("ROLE_USER")
+                        .requestMatchers(HttpMethod.PUT,  "/auth/password").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/email/password-recovery/send").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/email/password-recovery/resend").permitAll()
+                        .requestMatchers(HttpMethod.PUT,  "/auth/recover-password").permitAll()
+                        .requestMatchers(HttpMethod.PUT,  "/auth/update/password").hasAuthority("ROLE_USER")
+                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/token/refresh").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

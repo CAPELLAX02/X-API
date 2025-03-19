@@ -88,7 +88,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    @Transactional
     public BaseApiResponse<StartRegistrationResponse> startRegistration(StartRegistrationRequest req) {
         if (applicationUserRepository.existsByEmail(req.email())) {
             throw new EmailAlreadyInUseException(req.email());

@@ -23,12 +23,15 @@ public record LoginRequest(
     }
 
     public String getLoginKey() {
-        if (email != null && !email.isBlank())
-            return email;
-        if (username != null && !username.isBlank())
-            return username;
-        if (phoneNumber != null && !phoneNumber.isBlank())
-            return phoneNumber;
+        if (email != null && !email.isBlank()) {
+            return "email";
+        }
+        if (username != null && !username.isBlank()) {
+            return "username";
+        }
+        if (phoneNumber != null && !phoneNumber.isBlank()) {
+            return "phoneNumber";
+        }
         throw new InvalidLoginRequestKeyException();
     }
 
