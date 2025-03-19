@@ -222,7 +222,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String oldPhoneNumber = user.getPhone();
         String newPhoneNumber = req.newPhoneNumber();
 
-        if (applicationUserRepository.existsByPhone(oldPhoneNumber)) {
+        if (applicationUserRepository.existsByPhone(newPhoneNumber)) {
             throw new PhoneNumberAlreadyInUseException(newPhoneNumber);
         }
 
@@ -308,6 +308,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         if (!Objects.equals(req.newPassword(), req.newPasswordAgain())) {
             throw new PasswordDoesNotMatchException("New passwords do not match.");
+        }
+
+        if (passwordEncodingConfig.passwordEncoder().matches(req.newPassword(), user.getPassword())) {
+            throw new PasswordReusedException("New password cannot be the same as the old password.");
         }
 
         user.setPassword(passwordEncodingConfig.passwordEncoder().encode(req.newPassword()));

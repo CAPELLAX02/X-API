@@ -8,7 +8,7 @@ public record LoginRequest(
 
         String email,
         String username,
-        String phoneNumber,
+        String phone,
 
         @NotBlank(message = "Password is required.")
         @Size(min = 8, max = 64, message = "Password must be between 8 and 64 characters.")
@@ -19,7 +19,7 @@ public record LoginRequest(
     public boolean isValid() {
         return (email != null && !email.isBlank())
                 || (username!= null && !username.isBlank())
-                || (phoneNumber != null && !phoneNumber.isBlank());
+                || (phone != null && !phone.isBlank());
     }
 
     public String getLoginKey() {
@@ -29,8 +29,8 @@ public record LoginRequest(
         if (username != null && !username.isBlank()) {
             return "username";
         }
-        if (phoneNumber != null && !phoneNumber.isBlank()) {
-            return "phoneNumber";
+        if (phone != null && !phone.isBlank()) {
+            return "phone";
         }
         throw new InvalidLoginRequestKeyException();
     }

@@ -20,7 +20,6 @@ public class PhoneLoginStrategy implements LoginStrategy {
         this.passwordEncoder = passwordEncoder;
     }
 
-
     @Override
     public boolean supports(String loginType) {
         return "phone".equals(loginType);
@@ -29,8 +28,8 @@ public class PhoneLoginStrategy implements LoginStrategy {
     @Override
     @Transactional
     public ApplicationUser authenticate(LoginRequest req) {
-        ApplicationUser user = applicationUserRepository.findByEmail(req.phoneNumber())
-                .orElseThrow(() -> new UserNotFoundByPhoneException(req.phoneNumber()));
+        ApplicationUser user = applicationUserRepository.findByPhone(req.phone())
+                .orElseThrow(() -> new UserNotFoundByPhoneException(req.phone()));
         if (!passwordEncoder.matches(req.password(), user.getPassword())) {
             throw new InvalidLoginCredentialsException();
         }

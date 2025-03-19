@@ -18,6 +18,7 @@ public interface ApplicationUserRepository extends BaseRepository<ApplicationUse
 
     Optional<ApplicationUser> findByEmail(String email);
     Optional<ApplicationUser> findByUsername(String username);
+    Optional<ApplicationUser> findByPhone(String phone);
 
     @Query(value = "SELECT * FROM x_db.public.users ORDER BY created_at DESC LIMIT :limit", nativeQuery = true)
     List<ApplicationUser> findNewestUsers(@Param("limit") int limit);
