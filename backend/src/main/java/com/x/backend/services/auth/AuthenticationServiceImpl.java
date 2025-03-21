@@ -1,6 +1,6 @@
 package com.x.backend.services.auth;
 
-import com.x.backend.config.security.PasswordEncodingConfig;
+import com.x.backend.security.PasswordEncodingConfig;
 import com.x.backend.dto.auth.request.*;
 import com.x.backend.dto.auth.response.AuthTokenResponse;
 import com.x.backend.dto.auth.response.SendPasswordRecoveryEmailResponse;

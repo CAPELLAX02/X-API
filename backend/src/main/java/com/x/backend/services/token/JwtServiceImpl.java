@@ -1,6 +1,6 @@
 package com.x.backend.services.token;
 
-import com.x.backend.config.security.RSAKeyProperties;
+import com.x.backend.security.RSAKeyProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
