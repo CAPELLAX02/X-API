@@ -106,45 +106,45 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 // 1) Decrypt incoming request body
-                .addFilterBefore(
-                        decryptionFilter(),
-                        UsernamePasswordAuthenticationFilter.class
-                )
+//                .addFilterBefore(
+//                        decryptionFilter(),
+//                        UsernamePasswordAuthenticationFilter.class
+//                )
                 // 2) JWT authentication
                 .addFilterBefore(
                         jwtAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class
                 )
                 // 3) Encrypt outgoing response body
-                .addFilterAfter(
-                        encryptionFilter(),
-                        UsernamePasswordAuthenticationFilter.class
-                )
+//                .addFilterAfter(
+//                        encryptionFilter(),
+//                        UsernamePasswordAuthenticationFilter.class
+//                )
                 .build();
     }
 
-    /**
-     * Instantiate the DecryptionFilter with the actual SecretKey and IV (IvParameterSpec).
-     *
-     * @return DecryptionFilter instance.
-     */
-    @Bean
-    public DecryptionFilter decryptionFilter() {
-        // Instead of .toString(), we pass the actual IvParameterSpec
-        SecretKey key = AESUtil.getSecretKey();
-        IvParameterSpec iv = AESUtil.getIv();
-        return new DecryptionFilter(key, iv);    }
-
-    /**
-     * Instantiate the EncryptionFilter with the actual SecretKey and IV (IvParameterSpec).
-     *
-     * @return EncryptionFilter instance.
-     */
-    @Bean
-    public EncryptionFilter encryptionFilter() {
-        SecretKey key = AESUtil.getSecretKey();
-        IvParameterSpec iv = AESUtil.getIv();
-        return new EncryptionFilter(key, iv);
-    }
+//    /**
+//     * Instantiate the DecryptionFilter with the actual SecretKey and IV (IvParameterSpec).
+//     *
+//     * @return DecryptionFilter instance.
+//     */
+//    @Bean
+//    public DecryptionFilter decryptionFilter() {
+//        // Instead of .toString(), we pass the actual IvParameterSpec
+//        SecretKey key = AESUtil.getSecretKey();
+//        IvParameterSpec iv = AESUtil.getIv();
+//        return new DecryptionFilter(key, iv);    }
+//
+//    /**
+//     * Instantiate the EncryptionFilter with the actual SecretKey and IV (IvParameterSpec).
+//     *
+//     * @return EncryptionFilter instance.
+//     */
+//    @Bean
+//    public EncryptionFilter encryptionFilter() {
+//        SecretKey key = AESUtil.getSecretKey();
+//        IvParameterSpec iv = AESUtil.getIv();
+//        return new EncryptionFilter(key, iv);
+//    }
 
 }
