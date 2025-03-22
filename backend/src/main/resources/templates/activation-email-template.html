@@ -2,7 +2,72 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Activate Your Account</title>
+    <meta charset="UTF-8">
     <style>
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #f4f6f8;
+            margin: 0;
+            padding: 0;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .header {
+            background-color: #0077cc;
+            color: #ffffff;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .content {
+            padding: 32px;
+            color: #333333;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .content strong {
+            color: #000000;
+        }
+
+        .activation-code {
+            font-size: 22px;
+            font-weight: bold;
+            color: #0077cc;
+            background-color: #e6f2fb;
+            padding: 14px 0;
+            text-align: center;
+            border-radius: 6px;
+            margin: 20px 0;
+            letter-spacing: 2px;
+        }
+
+        .footer {
+            background-color: #f1f5f9;
+            text-align: center;
+            padding: 16px;
+            font-size: 13px;
+            color: #888888;
+        }
+
+        .footer a {
+            color: #0077cc;
+            text-decoration: none;
+        }
 
     </style>
 </head>
@@ -16,7 +81,7 @@
     <!-- Content -->
     <div class="content">
         <p>Hello, <strong th:text="${username}"></strong>!</p>
-        <p>Thank you for signing up X! To complete your registration, please activate your account using the code below. This code is valid for <strong>15 minutes</strong>.</p>
+        <p>Thank you for signing up for X! To complete your registration, please activate your account using the code below. This code is valid for <strong>15 minutes</strong>.</p>
         <p class="activation-code" th:text="${fiveDigitCode}"></p>
         <p>If you did not create an account, please ignore this email. For any assistance, feel free to contact our support team.</p>
         <p>Best regards,<br>The X Team</p>
