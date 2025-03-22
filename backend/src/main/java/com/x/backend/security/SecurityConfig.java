@@ -103,6 +103,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT,  "/auth/update/password").hasAuthority("ROLE_USER")
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/token/refresh").permitAll()
+
+                        .requestMatchers(HttpMethod.GET,  "/users/me").hasAuthority("ROLE_USER")
+
                         .anyRequest().authenticated()
                 )
                 // 1) Decrypt incoming request body

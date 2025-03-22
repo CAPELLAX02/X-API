@@ -6,12 +6,12 @@ import com.x.backend.dto.auth.response.SendPasswordRecoveryEmailResponse;
 import com.x.backend.dto.auth.response.SendVerificationEmailResponse;
 import com.x.backend.dto.auth.response.StartRegistrationResponse;
 import com.x.backend.exceptions.email.EmailFailedToSentException;
+import com.x.backend.models.entities.ApplicationUser;
 import com.x.backend.services.auth.AuthenticationService;
 import com.x.backend.utils.api.BaseApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -57,9 +57,9 @@ public class AuthController {
     @PutMapping("/update/phone")
     public ResponseEntity<BaseApiResponse<String>> changePhoneNumber(
             @Valid @RequestBody ChangePhoneNumberRequest req,
-            @AuthenticationPrincipal UserDetails userDetails
+            @AuthenticationPrincipal ApplicationUser user
     ) {
-        String authenticatedUsername = userDetails.getUsername();
+        String authenticatedUsername = user.getUsername();
         BaseApiResponse<String> res = authenticationService.changePhoneNumber(authenticatedUsername, req);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
@@ -91,9 +91,9 @@ public class AuthController {
     @PutMapping("/update/password")
     public ResponseEntity<BaseApiResponse<String>> changePassword(
             @Valid @RequestBody ChangePasswordRequest req,
-            @AuthenticationPrincipal UserDetails userDetails
+            @AuthenticationPrincipal ApplicationUser user
     ) {
-        String authenticatedUsername = userDetails.getUsername();
+        String authenticatedUsername = user.getUsername();
         BaseApiResponse<String> res = authenticationService.changePassword(authenticatedUsername, req);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
