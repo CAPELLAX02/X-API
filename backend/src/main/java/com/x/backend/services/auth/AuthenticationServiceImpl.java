@@ -235,6 +235,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public BaseApiResponse<String> setPassword(SetPasswordRequest req) {
         ApplicationUser user = getUserByUsername(req.username());
+        if (!user.isEnabled()) {
+            throw new UserIsNotEnabledException();
+        }
         user.setPassword(passwordEncodingConfig.passwordEncoder().encode(req.password()));
         applicationUserRepository.save(user);
         return BaseApiResponse.success("User password set successfully.");
@@ -355,6 +358,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .findFirst()
                 .orElseThrow(InvalidLoginRequestKeyException::new);
         ApplicationUser user = loginStrategy.authenticate(req);
+        if (!user.isEnabled()) {
+            throw new UserIsNotEnabledException();
+        }
         String accessToken = jwtService.generateAccessToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
         Long expiresIn = jwtService.getExpirationFromToken(accessToken);

@@ -27,6 +27,11 @@ import java.util.Objects;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(UserIsNotEnabledException.class)
+    public ResponseEntity<BaseApiResponse<String>> handleUserIsNotEnabledException(UserIsNotEnabledException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(BaseApiResponse.error(ex.getMessage(), HttpStatus.UNAUTHORIZED));
+    }
+
     @ExceptionHandler(InvalidLoginCredentialsException.class)
     public ResponseEntity<BaseApiResponse<String>> handleInvalidLoginCredentialsException(InvalidLoginCredentialsException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(BaseApiResponse.error(ex.getMessage(), HttpStatus.UNAUTHORIZED));
