@@ -6,6 +6,7 @@ import com.x.backend.models.entities.ApplicationUser;
 import com.x.backend.services.user.UserService;
 import com.x.backend.utils.api.BaseApiResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +24,7 @@ public class UserController {
     }
 
     @GetMapping("/me")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<BaseApiResponse<UserResponse>> getCurrentUser(
             @AuthenticationPrincipal ApplicationUser user
     ) {
@@ -32,6 +34,7 @@ public class UserController {
     }
 
     @PutMapping("/me/nickname")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<BaseApiResponse<String>> setNickname(
             @AuthenticationPrincipal ApplicationUser user,
             @RequestBody SetNicknameRequest req
@@ -42,6 +45,7 @@ public class UserController {
     }
 
     @PutMapping("/me/update/nickname")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<BaseApiResponse<String>> changeNickname(
             @AuthenticationPrincipal ApplicationUser user,
             @RequestBody ChangeNicknameRequest req
@@ -68,6 +72,7 @@ public class UserController {
     }
 
     @PutMapping("/me/profile/bio")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<BaseApiResponse<UserResponse>> updateBio(
             @AuthenticationPrincipal ApplicationUser user,
             @RequestBody UpdateBioRequest req
@@ -79,6 +84,7 @@ public class UserController {
     }
 
     @PutMapping("/me/profile/location")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<BaseApiResponse<UserResponse>> updateLocation(
             @AuthenticationPrincipal ApplicationUser user,
             @RequestBody UpdateLocationRequest req
@@ -90,6 +96,7 @@ public class UserController {
     }
 
     @PutMapping("/me/profile/website")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<BaseApiResponse<UserResponse>> updateWebsiteUrl(
             @AuthenticationPrincipal ApplicationUser user,
             @RequestBody UpdateWebsiteRequest req

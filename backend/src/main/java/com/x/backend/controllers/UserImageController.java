@@ -5,8 +5,12 @@ import com.x.backend.models.entities.ApplicationUser;
 import com.x.backend.services.image.UserImageServiceImpl;
 import com.x.backend.utils.api.BaseApiResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
@@ -20,6 +24,7 @@ public class UserImageController {
     }
 
     @PostMapping("/upload/pp")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<BaseApiResponse<ImageResponse>> uploadProfileImage(
             @RequestParam("image") MultipartFile file,
             @AuthenticationPrincipal ApplicationUser user
@@ -30,6 +35,7 @@ public class UserImageController {
     }
 
     @PostMapping("/upload/banner")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<BaseApiResponse<ImageResponse>> uploadBannerImage(
             @RequestParam("image") MultipartFile file,
             @AuthenticationPrincipal ApplicationUser user

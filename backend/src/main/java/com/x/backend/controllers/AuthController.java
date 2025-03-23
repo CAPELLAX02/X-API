@@ -11,6 +11,7 @@ import com.x.backend.services.auth.AuthenticationService;
 import com.x.backend.utils.api.BaseApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,6 +56,7 @@ public class AuthController {
     }
 
     @PutMapping("/update/phone")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<BaseApiResponse<String>> changePhoneNumber(
             @Valid @RequestBody ChangePhoneNumberRequest req,
             @AuthenticationPrincipal ApplicationUser user
@@ -89,6 +91,7 @@ public class AuthController {
     }
 
     @PutMapping("/update/password")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<BaseApiResponse<String>> changePassword(
             @Valid @RequestBody ChangePasswordRequest req,
             @AuthenticationPrincipal ApplicationUser user
