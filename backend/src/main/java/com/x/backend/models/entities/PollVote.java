@@ -9,6 +9,15 @@ import jakarta.persistence.*;
                 @Index(name = "idx_poll_vote_poll", columnList = "poll_id"),
                 @Index(name = "idx_poll_vote_user", columnList = "user_id"),
                 @Index(name = "idx_poll_vote_option", columnList = "option_index")
+        },
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uq_poll_vote_user",
+                        columnNames = {
+                                "poll_id",
+                                "user_id"
+                        }
+                )
         }
 )
 public class PollVote {
@@ -26,16 +35,17 @@ public class PollVote {
     @JoinColumn(name = "user_id", nullable = false)
     private ApplicationUser user;
 
-    @Column(name = "option_index", nullable = false)
-    private int optionIndex;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "option_id", nullable = false)
+    private PollOption option;
 
     public PollVote() {}
 
-    public PollVote(Long id, Poll poll, ApplicationUser user, int optionIndex) {
+    public PollVote(Long id, Poll poll, ApplicationUser user, PollOption option) {
         this.id = id;
         this.poll = poll;
         this.user = user;
-        this.optionIndex = optionIndex;
+        this.option = option;
     }
 
     public Long getId() {
@@ -62,12 +72,12 @@ public class PollVote {
         this.user = user;
     }
 
-    public int getOptionIndex() {
-        return optionIndex;
+    public PollOption getOption() {
+        return option;
     }
 
-    public void setOptionIndex(int optionIndex) {
-        this.optionIndex = optionIndex;
+    public void setOption(PollOption option) {
+        this.option = option;
     }
 
 }
