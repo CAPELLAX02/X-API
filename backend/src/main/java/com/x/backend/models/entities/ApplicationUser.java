@@ -20,7 +20,8 @@ import java.util.Set;
         name = "users",
         indexes = {
                 @Index(name = "idx_user_email", columnList = "email", unique = true),
-                @Index(name = "idx_user_username", columnList = "username", unique = true)
+                @Index(name = "idx_user_username", columnList = "username", unique = true),
+                @Index(name = "idx_user_nickname", columnList = "nickname", unique = true)
         },
         uniqueConstraints = {
                 @UniqueConstraint(name = "uq_email", columnNames = "email"),

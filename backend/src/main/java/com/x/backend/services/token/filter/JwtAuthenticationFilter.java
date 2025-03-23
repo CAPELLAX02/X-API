@@ -1,8 +1,8 @@
 package com.x.backend.services.token.filter;
 
+import com.x.backend.models.entities.ApplicationUser;
 import com.x.backend.services.token.JwtService;
 import com.x.backend.services.user.UserServiceImpl;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -44,9 +44,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try {
             String username = jwtService.extractUsernameFromToken(accessToken);
+            ApplicationUser user = userServiceImpl.getUserByUsername(username);
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = userServiceImpl.loadUserByUsername(username);
-                if (jwtService.isTokenValid(accessToken, userDetails)) {
+                if (jwtService.isTokenValid(accessToken, user)) {
                     UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(
                                     userDetails,
