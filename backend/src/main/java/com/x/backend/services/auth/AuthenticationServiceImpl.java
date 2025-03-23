@@ -1,5 +1,8 @@
 package com.x.backend.services.auth;
 
+import com.x.backend.models.entities.PrivacySettings;
+import com.x.backend.models.enums.PrivacyLevel;
+import com.x.backend.repositories.PrivacySettingsRepository;
 import com.x.backend.security.PasswordEncodingConfig;
 import com.x.backend.dto.auth.request.*;
 import com.x.backend.dto.auth.response.AuthTokenResponse;
@@ -58,6 +61,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserService userService;
     private final CodeGenerator codeGenerator;
     private final RoleRepository roleRepository;
+    private final PrivacySettingsRepository privacySettingsRepository;
 
     public AuthenticationServiceImpl(
             ApplicationUserRepository applicationUserRepository,
@@ -69,8 +73,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             RefreshTokenRepository refreshTokenRepository,
             UserService userService,
             CodeGenerator codeGenerator,
-            RoleRepository roleRepository
-    ) {
+            RoleRepository roleRepository,
+            PrivacySettingsRepository privacySettingsRepository) {
         this.applicationUserRepository = applicationUserRepository;
         this.usernameGenerationService = usernameGenerationService;
         this.mailService = mailService;
@@ -81,6 +85,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         this.userService = userService;
         this.codeGenerator = codeGenerator;
         this.roleRepository = roleRepository;
+        this.privacySettingsRepository = privacySettingsRepository;
     }
 
     private ApplicationUser getUserByUsername(String username) {
@@ -117,6 +122,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setAuthorities(Collections.singleton(userRole));
 
         applicationUserRepository.save(user);
+
+        // Initialize the privacy setting of the user with default settings
+        PrivacySettings privacySettings = new PrivacySettings();
+        privacySettings.setUser(user);
+        privacySettings.setMessagePrivacy(PrivacyLevel.EVERYONE);
+        privacySettings.setMentionPrivacy(PrivacyLevel.EVERYONE);
+        privacySettings.setPostVisibility(PrivacyLevel.EVERYONE);
+        privacySettingsRepository.save(privacySettings);
 
         return BaseApiResponse.success(
                 new StartRegistrationResponse(user.getUsername()),

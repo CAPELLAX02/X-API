@@ -123,6 +123,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT,  "/users/me/profile/location").authenticated()
                         .requestMatchers(HttpMethod.PUT,  "/users/me/profile/website").authenticated()
 
+                        .requestMatchers(HttpMethod.GET,  "/users/me/privacy-settings").authenticated()
+                        .requestMatchers(HttpMethod.PUT,  "/users/me/update/privacy-settings").authenticated()
+
                         .requestMatchers(HttpMethod.POST,  "/users/image/upload/pp").authenticated()
                         .requestMatchers(HttpMethod.POST,  "/users/image/upload/banner").authenticated()
 

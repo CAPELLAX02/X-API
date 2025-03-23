@@ -1,9 +1,11 @@
 package com.x.backend.controllers;
 
+import com.x.backend.dto.user.response.PrivacySettingsResponse;
 import com.x.backend.dto.user.response.UserResponse;
 import com.x.backend.dto.user.request.*;
 import com.x.backend.models.entities.ApplicationUser;
 import com.x.backend.services.user.UserService;
+import com.x.backend.services.user.privacy.PrivacySettingsService;
 import com.x.backend.utils.api.BaseApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,9 +20,11 @@ import java.util.function.Consumer;
 public class UserController {
 
     private final UserService userService;
+    private final PrivacySettingsService privacySettingsService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, PrivacySettingsService privacySettingsService) {
         this.userService = userService;
+        this.privacySettingsService = privacySettingsService;
     }
 
     @GetMapping("/me")
@@ -107,10 +111,26 @@ public class UserController {
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
+    @GetMapping("/me/privacy-settings")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<BaseApiResponse<PrivacySettingsResponse>> getPrivacySettingsForCurrentUser(
+            @AuthenticationPrincipal ApplicationUser user
+    ) {
+        String username = user.getUsername();
+        BaseApiResponse<PrivacySettingsResponse> res = privacySettingsService.getPrivacySettingsForCurrentUser(username);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
 
-
-
-
+    @PutMapping("/me/update/privacy-settings")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<BaseApiResponse<PrivacySettingsResponse>> updatePrivacySettingsForCurrentUser(
+            @AuthenticationPrincipal ApplicationUser user,
+            @RequestBody UpdatePrivacySettingsRequest req
+    ) {
+        String username = user.getUsername();
+        BaseApiResponse<PrivacySettingsResponse> res = privacySettingsService.updatePrivacySettingsForCurrentUser(username, req);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
 
 
 
