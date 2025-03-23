@@ -5,6 +5,7 @@ import com.x.backend.dto.user.response.UserResponse;
 import com.x.backend.dto.user.request.*;
 import com.x.backend.models.entities.ApplicationUser;
 import com.x.backend.services.user.UserService;
+import com.x.backend.services.user.follow.FollowService;
 import com.x.backend.services.user.privacy.PrivacySettingsService;
 import com.x.backend.utils.api.BaseApiResponse;
 import org.springframework.http.ResponseEntity;
@@ -21,10 +22,12 @@ public class UserController {
 
     private final UserService userService;
     private final PrivacySettingsService privacySettingsService;
+    private final FollowService followService;
 
-    public UserController(UserService userService, PrivacySettingsService privacySettingsService) {
+    public UserController(UserService userService, PrivacySettingsService privacySettingsService, FollowService followService) {
         this.userService = userService;
         this.privacySettingsService = privacySettingsService;
+        this.followService = followService;
     }
 
     @GetMapping("/me")
@@ -132,13 +135,57 @@ public class UserController {
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("/me/followers")
+    public ResponseEntity<BaseApiResponse<List<UserResponse>>> getAllFollowers(
+            @AuthenticationPrincipal ApplicationUser user
+    ) {
+        String username = user.getUsername();
+        BaseApiResponse<List<UserResponse>> res = followService.getAllFollowers(username);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("/me/following")
+    public ResponseEntity<BaseApiResponse<List<UserResponse>>> getAllFollowing(
+            @AuthenticationPrincipal ApplicationUser user
+    ) {
+        String username = user.getUsername();
+        BaseApiResponse<List<UserResponse>> res = followService.getAllFollowings(username);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @PutMapping("/me/follow/{username}")
+    public ResponseEntity<BaseApiResponse<String>> followUser(
+            @AuthenticationPrincipal ApplicationUser user,
+            @PathVariable("username") String targetUsername
+    ) {
+        String username = user.getUsername();
+        BaseApiResponse<String> res = followService.followUser(username, targetUsername);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @DeleteMapping("/me/unfollow/{username}")
+    public ResponseEntity<BaseApiResponse<String>> unfollowUser(
+            @AuthenticationPrincipal ApplicationUser user,
+            @PathVariable("username") String targetUsername
+    ) {
+        String username = user.getUsername();
+        BaseApiResponse<String> res = followService.unfollowUser(username, targetUsername);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
 
-
-
-
-
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("/me/check/{username}")
+    public ResponseEntity<BaseApiResponse<Boolean>> isFollowing(
+            @AuthenticationPrincipal ApplicationUser user,
+            @PathVariable("username") String targetUsername
+    ) {
+        String username = user.getUsername();
+        BaseApiResponse<Boolean> res = followService.isFollowing(username, targetUsername);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
 
 }
