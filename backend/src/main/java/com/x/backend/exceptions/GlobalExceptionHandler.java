@@ -1,7 +1,8 @@
 package com.x.backend.exceptions;
 
-import com.x.backend.dto.auth.response.UserResponse;
+import com.x.backend.dto.user.response.UserResponse;
 import com.x.backend.exceptions.auth.*;
+import com.x.backend.exceptions.image.FailedToUploadImageException;
 import com.x.backend.exceptions.user.NicknameAlreadyInUseException;
 import com.x.backend.utils.api.BaseApiResponse;
 import jakarta.mail.MessagingException;
@@ -27,6 +28,11 @@ import java.util.Objects;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(FailedToUploadImageException.class)
+    public ResponseEntity<BaseApiResponse<String>> handleFailedToUploadImageException(FailedToUploadImageException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseApiResponse.error(e.getMessage(), HttpStatus.BAD_REQUEST));
+    }
 
     @ExceptionHandler(NicknameAlreadyInUseException.class)
     public ResponseEntity<BaseApiResponse<String>> nicknameAlreadyInUseException(NicknameAlreadyInUseException e) {

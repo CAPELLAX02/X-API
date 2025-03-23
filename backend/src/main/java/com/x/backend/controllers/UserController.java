@@ -1,6 +1,6 @@
 package com.x.backend.controllers;
 
-import com.x.backend.dto.auth.response.UserResponse;
+import com.x.backend.dto.user.response.UserResponse;
 import com.x.backend.dto.user.request.*;
 import com.x.backend.models.entities.ApplicationUser;
 import com.x.backend.services.user.UserService;

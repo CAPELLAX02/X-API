@@ -1,4 +1,4 @@
-package com.x.backend.dto.auth.response;
+package com.x.backend.dto.user.response;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
