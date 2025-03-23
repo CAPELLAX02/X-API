@@ -1,8 +1,7 @@
 package com.x.backend.controllers;
 
 import com.x.backend.dto.auth.response.UserResponse;
-import com.x.backend.dto.user.request.ChangeNicknameRequest;
-import com.x.backend.dto.user.request.SetNicknameRequest;
+import com.x.backend.dto.user.request.*;
 import com.x.backend.models.entities.ApplicationUser;
 import com.x.backend.services.user.UserService;
 import com.x.backend.utils.api.BaseApiResponse;
@@ -11,6 +10,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 @RestController
 @RequestMapping("/users")
@@ -66,5 +66,52 @@ public class UserController {
         BaseApiResponse<List<UserResponse>> res = userService.getAllUsersByNickname(nickname);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
+
+    @PutMapping("/me/profile/bio")
+    public ResponseEntity<BaseApiResponse<UserResponse>> updateBio(
+            @AuthenticationPrincipal ApplicationUser user,
+            @RequestBody UpdateBioRequest req
+    ) {
+        String username = user.getUsername();
+        Consumer<ApplicationUser> bioUpdater = u -> u.setBio(req.bio());
+        BaseApiResponse<UserResponse> res = userService.updateUser(username, bioUpdater);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
+
+    @PutMapping("/me/profile/location")
+    public ResponseEntity<BaseApiResponse<UserResponse>> updateLocation(
+            @AuthenticationPrincipal ApplicationUser user,
+            @RequestBody UpdateLocationRequest req
+    ) {
+        String username = user.getUsername();
+        Consumer<ApplicationUser> locationUpdater = u -> u.setLocation(req.location());
+        BaseApiResponse<UserResponse> res = userService.updateUser(username, locationUpdater);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
+
+    @PutMapping("/me/profile/website")
+    public ResponseEntity<BaseApiResponse<UserResponse>> updateWebsiteUrl(
+            @AuthenticationPrincipal ApplicationUser user,
+            @RequestBody UpdateWebsiteRequest req
+    ) {
+        String username = user.getUsername();
+        Consumer<ApplicationUser> websiteUpdater = u -> u.setWebsiteUrl(req.websiteUrl());
+        BaseApiResponse<UserResponse> res = userService.updateUser(username, websiteUpdater);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }

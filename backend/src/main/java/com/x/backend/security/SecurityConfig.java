@@ -110,6 +110,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT,  "/users/me/update/nickname").hasAuthority("ROLE_USER")
                         .requestMatchers(HttpMethod.GET,  "/users/nickname/{nickname}").permitAll()
                         .requestMatchers(HttpMethod.GET,  "/users/nickname").permitAll()
+                        .requestMatchers(HttpMethod.PUT,  "/users/me/profile/bio").hasAuthority("ROLE_USER")
+                        .requestMatchers(HttpMethod.PUT,  "/users/me/profile/location").hasAuthority("ROLE_USER")
+                        .requestMatchers(HttpMethod.PUT,  "/users/me/profile/website").hasAuthority("ROLE_USER")
 
                         .anyRequest().authenticated()
                 )

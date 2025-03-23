@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 @Service
 @Transactional
@@ -108,6 +109,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         List<UserResponse> responseList = userResponseBuilder.buildUserResponses(users);
         return BaseApiResponse.success(responseList, "Users retrieved successfully.");
+    }
+
+    @Override
+    public BaseApiResponse<UserResponse> updateUser(String username, Consumer<ApplicationUser> updater) {
+        ApplicationUser user = getUserByUsername(username);
+        updater.accept(user);
+        ApplicationUser updatedUser = applicationUserRepository.save(user);
+        UserResponse userRes = userResponseBuilder.buildUserResponse(updatedUser);
+        return BaseApiResponse.success(userRes, "User updated successfully.");
     }
 
 

@@ -7,6 +7,7 @@ import com.x.backend.models.entities.ApplicationUser;
 import com.x.backend.utils.api.BaseApiResponse;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public interface UserService {
 
@@ -17,5 +18,7 @@ public interface UserService {
     BaseApiResponse<String> changeNickname(String username, ChangeNicknameRequest req);
     BaseApiResponse<UserResponse> getUserByNickname(String nickname);
     BaseApiResponse<List<UserResponse>> getAllUsersByNickname(String nickname);
+
+    BaseApiResponse<UserResponse> updateUser(String username, Consumer<ApplicationUser> updater);
 
 }
