@@ -1,14 +1,16 @@
 package com.x.backend.controllers;
 
 import com.x.backend.dto.auth.response.UserResponse;
+import com.x.backend.dto.user.request.ChangeNicknameRequest;
+import com.x.backend.dto.user.request.SetNicknameRequest;
 import com.x.backend.models.entities.ApplicationUser;
 import com.x.backend.services.user.UserService;
 import com.x.backend.utils.api.BaseApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -26,6 +28,42 @@ public class UserController {
     ) {
         String username = user.getUsername();
         BaseApiResponse<UserResponse> res = userService.getCurrentUser(username);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
+
+    @PutMapping("/me/nickname")
+    public ResponseEntity<BaseApiResponse<String>> setNickname(
+            @AuthenticationPrincipal ApplicationUser user,
+            @RequestBody SetNicknameRequest req
+    ) {
+        String username = user.getUsername();
+        BaseApiResponse<String> res = userService.setNickname(username, req);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
+
+    @PutMapping("/me/update/nickname")
+    public ResponseEntity<BaseApiResponse<String>> changeNickname(
+            @AuthenticationPrincipal ApplicationUser user,
+            @RequestBody ChangeNicknameRequest req
+    ) {
+        String username = user.getUsername();
+        BaseApiResponse<String> res = userService.changeNickname(username, req);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
+
+    @GetMapping("/nickname/{nickname}")
+    public ResponseEntity<BaseApiResponse<UserResponse>> getUserByNickname(
+            @PathVariable String nickname
+    ) {
+        BaseApiResponse<UserResponse> res = userService.getUserByNickname(nickname);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
+
+    @GetMapping("/nickname")
+    public ResponseEntity<BaseApiResponse<List<UserResponse>>> getAllUsersByNickname(
+            @RequestParam("nickname") String nickname
+    ) {
+        BaseApiResponse<List<UserResponse>> res = userService.getAllUsersByNickname(nickname);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 

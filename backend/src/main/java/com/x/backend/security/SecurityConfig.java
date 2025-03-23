@@ -90,6 +90,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
+
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/email/verification/send").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/email/verification/resend").permitAll()
@@ -105,6 +106,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/auth/token/refresh").permitAll()
 
                         .requestMatchers(HttpMethod.GET,  "/users/me").hasAuthority("ROLE_USER")
+                        .requestMatchers(HttpMethod.PUT,  "/users/me/nickname").hasAuthority("ROLE_USER")
+                        .requestMatchers(HttpMethod.PUT,  "/users/me/update/nickname").hasAuthority("ROLE_USER")
+                        .requestMatchers(HttpMethod.GET,  "/users/nickname/{nickname}").permitAll()
+                        .requestMatchers(HttpMethod.GET,  "/users/nickname").permitAll()
 
                         .anyRequest().authenticated()
                 )

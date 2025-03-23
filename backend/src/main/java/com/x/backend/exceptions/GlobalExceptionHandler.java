@@ -2,6 +2,7 @@ package com.x.backend.exceptions;
 
 import com.x.backend.dto.auth.response.UserResponse;
 import com.x.backend.exceptions.auth.*;
+import com.x.backend.exceptions.user.NicknameAlreadyInUseException;
 import com.x.backend.utils.api.BaseApiResponse;
 import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityNotFoundException;
@@ -26,6 +27,11 @@ import java.util.Objects;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(NicknameAlreadyInUseException.class)
+    public ResponseEntity<BaseApiResponse<String>> nicknameAlreadyInUseException(NicknameAlreadyInUseException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(BaseApiResponse.error(e.getMessage(), HttpStatus.CONFLICT));
+    }
 
     @ExceptionHandler(UserIsNotEnabledException.class)
     public ResponseEntity<BaseApiResponse<String>> handleUserIsNotEnabledException(UserIsNotEnabledException ex) {

@@ -24,7 +24,8 @@ import java.util.Set;
         },
         uniqueConstraints = {
                 @UniqueConstraint(name = "uq_email", columnNames = "email"),
-                @UniqueConstraint(name = "uq_username", columnNames = "username")
+                @UniqueConstraint(name = "uq_username", columnNames = "username"),
+                @UniqueConstraint(name = "uq_nickname", columnNames = "nickname")
         }
 )
 public class ApplicationUser implements UserDetails {
@@ -60,7 +61,7 @@ public class ApplicationUser implements UserDetails {
     @Column(name = "bio", length = 200)
     private String bio;
 
-    @Column(name = "nickname", length = 50)
+    @Column(name = "nickname", length = 50, unique = true)
     private String nickname;
 
     @CreationTimestamp
