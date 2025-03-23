@@ -15,8 +15,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
 import java.security.SecureRandom;
 
 /**
@@ -33,22 +31,26 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final PasswordEncodingConfig passwordEncodingConfig;
     private final UserServiceImpl userServiceImpl;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     /**
      * Initializes the security configuration with required dependencies.
      *
-     * @param jwtAuthenticationFilter Handles JWT-based authentication.
-     * @param passwordEncodingConfig  Configures password encoding mechanisms.
-     * @param userServiceImpl         Provides user authentication services.
+     * @param jwtAuthenticationFilter         Handles JWT-based authentication.
+     * @param passwordEncodingConfig          Configures password encoding mechanisms.
+     * @param userServiceImpl                 Provides user authentication services.
+     * @param customAuthenticationEntryPoint  Overrides response status' with no token
      */
     public SecurityConfig(
             JwtAuthenticationFilter jwtAuthenticationFilter,
             PasswordEncodingConfig passwordEncodingConfig,
-            UserServiceImpl userServiceImpl
+            UserServiceImpl userServiceImpl,
+            CustomAuthenticationEntryPoint customAuthenticationEntryPoint
     ) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.passwordEncodingConfig = passwordEncodingConfig;
         this.userServiceImpl = userServiceImpl;
+        this.customAuthenticationEntryPoint = customAuthenticationEntryPoint;
     }
 
     /**
@@ -115,6 +117,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT,  "/users/me/profile/website").hasAuthority("ROLE_USER")
 
                         .anyRequest().authenticated()
+                )
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(customAuthenticationEntryPoint)
                 )
                 // 1) Decrypt incoming request body
 //                .addFilterBefore(
