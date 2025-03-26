@@ -135,6 +135,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE,"/users/me/unfollow/{username}").authenticated()
                         .requestMatchers(HttpMethod.GET,   "/users/me/check/{username}").authenticated()
 
+                        .requestMatchers(HttpMethod.POST,  "/posts/create").authenticated()
+
                         .anyRequest().denyAll()
                 )
                 .exceptionHandling(exception -> exception
