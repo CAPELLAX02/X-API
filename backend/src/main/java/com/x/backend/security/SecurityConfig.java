@@ -118,7 +118,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT,   "/users/me/nickname").authenticated()
                         .requestMatchers(HttpMethod.PUT,   "/users/me/update/nickname").authenticated()
                         .requestMatchers(HttpMethod.GET,   "/users/nickname/{nickname}").permitAll()
-                        .requestMatchers(HttpMethod.GET,   "/users/nickname").permitAll()
+                        .requestMatchers(HttpMethod.GET,   "/users/search").permitAll()
                         .requestMatchers(HttpMethod.PUT,   "/users/me/profile/bio").authenticated()
                         .requestMatchers(HttpMethod.PUT,   "/users/me/profile/location").authenticated()
                         .requestMatchers(HttpMethod.PUT,   "/users/me/profile/website").authenticated()

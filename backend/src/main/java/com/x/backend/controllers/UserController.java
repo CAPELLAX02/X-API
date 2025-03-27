@@ -70,8 +70,8 @@ public class UserController {
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    @GetMapping("/nickname")
-    public ResponseEntity<BaseApiResponse<List<UserResponse>>> getAllUsersByNickname(
+    @GetMapping("/search")
+    public ResponseEntity<BaseApiResponse<List<UserResponse>>> searchUsersByNickname(
             @RequestParam("nickname") String nickname
     ) {
         BaseApiResponse<List<UserResponse>> res = userService.getAllUsersByNickname(nickname);
