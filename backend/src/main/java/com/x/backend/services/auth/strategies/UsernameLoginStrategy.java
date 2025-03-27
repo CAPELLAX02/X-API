@@ -2,6 +2,7 @@ package com.x.backend.services.auth.strategies;
 
 import com.x.backend.dto.auth.request.LoginRequest;
 import com.x.backend.exceptions.auth.InvalidLoginCredentialsException;
+import com.x.backend.exceptions.auth.PasswordNotSetYetException;
 import com.x.backend.models.entities.ApplicationUser;
 import com.x.backend.repositories.ApplicationUserRepository;
 import jakarta.transaction.Transactional;
@@ -20,7 +21,6 @@ public class UsernameLoginStrategy implements LoginStrategy {
         this.passwordEncoder = passwordEncoder;
     }
 
-
     @Override
     public boolean supports(String loginType) {
         return "username".equals(loginType);
@@ -31,6 +31,9 @@ public class UsernameLoginStrategy implements LoginStrategy {
     public ApplicationUser authenticate(LoginRequest req) {
         ApplicationUser user = applicationUserRepository.findByUsername(req.username())
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+        if (user.getPassword() == null) {
+            throw new PasswordNotSetYetException();
+        }
         if (!passwordEncoder.matches(req.password(), user.getPassword())) {
             throw new InvalidLoginCredentialsException();
         }

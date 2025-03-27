@@ -29,6 +29,11 @@ import java.util.Objects;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(PasswordNotSetYetException.class)
+    public ResponseEntity<BaseApiResponse<String>> handlePasswordNotSetYetException(PasswordNotSetYetException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(BaseApiResponse.error(e.getMessage(), HttpStatus.UNAUTHORIZED));
+    }
+
     @ExceptionHandler(FailedToUploadImageException.class)
     public ResponseEntity<BaseApiResponse<String>> handleFailedToUploadImageException(FailedToUploadImageException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseApiResponse.error(e.getMessage(), HttpStatus.BAD_REQUEST));

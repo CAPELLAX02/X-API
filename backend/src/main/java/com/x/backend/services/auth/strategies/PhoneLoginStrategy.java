@@ -2,6 +2,7 @@ package com.x.backend.services.auth.strategies;
 
 import com.x.backend.dto.auth.request.LoginRequest;
 import com.x.backend.exceptions.auth.InvalidLoginCredentialsException;
+import com.x.backend.exceptions.auth.PasswordNotSetYetException;
 import com.x.backend.exceptions.user.UserNotFoundByPhoneException;
 import com.x.backend.models.entities.ApplicationUser;
 import com.x.backend.repositories.ApplicationUserRepository;
@@ -30,6 +31,9 @@ public class PhoneLoginStrategy implements LoginStrategy {
     public ApplicationUser authenticate(LoginRequest req) {
         ApplicationUser user = applicationUserRepository.findByPhone(req.phone())
                 .orElseThrow(() -> new UserNotFoundByPhoneException(req.phone()));
+        if (user.getPassword() == null) {
+            throw new PasswordNotSetYetException();
+        }
         if (!passwordEncoder.matches(req.password(), user.getPassword())) {
             throw new InvalidLoginCredentialsException();
         }
