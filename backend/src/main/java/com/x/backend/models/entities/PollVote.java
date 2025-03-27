@@ -8,7 +8,7 @@ import jakarta.persistence.*;
         indexes = {
                 @Index(name = "idx_poll_vote_poll", columnList = "poll_id"),
                 @Index(name = "idx_poll_vote_user", columnList = "user_id"),
-                @Index(name = "idx_poll_vote_option", columnList = "option_index")
+                @Index(name = "idx_poll_vote_option", columnList = "option_id")
         },
         uniqueConstraints = {
                 @UniqueConstraint(
