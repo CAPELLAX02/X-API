@@ -14,8 +14,6 @@ public record CreatePostRequest(
         @Size(max = 500, message = "Post content cannot exceed 500 characters.")
         String content,
 
-        List<Long> mediaAttachmentIds,
-
         Audience audience,
         ReplyRestriction replyRestriction,
 

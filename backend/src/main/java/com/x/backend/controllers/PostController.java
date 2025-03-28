@@ -5,14 +5,16 @@ import com.x.backend.dto.post.response.PostResponse;
 import com.x.backend.models.entities.ApplicationUser;
 import com.x.backend.services.post.PostService;
 import com.x.backend.utils.api.BaseApiResponse;
-import jakarta.validation.Valid;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/posts")
@@ -24,15 +26,14 @@ public class PostController {
         this.postService = postService;
     }
 
-    @PostMapping("/create")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<BaseApiResponse<PostResponse>> createPost(
-            @AuthenticationPrincipal ApplicationUser user,
-            @RequestBody @Valid CreatePostRequest req
+            @RequestPart("post") CreatePostRequest req,
+            @RequestPart(value = "postImages", required = false) List<MultipartFile> postImages,
+            @AuthenticationPrincipal ApplicationUser user
     ) {
         String username = user.getUsername();
-        BaseApiResponse<PostResponse> res = postService.createPost(username, req);
-        return ResponseEntity.status(res.getStatus()).body(res);
+        return ResponseEntity.ok(postService.createPost(username, req, postImages));
     }
 
 }
