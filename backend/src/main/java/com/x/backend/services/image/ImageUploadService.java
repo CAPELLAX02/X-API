@@ -14,6 +14,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -30,6 +32,8 @@ public abstract class ImageUploadService {
 
     protected Image storeImage(MultipartFile file, ImageType imageType) {
         try {
+            validateImage(file);
+
             String extension = getFileExtension(Objects.requireNonNull(file.getOriginalFilename()));
             String generatedFileName = UUID.randomUUID() + extension;
 
@@ -55,13 +59,27 @@ public abstract class ImageUploadService {
         }
         catch (Exception e) {
             e.printStackTrace();
-            throw new FailedToUploadImageException();
+            throw new FailedToUploadImageException("Image upload failed.");
         }
     }
 
     private String getFileExtension(String fileName) {
         int index = fileName.lastIndexOf('.');
         return (index > 0) ? fileName.substring(index) : "";
+    }
+
+    private void validateImage(MultipartFile file) {
+        long maxFileSize = 5 * 1024 * 1024;
+        List<String> whitelistedExtensions = List.of("image/jpeg", "image/jpg", "image/png", "image/webp");
+        if (file.isEmpty()) {
+            throw new FailedToUploadImageException("Uploaded file is empty.");
+        }
+        if (!whitelistedExtensions.contains(file.getContentType())) {
+            throw new FailedToUploadImageException("Unsupported image type: " + file.getContentType());
+        }
+        if (file.getSize() > maxFileSize) {
+            throw new FailedToUploadImageException("Image size exceeds maximum allowed (5MB).");
+        }
     }
 
 }
