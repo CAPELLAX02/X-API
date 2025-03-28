@@ -2,6 +2,7 @@ package com.x.backend.services.post;
 
 import com.x.backend.dto.post.request.CreatePostRequest;
 import com.x.backend.dto.post.response.PostResponse;
+import com.x.backend.exceptions.image.MaxImageLimitExceededException;
 import com.x.backend.models.entities.*;
 import com.x.backend.repositories.ImageRepository;
 import com.x.backend.repositories.PollOptionRepository;
@@ -65,6 +66,10 @@ public class PostServiceImpl implements PostService {
         if (postImages != null && !postImages.isEmpty()) {
             List<Image> uploadedImages = postImageService.uploadPostImages(postImages);
             post.setMediaAttachments(uploadedImages);
+        }
+
+        if (postImages != null && postImages.size() > 5) {
+            throw new MaxImageLimitExceededException(5);
         }
 
         if (req.hasPoll() && req.pollOptions() != null && req.pollExpiryDate() != null) {
