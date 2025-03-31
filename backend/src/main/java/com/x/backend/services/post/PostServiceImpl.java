@@ -97,33 +97,20 @@ public class PostServiceImpl implements PostService {
         return BaseApiResponse.success(postResponse, "Post created successfully.");
     }
 
+    @Override
+    public BaseApiResponse<PostResponse> getPostById(Long postId) {
+        return null;
+    }
 
+    @Override
+    public BaseApiResponse<List<PostResponse>> getPostsByUser(String username) {
+        return null;
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    @Override
+    public BaseApiResponse<List<PostResponse>> getTimeline(String currentUsername) {
+        return null;
+    }
 
 
 }

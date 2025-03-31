@@ -15,4 +15,8 @@ public interface PostService {
             List<MultipartFile> postImages
     );
 
+    BaseApiResponse<PostResponse> getPostById(Long postId);
+    BaseApiResponse<List<PostResponse>> getPostsByUser(String username);
+    BaseApiResponse<List<PostResponse>> getTimeline(String currentUsername);
+
 }

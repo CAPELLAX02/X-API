@@ -15,13 +15,15 @@ import java.util.Optional;
 public class PostResponseBuilder {
 
     private final UserService userService;
+    private final AuthUtils authUtils;
 
-    public PostResponseBuilder(UserService userService) {
+    public PostResponseBuilder(UserService userService, AuthUtils authUtils) {
         this.userService = userService;
+        this.authUtils = authUtils;
     }
 
     public PostResponse buildPostResponse(Post p) {
-        String currentUsername = AuthUtils.getAuthenticatedUsername();
+        String currentUsername = authUtils.getAuthenticatedUsername();
         ApplicationUser currentUser = userService.getUserByUsername(currentUsername);
 
         return new PostResponse(
