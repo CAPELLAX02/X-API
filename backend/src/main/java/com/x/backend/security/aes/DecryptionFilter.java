@@ -1,4 +1,4 @@
-package com.x.backend.security;
+package com.x.backend.security.aes;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ReadListener;
@@ -86,14 +86,14 @@ public class DecryptionFilter extends OncePerRequestFilter {
             @Override
             public ServletInputStream getInputStream() {
                 return new ServletInputStream() {
-                    private final ByteArrayInputStream bais = new ByteArrayInputStream(decryptedBytes);
+                    private final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(decryptedBytes);
                     @Override
-                    public int read() throws IOException {
-                        return bais.read();
+                    public int read() {
+                        return byteArrayInputStream.read();
                     }
                     @Override
                     public boolean isFinished() {
-                        return bais.available() <= 0;
+                        return byteArrayInputStream.available() <= 0;
                     }
                     @Override
                     public boolean isReady() {

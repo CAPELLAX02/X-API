@@ -3,7 +3,7 @@ package com.x.backend.services.auth;
 import com.x.backend.models.entities.*;
 import com.x.backend.models.enums.PrivacyLevel;
 import com.x.backend.repositories.*;
-import com.x.backend.security.PasswordEncodingConfig;
+import com.x.backend.security.password.PasswordEncodingConfig;
 import com.x.backend.dto.auth.request.*;
 import com.x.backend.dto.auth.response.AuthTokenResponse;
 import com.x.backend.dto.auth.response.SendPasswordRecoveryEmailResponse;

@@ -1,4 +1,4 @@
-package com.x.backend.security;
+package com.x.backend.security.servlet;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

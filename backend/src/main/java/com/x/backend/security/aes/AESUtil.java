@@ -1,7 +1,4 @@
-package com.x.backend.security;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package com.x.backend.security.aes;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;

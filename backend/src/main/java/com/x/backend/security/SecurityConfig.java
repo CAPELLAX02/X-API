@@ -1,5 +1,8 @@
 package com.x.backend.security;
 
+import com.x.backend.security.password.PasswordEncodingConfig;
+import com.x.backend.security.servlet.CustomAccessDeniedHandler;
+import com.x.backend.security.servlet.CustomAuthenticationEntryPoint;
 import com.x.backend.services.token.filter.JwtAuthenticationFilter;
 import com.x.backend.services.user.UserServiceImpl;
 import org.springframework.context.annotation.Bean;
