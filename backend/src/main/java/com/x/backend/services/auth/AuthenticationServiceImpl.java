@@ -57,6 +57,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final RoleRepository roleRepository;
     private final PrivacySettingsRepository privacySettingsRepository;
     private final PasswordHistoryRepository passwordHistoryRepository;
+    private final ValidAccessTokenRepository validAccessTokenRepository;
 
     public AuthenticationServiceImpl(ApplicationUserRepository applicationUserRepository,
                                      UsernameGenerationService usernameGenerationService,
@@ -69,7 +70,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                                      CodeGenerator codeGenerator,
                                      RoleRepository roleRepository,
                                      PrivacySettingsRepository privacySettingsRepository,
-                                     PasswordHistoryRepository passwordHistoryRepository
+                                     PasswordHistoryRepository passwordHistoryRepository,
+                                     ValidAccessTokenRepository validAccessTokenRepository
     ) {
         this.applicationUserRepository = applicationUserRepository;
         this.usernameGenerationService = usernameGenerationService;
@@ -83,6 +85,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         this.roleRepository = roleRepository;
         this.privacySettingsRepository = privacySettingsRepository;
         this.passwordHistoryRepository = passwordHistoryRepository;
+        this.validAccessTokenRepository = validAccessTokenRepository;
     }
 
     private ApplicationUser getUserByUsername(String username) {
@@ -378,25 +381,37 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (!req.isValid()) {
             throw new InvalidLoginCredentialsException();
         }
+
         String loginKey = req.getLoginKey();
         LoginStrategy loginStrategy = loginStrategies.stream()
                 .filter(s -> s.supports(loginKey))
                 .findFirst()
                 .orElseThrow(InvalidLoginRequestKeyException::new);
+
         ApplicationUser user = loginStrategy.authenticate(req);
+
         if (!user.isEnabled()) {
             throw new UserIsNotEnabledException();
         }
+
+        validAccessTokenRepository.deleteAllByUser(user);
+        refreshTokenRepository.deleteByUser(user);
+
         String accessToken = jwtService.generateAccessToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
         Long expiresIn = jwtService.getExpirationFromToken(accessToken);
-        refreshTokenRepository.deleteByUser(user);
+
+        String jti = jwtService.extractJtiFromToken(accessToken);
+        Instant expiresAt = Instant.now().plusSeconds(900);
+        validAccessTokenRepository.save(new ValidAccessToken(jti, user, expiresAt));
+
         RefreshToken newRefreshToken = new RefreshToken(
                 refreshToken,
                 user,
                 Instant.now().plusSeconds(604800)
         );
         refreshTokenRepository.save(newRefreshToken);
+
         return BaseApiResponse.success(
                 new AuthTokenResponse(accessToken, refreshToken, expiresIn),
                 "Logged in successfully."
@@ -407,16 +422,28 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public BaseApiResponse<AuthTokenResponse> refreshToken(RefreshTokenRequest req) {
         RefreshToken storedRefreshToken = refreshTokenRepository.findByToken(req.refreshToken())
                 .orElseThrow(RefreshTokenNotFoundException::new);
+
         if (storedRefreshToken.getExpiryDate().isBefore(Instant.now())) {
             refreshTokenRepository.delete(storedRefreshToken);
             throw new InvalidOrExpiredRefreshTokenException();
         }
+
         ApplicationUser user = storedRefreshToken.getUser();
+
+        validAccessTokenRepository.deleteAllByUser(user);
+
         String newAccessToken = jwtService.generateAccessToken(user);
         String newRefreshToken = jwtService.generateRefreshToken(user);
         Long expiresIn = jwtService.getExpirationFromToken(newAccessToken);
+
+        String jti = jwtService.extractJtiFromToken(newAccessToken);
+        Instant expiresAt = Instant.now().plusSeconds(900);
+        validAccessTokenRepository.save(new ValidAccessToken(jti, user, expiresAt));
+
         storedRefreshToken.setToken(newRefreshToken);
+        storedRefreshToken.setExpiryDate(Instant.now().plusSeconds(604800));
         refreshTokenRepository.save(storedRefreshToken);
+
         return BaseApiResponse.success(
                 new AuthTokenResponse(newAccessToken, newRefreshToken, expiresIn),
                 "Refreshed token successfully."
@@ -427,6 +454,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public BaseApiResponse<String> logout(String username) {
         ApplicationUser user = getUserByUsername(username);
         refreshTokenRepository.deleteByUser(user);
+        validAccessTokenRepository.deleteAllByUser(user);
         return BaseApiResponse.success("Logged out successfully.");
     }
 

@@ -1,6 +1,7 @@
 package com.x.backend.services.token.filter;
 
 import com.x.backend.models.entities.ApplicationUser;
+import com.x.backend.repositories.ValidAccessTokenRepository;
 import com.x.backend.services.token.JwtService;
 import com.x.backend.services.user.UserServiceImpl;
 import io.jsonwebtoken.JwtException;
@@ -23,12 +24,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserServiceImpl userServiceImpl;
+    private final ValidAccessTokenRepository validAccessTokenRepository;
 
     public JwtAuthenticationFilter(@Qualifier("jwtService") JwtService jwtService,
-                                   UserServiceImpl userServiceImpl)
+                                   UserServiceImpl userServiceImpl,
+                                   ValidAccessTokenRepository validAccessTokenRepository)
     {
         this.jwtService = jwtService;
         this.userServiceImpl = userServiceImpl;
+        this.validAccessTokenRepository = validAccessTokenRepository;
     }
 
     @Override
@@ -51,8 +55,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
 
-            String username = jwtService.extractUsernameFromToken(token);
+            String jti = jwtService.extractJtiFromToken(token);
+            if (!validAccessTokenRepository.existsByJti(jti)) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
 
+            String username = jwtService.extractUsernameFromToken(token);
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 ApplicationUser user = userServiceImpl.getUserByUsername(username);
 

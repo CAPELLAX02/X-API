@@ -11,6 +11,7 @@ public interface JwtService {
     String generateAccessToken(ApplicationUser user);
     String generateRefreshToken(ApplicationUser user);
 
+    String extractJtiFromToken(String token);
     String extractUsernameFromToken(String token);
     Long extractUserIdFromToken(String token);
     List<String> extractRoles(String token);

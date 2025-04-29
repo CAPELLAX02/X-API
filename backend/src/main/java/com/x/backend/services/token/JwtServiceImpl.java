@@ -36,6 +36,7 @@ public class JwtServiceImpl implements JwtService {
     public String generateAccessToken(ApplicationUser user) {
         Map<String, Object> claims = buildStandardClaims(user);
         claims.put("token_type", "access");
+        claims.put("jti", UUID.randomUUID().toString());
         return buildToken(claims, user.getUsername(), ACCESS_TOKEN_EXPIRATION);
     }
 
@@ -43,6 +44,7 @@ public class JwtServiceImpl implements JwtService {
     public String generateRefreshToken(ApplicationUser user) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("token_type", "refresh");
+        claims.put("jti", UUID.randomUUID().toString());
         return buildToken(claims, user.getUsername(), REFRESH_TOKEN_EXPIRATION);
     }
 
@@ -61,11 +63,14 @@ public class JwtServiceImpl implements JwtService {
 
     private String buildToken(Map<String, Object> claims, String subject, long expiresInSeconds) {
         Instant now = Instant.now();
+        String jti = (String) claims.get("jti");
+
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(now.plusSeconds(expiresInSeconds)))
+                .setId(jti)
                 .signWith(privateKey, SignatureAlgorithm.RS256)
                 .compact();
     }
@@ -129,4 +134,10 @@ public class JwtServiceImpl implements JwtService {
         Date expiration = extractClaim(token, Claims::getExpiration);
         return (expiration.getTime() - System.currentTimeMillis()) / 1000;
     }
+
+    @Override
+    public String extractJtiFromToken(String token) {
+        return extractClaim(token, Claims::getId);
+    }
+
 }
