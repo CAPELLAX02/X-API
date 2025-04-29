@@ -1,6 +1,7 @@
 package com.x.backend.security;
 
 import com.x.backend.security.password.PasswordEncodingConfig;
+import com.x.backend.security.ratelimit.RateLimitingFilter;
 import com.x.backend.security.servlet.CustomAccessDeniedHandler;
 import com.x.backend.security.servlet.CustomAuthenticationEntryPoint;
 import com.x.backend.services.token.filter.JwtAuthenticationFilter;
@@ -36,27 +37,24 @@ public class SecurityConfig {
     private final UserServiceImpl userServiceImpl;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
+    private final RateLimitingFilter rateLimitingFilter;
 
-    /**
+    /*
      * Initializes the security configuration with required dependencies.
-     *
-     * @param jwtAuthenticationFilter         Handles JWT-based authentication.
-     * @param passwordEncodingConfig          Configures password encoding mechanisms.
-     * @param userServiceImpl                 Provides user authentication services.
-     * @param customAuthenticationEntryPoint  Overrides response status' with no token
-     * @param customAccessDeniedHandler       Overrides response status' for forbidden requests
      */
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
                           PasswordEncodingConfig passwordEncodingConfig,
                           UserServiceImpl userServiceImpl,
                           CustomAuthenticationEntryPoint customAuthenticationEntryPoint,
-                          CustomAccessDeniedHandler customAccessDeniedHandler
+                          CustomAccessDeniedHandler customAccessDeniedHandler,
+                          RateLimitingFilter rateLimitingFilter
     ) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.passwordEncodingConfig = passwordEncodingConfig;
         this.userServiceImpl = userServiceImpl;
         this.customAuthenticationEntryPoint = customAuthenticationEntryPoint;
         this.customAccessDeniedHandler = customAccessDeniedHandler;
+        this.rateLimitingFilter = rateLimitingFilter;
     }
 
     /**
@@ -142,6 +140,10 @@ public class SecurityConfig {
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(customAuthenticationEntryPoint)
                         .accessDeniedHandler(customAccessDeniedHandler)
+                )
+                .addFilterBefore(
+                        rateLimitingFilter,
+                        UsernamePasswordAuthenticationFilter.class
                 )
                 // 1) Decrypt incoming request body
 //                .addFilterBefore(
