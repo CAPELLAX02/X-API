@@ -1,6 +1,5 @@
 package com.x.backend.security;
 
-import com.x.backend.models.enums.RoleType;
 import com.x.backend.services.token.filter.JwtAuthenticationFilter;
 import com.x.backend.services.user.UserServiceImpl;
 import org.springframework.context.annotation.Bean;
@@ -9,7 +8,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -28,7 +26,6 @@ import java.security.SecureRandom;
  */
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -46,12 +43,11 @@ public class SecurityConfig {
      * @param customAuthenticationEntryPoint  Overrides response status' with no token
      * @param customAccessDeniedHandler       Overrides response status' for forbidden requests
      */
-    public SecurityConfig(
-            JwtAuthenticationFilter jwtAuthenticationFilter,
-            PasswordEncodingConfig passwordEncodingConfig,
-            UserServiceImpl userServiceImpl,
-            CustomAuthenticationEntryPoint customAuthenticationEntryPoint,
-            CustomAccessDeniedHandler customAccessDeniedHandler
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
+                          PasswordEncodingConfig passwordEncodingConfig,
+                          UserServiceImpl userServiceImpl,
+                          CustomAuthenticationEntryPoint customAuthenticationEntryPoint,
+                          CustomAccessDeniedHandler customAccessDeniedHandler
     ) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.passwordEncodingConfig = passwordEncodingConfig;
@@ -113,6 +109,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT,   "/auth/update/password").authenticated()
                         .requestMatchers(HttpMethod.POST,  "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST,  "/auth/token/refresh").permitAll()
+                        .requestMatchers(HttpMethod.POST,  "/auth/logout").authenticated()
 
                         .requestMatchers(HttpMethod.GET,   "/users/me").authenticated()
                         .requestMatchers(HttpMethod.PUT,   "/users/me/nickname").authenticated()

@@ -113,5 +113,12 @@ public class AuthController {
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
+    @PostMapping("/logout")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<BaseApiResponse<String>> logout(@AuthenticationPrincipal ApplicationUser user) {
+        String authenticatedUsername = user.getUsername();
+        BaseApiResponse<String> res = authenticationService.logout(authenticatedUsername);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
 
 }

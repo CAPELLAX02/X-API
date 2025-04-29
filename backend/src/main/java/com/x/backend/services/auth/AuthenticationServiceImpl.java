@@ -1,8 +1,8 @@
 package com.x.backend.services.auth;
 
-import com.x.backend.models.entities.PrivacySettings;
+import com.x.backend.models.entities.*;
 import com.x.backend.models.enums.PrivacyLevel;
-import com.x.backend.repositories.PrivacySettingsRepository;
+import com.x.backend.repositories.*;
 import com.x.backend.security.PasswordEncodingConfig;
 import com.x.backend.dto.auth.request.*;
 import com.x.backend.dto.auth.response.AuthTokenResponse;
@@ -13,13 +13,7 @@ import com.x.backend.exceptions.auth.*;
 import com.x.backend.exceptions.common.TooManyRequestsException;
 import com.x.backend.exceptions.email.EmailFailedToSentException;
 import com.x.backend.exceptions.user.UserNotFoundByEmailException;
-import com.x.backend.models.entities.ApplicationUser;
-import com.x.backend.models.entities.RefreshToken;
-import com.x.backend.models.entities.Role;
 import com.x.backend.models.enums.RoleType;
-import com.x.backend.repositories.ApplicationUserRepository;
-import com.x.backend.repositories.RefreshTokenRepository;
-import com.x.backend.repositories.RoleRepository;
 import com.x.backend.services.auth.strategies.LoginStrategy;
 import com.x.backend.services.email.MailService;
 import com.x.backend.services.token.JwtService;
@@ -62,19 +56,21 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final CodeGenerator codeGenerator;
     private final RoleRepository roleRepository;
     private final PrivacySettingsRepository privacySettingsRepository;
+    private final PasswordHistoryRepository passwordHistoryRepository;
 
-    public AuthenticationServiceImpl(
-            ApplicationUserRepository applicationUserRepository,
-            UsernameGenerationService usernameGenerationService,
-            MailService mailService,
-            PasswordEncodingConfig passwordEncoderConfig,
-            List<LoginStrategy> loginStrategies,
-            JwtService jwtService,
-            RefreshTokenRepository refreshTokenRepository,
-            UserService userService,
-            CodeGenerator codeGenerator,
-            RoleRepository roleRepository,
-            PrivacySettingsRepository privacySettingsRepository) {
+    public AuthenticationServiceImpl(ApplicationUserRepository applicationUserRepository,
+                                     UsernameGenerationService usernameGenerationService,
+                                     MailService mailService,
+                                     PasswordEncodingConfig passwordEncoderConfig,
+                                     List<LoginStrategy> loginStrategies,
+                                     JwtService jwtService,
+                                     RefreshTokenRepository refreshTokenRepository,
+                                     UserService userService,
+                                     CodeGenerator codeGenerator,
+                                     RoleRepository roleRepository,
+                                     PrivacySettingsRepository privacySettingsRepository,
+                                     PasswordHistoryRepository passwordHistoryRepository
+    ) {
         this.applicationUserRepository = applicationUserRepository;
         this.usernameGenerationService = usernameGenerationService;
         this.mailService = mailService;
@@ -86,6 +82,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         this.codeGenerator = codeGenerator;
         this.roleRepository = roleRepository;
         this.privacySettingsRepository = privacySettingsRepository;
+        this.passwordHistoryRepository = passwordHistoryRepository;
     }
 
     private ApplicationUser getUserByUsername(String username) {
@@ -326,16 +323,31 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new PasswordDoesNotMatchException("New passwords do not match.");
         }
 
-        if (passwordEncodingConfig.passwordEncoder().matches(req.newPassword(), user.getPassword())) {
-            throw new PasswordReusedException("New password cannot be the same as the old password.");
-        }
+        checkPasswordReuse(user, req.newPassword());
 
-        user.setPassword(passwordEncodingConfig.passwordEncoder().encode(req.newPassword()));
+        String encodedNewPassword = passwordEncodingConfig.passwordEncoder().encode(req.newPassword());
+        user.setPassword(encodedNewPassword);
         user.setPasswordRecoveryCode(null);
         user.setPasswordRecoveryCodeExpiry(null);
         applicationUserRepository.save(user);
 
+        savePasswordHistory(user, encodedNewPassword);
+
         return BaseApiResponse.success("Password successfully reset.");
+    }
+
+    private void checkPasswordReuse(ApplicationUser user, String rawNewPassword) {
+        List<PasswordHistory> lastPasswords = passwordHistoryRepository.findTop3ByUserOrderByChangedAtDesc(user);
+        for (PasswordHistory passwordHistory : lastPasswords) {
+            if (passwordEncodingConfig.passwordEncoder().matches(rawNewPassword, passwordHistory.getPassword())) {
+                throw new PasswordReusedException("New password cannot be the same as any of the last 3 passwords.");
+            }
+        }
+    }
+
+    private void savePasswordHistory(ApplicationUser user, String encodedPassword) {
+        PasswordHistory passwordHistory = new PasswordHistory(user, encodedPassword, Instant.now());
+        passwordHistoryRepository.save(passwordHistory);
     }
 
     @Override
@@ -350,12 +362,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new PasswordDoesNotMatchException("New passwords do not match.");
         }
 
-        if (passwordEncodingConfig.passwordEncoder().matches(req.newPassword(), user.getPassword())) {
-            throw new PasswordReusedException("New password cannot be the same as the old password.");
-        }
+        checkPasswordReuse(user, req.newPassword());
 
-        user.setPassword(passwordEncodingConfig.passwordEncoder().encode(req.newPassword()));
+        String encodedNewPassword = passwordEncodingConfig.passwordEncoder().encode(req.newPassword());
+        user.setPassword(encodedNewPassword);
         applicationUserRepository.save(user);
+
+        savePasswordHistory(user, encodedNewPassword);
 
         return BaseApiResponse.success("Password successfully changed.");
     }
@@ -408,6 +421,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 new AuthTokenResponse(newAccessToken, newRefreshToken, expiresIn),
                 "Refreshed token successfully."
         );
+    }
+
+    @Override
+    public BaseApiResponse<String> logout(String username) {
+        ApplicationUser user = getUserByUsername(username);
+        refreshTokenRepository.deleteByUser(user);
+        return BaseApiResponse.success("Logged out successfully.");
     }
 
 }

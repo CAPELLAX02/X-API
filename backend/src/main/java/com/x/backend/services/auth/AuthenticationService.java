@@ -20,4 +20,5 @@ public interface AuthenticationService {
     BaseApiResponse<String> changePassword(String username, ChangePasswordRequest req);
     BaseApiResponse<AuthTokenResponse> login(LoginRequest req);
     BaseApiResponse<AuthTokenResponse> refreshToken(RefreshTokenRequest req);
+    BaseApiResponse<String> logout(String username);
 }
