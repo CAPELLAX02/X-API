@@ -35,12 +35,15 @@ public class JwtServiceImpl implements JwtService {
     @Override
     public String generateAccessToken(ApplicationUser user) {
         Map<String, Object> claims = buildStandardClaims(user);
+        claims.put("token_type", "access");
         return buildToken(claims, user.getUsername(), ACCESS_TOKEN_EXPIRATION);
     }
 
     @Override
     public String generateRefreshToken(ApplicationUser user) {
-        return buildToken(Collections.emptyMap(), user.getUsername(), REFRESH_TOKEN_EXPIRATION);
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("token_type", "refresh");
+        return buildToken(claims, user.getUsername(), REFRESH_TOKEN_EXPIRATION);
     }
 
     private Map<String, Object> buildStandardClaims(ApplicationUser user) {
@@ -49,7 +52,8 @@ public class JwtServiceImpl implements JwtService {
         claims.put("username", user.getUsername());
         claims.put("email", user.getEmail());
         claims.put("nickname", user.getNickname());
-        claims.put("roles", user.getAuthorities().stream()
+        claims.put("roles", user.getAuthorities()
+                .stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList()));
         return claims;

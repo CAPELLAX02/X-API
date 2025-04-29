@@ -24,38 +24,46 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserServiceImpl userServiceImpl;
 
-    public JwtAuthenticationFilter(@Qualifier("jwtService") JwtService jwtService, UserServiceImpl userServiceImpl) {
+    public JwtAuthenticationFilter(@Qualifier("jwtService") JwtService jwtService,
+                                   UserServiceImpl userServiceImpl)
+    {
         this.jwtService = jwtService;
         this.userServiceImpl = userServiceImpl;
     }
 
     @Override
-    protected void doFilterInternal(
-            @NonNull HttpServletRequest request,
-            @NonNull HttpServletResponse response,
-            @NonNull FilterChain filterChain
-    ) throws ServletException, IOException
+    protected void doFilterInternal(@NonNull HttpServletRequest request,
+                                    @NonNull HttpServletResponse response,
+                                    @NonNull FilterChain filterChain) throws ServletException, IOException
     {
         String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
-        String accessToken = authorizationHeader.substring(7);
+        String token = authorizationHeader.substring(7);
 
         try {
-            String username = jwtService.extractUsernameFromToken(accessToken);
-            ApplicationUser user = userServiceImpl.getUserByUsername(username);
+            String tokenType = jwtService.extractClaim(token, claims -> claims.get("token_type", String.class));
+
+            if (!"access".equals(tokenType)) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
+
+            String username = jwtService.extractUsernameFromToken(token);
+
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = userServiceImpl.loadUserByUsername(username);
-                if (jwtService.isTokenValid(accessToken, user)) {
-                    UsernamePasswordAuthenticationToken authentication =
+                ApplicationUser user = userServiceImpl.getUserByUsername(username);
+
+                if (jwtService.isTokenValid(token, user)) {
+                    UsernamePasswordAuthenticationToken authenticationToken =
                             new UsernamePasswordAuthenticationToken(
-                                    userDetails,
+                                    user,
                                     null,
-                                    userDetails.getAuthorities()
+                                    user.getAuthorities()
                             );
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                 }
             }
             filterChain.doFilter(request, response);
