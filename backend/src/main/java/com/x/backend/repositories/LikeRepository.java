@@ -1,16 +1,21 @@
 package com.x.backend.repositories;
 
+import com.x.backend.models.entities.ApplicationUser;
 import com.x.backend.models.entities.Like;
+import com.x.backend.models.entities.Post;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface LikeRepository extends BaseRepository<Like, Long> {
 
-    List<Like> findByUserIdOrderByCreatedAtDesc(Long userId);
+    boolean existsByUserAndPost(ApplicationUser user, Post post);
 
-    long countByPostId(Long postId);
+    Optional<Like> findByUserAndPost(ApplicationUser user, Post post);
 
-    boolean existsByUserIdAndPostId(Long userId, Long postId);
+    long countByPost(Post post);
+
+    void deleteByUserAndPost(ApplicationUser user, Post post);
+
 }
