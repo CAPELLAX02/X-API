@@ -9,6 +9,11 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
+/**
+ * Entry point for handling unauthenticated access attempts.
+ * <p>
+ * Returns HTTP 401 Unauthorized when a request is made to a secured resource without valid authentication.
+ */
 @Component
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
 

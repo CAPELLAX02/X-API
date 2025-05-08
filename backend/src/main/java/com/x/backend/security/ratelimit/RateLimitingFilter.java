@@ -17,6 +17,11 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Servlet filter that limits the number of requests a client can make within a given timeframe.
+ * <p>
+ * This filter uses Bucket4j to enforce IP-based rate limiting with a token bucket strategy.
+ */
 @Component
 public class RateLimitingFilter extends OncePerRequestFilter {
 
@@ -25,12 +30,18 @@ public class RateLimitingFilter extends OncePerRequestFilter {
 
     private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();
 
+    /**
+     * Creates a new token bucket with the specified rate limit.
+     */
     private Bucket createNewBucket() {
         return Bucket.builder()
                 .addLimit(Bandwidth.classic(REQUEST_LIMIT, Refill.greedy(REQUEST_LIMIT, REQUEST_LIMIT_DURATION)))
                 .build();
     }
 
+    /**
+     * Extracts a client identifier (IP address) from the request.
+     */
     private String resolveClientKey(HttpServletRequest request) {
         String forwarded = request.getHeader("X-Forwarded-For");
         if (forwarded != null)
@@ -39,6 +50,10 @@ public class RateLimitingFilter extends OncePerRequestFilter {
             return request.getRemoteAddr();
     }
 
+    /**
+     * Filters incoming requests and applies rate limiting.
+     * Returns HTTP 429 if the client exceeds the allowed number of requests.
+     */
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
                                     @NonNull HttpServletResponse response,

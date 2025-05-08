@@ -9,6 +9,9 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
+/**
+ * Handles access-denied (403) scenarios when authenticated users attempt to access resources they are not authorized for.
+ */
 @Component
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
