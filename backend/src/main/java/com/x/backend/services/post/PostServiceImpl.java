@@ -3,8 +3,8 @@ package com.x.backend.services.post;
 import com.x.backend.dto.post.request.CreatePostRequest;
 import com.x.backend.dto.post.response.PostResponse;
 import com.x.backend.exceptions.image.MaxImageLimitExceededException;
+import com.x.backend.exceptions.post.PostNotFoundException;
 import com.x.backend.models.entities.*;
-import com.x.backend.repositories.ImageRepository;
 import com.x.backend.repositories.PollOptionRepository;
 import com.x.backend.repositories.PollRepository;
 import com.x.backend.repositories.PostRepository;
@@ -24,7 +24,6 @@ import java.util.List;
 public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
-    private final ImageRepository imageRepository;
     private final PollOptionRepository pollOptionRepository;
     private final PollRepository pollRepository;
     private final UserService userService;
@@ -33,14 +32,13 @@ public class PostServiceImpl implements PostService {
 
     public PostServiceImpl(
             PostRepository postRepository,
-            ImageRepository imageRepository,
             PollOptionRepository pollOptionRepository,
             PollRepository pollRepository,
             UserService userService,
             PostResponseBuilder postResponseBuilder,
-            PostImageService postImageService) {
+            PostImageService postImageService)
+    {
         this.postRepository = postRepository;
-        this.imageRepository = imageRepository;
         this.pollOptionRepository = pollOptionRepository;
         this.pollRepository = pollRepository;
         this.userService = userService;
@@ -99,17 +97,35 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public BaseApiResponse<PostResponse> getPostById(Long postId) {
-        return null;
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException(postId));
+        PostResponse postResponse = postResponseBuilder.buildPostResponse(post);
+        return BaseApiResponse.success(postResponse, "Post retrieved successfully.");
     }
 
     @Override
-    public BaseApiResponse<List<PostResponse>> getPostsByUser(String username) {
-        return null;
+    public BaseApiResponse<List<PostResponse>> getPostsByAuthor(String author) {
+        ApplicationUser authorUser = userService.getUserByUsername(author);
+        List<Post> posts = postRepository.findAllByAuthorOrderByCreatedAtDesc(authorUser);
+        List<PostResponse> postResponseList = posts.stream()
+                .map(postResponseBuilder::buildPostResponse)
+                .toList();
+
+        return BaseApiResponse.success(postResponseList, "Posts of author (" + author + ") retrieved successfully.");
     }
 
     @Override
     public BaseApiResponse<List<PostResponse>> getTimeline(String currentUsername) {
-        return null;
+        ApplicationUser user = userService.getUserByUsername(currentUsername);
+        List<ApplicationUser> followedUsers = new ArrayList<>(user.getFollowing());
+        followedUsers.add(user);
+
+        List<Post> timelinePosts = postRepository.findAllByAuthorInOrderByCreatedAtDesc(followedUsers);
+        List<PostResponse> responseList = timelinePosts.stream()
+                .map(postResponseBuilder::buildPostResponse)
+                .toList();
+
+        return BaseApiResponse.success(responseList, "Post timeline retrieved successfully.");
     }
 
 

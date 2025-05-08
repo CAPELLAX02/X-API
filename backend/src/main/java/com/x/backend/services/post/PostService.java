@@ -16,7 +16,7 @@ public interface PostService {
     );
 
     BaseApiResponse<PostResponse> getPostById(Long postId);
-    BaseApiResponse<List<PostResponse>> getPostsByUser(String username);
+    BaseApiResponse<List<PostResponse>> getPostsByAuthor(String author);
     BaseApiResponse<List<PostResponse>> getTimeline(String currentUsername);
 
 }

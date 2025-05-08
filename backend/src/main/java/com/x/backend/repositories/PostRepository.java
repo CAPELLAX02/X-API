@@ -1,5 +1,6 @@
 package com.x.backend.repositories;
 
+import com.x.backend.models.entities.ApplicationUser;
 import com.x.backend.models.entities.Post;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -13,6 +14,9 @@ import java.util.Optional;
 @Repository
 public interface PostRepository extends BaseRepository<Post, Long> {
 
+    List<Post> findAllByAuthorOrderByCreatedAtDesc(ApplicationUser author);
+    List<Post> findAllByAuthorInOrderByCreatedAtDesc(List<ApplicationUser> authors);
+
     List<Post> findByOrderByCreatedAtDesc(Pageable pageable);
 
     List<Post> findByAuthorIdOrderByCreatedAtDesc(Long userId, Pageable pageable);
@@ -25,4 +29,6 @@ public interface PostRepository extends BaseRepository<Post, Long> {
     @EntityGraph(attributePaths = {"author", "likes", "comments"})
     @Query("SELECT p FROM Post p WHERE p.id = :postId")
     Optional<Post> findPostWithDetails(@Param("postId") Long postId);
+
+    List<Post> findAllByAuthorOrderByCreatedA(ApplicationUser author);
 }
