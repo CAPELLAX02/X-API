@@ -8,10 +8,7 @@ import com.x.backend.utils.api.BaseApiResponse;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -33,7 +30,35 @@ public class PostController {
             @AuthenticationPrincipal ApplicationUser user
     ) {
         String username = user.getUsername();
-        return ResponseEntity.ok(postService.createPost(username, req, postImages));
+        BaseApiResponse<PostResponse> res = postService.createPost(username, req, postImages);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
+
+    @GetMapping("/{postId}")
+    public ResponseEntity<BaseApiResponse<PostResponse>> getPostById(@PathVariable Long postId) {
+        BaseApiResponse<PostResponse> res = postService.getPostById(postId);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
+
+    @GetMapping("/author/{username}")
+    public ResponseEntity<BaseApiResponse<List<PostResponse>>> getPostsByAuthor(@PathVariable String username) {
+        BaseApiResponse<List<PostResponse>> res = postService.getPostsByAuthor(username);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
+
+    @GetMapping("/timeline")
+    public ResponseEntity<BaseApiResponse<List<PostResponse>>> getPostTimeline(
+            @AuthenticationPrincipal ApplicationUser currentUser
+    ) {
+        String currentUsername = currentUser.getUsername();
+        BaseApiResponse<List<PostResponse>> res = postService.getTimeline(currentUsername);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
+
+    @GetMapping("/user/{username}/post-count")
+    public ResponseEntity<BaseApiResponse<Long>> getUserPostCount(@PathVariable String username) {
+        BaseApiResponse<Long> res = postService.getUserPostCount(username);
+        return ResponseEntity.status(res.getStatus()).body(res);
     }
 
 }

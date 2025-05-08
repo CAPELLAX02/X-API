@@ -128,5 +128,11 @@ public class PostServiceImpl implements PostService {
         return BaseApiResponse.success(responseList, "Post timeline retrieved successfully.");
     }
 
+    @Override
+    public BaseApiResponse<Long> getUserPostCount(String currentUsername) {
+        ApplicationUser user = userService.getUserByUsername(currentUsername);
+        long count = postRepository.countByAuthorId(user.getId());
+        return BaseApiResponse.success(count, "Post count retrieved successfully.");
+    }
 
 }

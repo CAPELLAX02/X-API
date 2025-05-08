@@ -16,7 +16,11 @@ public interface PostService {
     );
 
     BaseApiResponse<PostResponse> getPostById(Long postId);
+
     BaseApiResponse<List<PostResponse>> getPostsByAuthor(String author);
+
     BaseApiResponse<List<PostResponse>> getTimeline(String currentUsername);
+
+    BaseApiResponse<Long> getUserPostCount(String username);
 
 }

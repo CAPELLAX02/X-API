@@ -14,14 +14,14 @@ import java.util.Optional;
 @Repository
 public interface PostRepository extends BaseRepository<Post, Long> {
 
+    long countByAuthorId(Long userId);
+
     List<Post> findAllByAuthorOrderByCreatedAtDesc(ApplicationUser author);
     List<Post> findAllByAuthorInOrderByCreatedAtDesc(List<ApplicationUser> authors);
 
     List<Post> findByOrderByCreatedAtDesc(Pageable pageable);
 
     List<Post> findByAuthorIdOrderByCreatedAtDesc(Long userId, Pageable pageable);
-
-    long countByAuthorId(Long userId);
 
     @Query("SELECT p FROM Post p ORDER BY SIZE(p.likes) DESC")
     List<Post> findMostLikedPosts(Pageable pageable);
@@ -30,5 +30,5 @@ public interface PostRepository extends BaseRepository<Post, Long> {
     @Query("SELECT p FROM Post p WHERE p.id = :postId")
     Optional<Post> findPostWithDetails(@Param("postId") Long postId);
 
-    List<Post> findAllByAuthorOrderByCreatedA(ApplicationUser author);
+    List<Post> findAllByAuthorOrderByCreatedAt(ApplicationUser author);
 }
