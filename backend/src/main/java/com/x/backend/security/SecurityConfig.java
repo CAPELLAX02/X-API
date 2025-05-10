@@ -146,6 +146,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST,  "/comments/post/{postId}").authenticated()
                         .requestMatchers(HttpMethod.GET,   "/comments/post/{postId}").permitAll()
 
+                        .requestMatchers(HttpMethod.PUT,   "/comments/{commentId}/like").authenticated()
+                        .requestMatchers(HttpMethod.DELETE,"/comments/{commentId}/unlike").authenticated()
+                        .requestMatchers(HttpMethod.GET,   "/comments/{commentId}/like-count").permitAll()
+
                         .anyRequest().denyAll()
                 )
                 .exceptionHandling(exception -> exception

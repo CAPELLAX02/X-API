@@ -1,7 +1,7 @@
 package com.x.backend.controllers;
 
 import com.x.backend.models.entities.ApplicationUser;
-import com.x.backend.services.post.like.PostLikeService;
+import com.x.backend.services.like.PostLikeService;
 import com.x.backend.utils.api.BaseApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

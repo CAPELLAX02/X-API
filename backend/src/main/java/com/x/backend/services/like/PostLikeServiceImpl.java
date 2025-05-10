@@ -1,7 +1,7 @@
-package com.x.backend.services.post.like;
+package com.x.backend.services.like;
 
-import com.x.backend.exceptions.post.AlreadyLikedException;
-import com.x.backend.exceptions.post.HaveNotLikedException;
+import com.x.backend.exceptions.post.PostAlreadyLikedException;
+import com.x.backend.exceptions.post.PostHaveNotLikedException;
 import com.x.backend.exceptions.post.PostNotFoundException;
 import com.x.backend.models.entities.ApplicationUser;
 import com.x.backend.models.entities.Like;
@@ -35,7 +35,7 @@ public class PostLikeServiceImpl implements PostLikeService {
                 .orElseThrow(() -> new PostNotFoundException(postId));
 
         if (likeRepository.existsByUserAndPost(user, post)) {
-            throw new AlreadyLikedException();
+            throw new PostAlreadyLikedException();
         }
 
         Like like = new Like();
@@ -53,7 +53,7 @@ public class PostLikeServiceImpl implements PostLikeService {
                 .orElseThrow(() -> new PostNotFoundException(postId));
 
         if (!likeRepository.existsByUserAndPost(user, post)) {
-            throw new HaveNotLikedException();
+            throw new PostHaveNotLikedException();
         }
 
         likeRepository.deleteByUserAndPost(user, post);

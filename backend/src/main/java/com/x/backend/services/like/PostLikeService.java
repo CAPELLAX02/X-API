@@ -1,4 +1,4 @@
-package com.x.backend.services.post.like;
+package com.x.backend.services.like;
 
 import com.x.backend.utils.api.BaseApiResponse;
 

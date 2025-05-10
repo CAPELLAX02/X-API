@@ -1,4 +1,4 @@
-package com.x.backend.services.post.comment;
+package com.x.backend.services.comment;
 
 import com.x.backend.dto.comment.request.CreateCommentRequest;
 import com.x.backend.dto.comment.response.CommentResponse;

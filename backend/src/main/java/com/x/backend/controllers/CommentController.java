@@ -3,7 +3,7 @@ package com.x.backend.controllers;
 import com.x.backend.dto.comment.request.CreateCommentRequest;
 import com.x.backend.dto.comment.response.CommentResponse;
 import com.x.backend.models.entities.ApplicationUser;
-import com.x.backend.services.post.comment.CommentService;
+import com.x.backend.services.comment.CommentService;
 import com.x.backend.utils.api.BaseApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
