@@ -150,6 +150,11 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE,"/comments/{commentId}/unlike").authenticated()
                         .requestMatchers(HttpMethod.GET,   "/comments/{commentId}/like-count").permitAll()
 
+                        .requestMatchers(HttpMethod.POST,  "/posts/{postId}/repost").authenticated()
+                        .requestMatchers(HttpMethod.DELETE,"/posts/{postId}/repost/undo").authenticated()
+                        .requestMatchers(HttpMethod.GET,   "/posts/{postId}/count-repost").permitAll()
+                        .requestMatchers(HttpMethod.GET,   "/posts/{postId}/repost/status").authenticated()
+
                         .anyRequest().denyAll()
                 )
                 .exceptionHandling(exception -> exception
