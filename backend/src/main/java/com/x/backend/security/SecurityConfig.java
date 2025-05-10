@@ -134,6 +134,17 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET,   "/users/me/check/{username}").authenticated()
 
                         .requestMatchers(HttpMethod.POST,  "/posts/create").authenticated()
+                        .requestMatchers(HttpMethod.GET,   "/posts/{postId}").permitAll()
+                        .requestMatchers(HttpMethod.GET,   "/author/{username}").permitAll()
+                        .requestMatchers(HttpMethod.GET,   "/posts/create").authenticated()
+                        .requestMatchers(HttpMethod.GET,   "/user/{username}/post-count").permitAll()
+
+                        .requestMatchers(HttpMethod.PUT,   "/posts/{postId}/like").authenticated()
+                        .requestMatchers(HttpMethod.DELETE,"/posts/{postId}/unlike").authenticated()
+                        .requestMatchers(HttpMethod.GET,   "/posts/{postId}/likes").permitAll()
+
+                        .requestMatchers(HttpMethod.POST,  "/comments/post/{postId}").authenticated()
+                        .requestMatchers(HttpMethod.GET,   "/comments/post/{postId}").permitAll()
 
                         .anyRequest().denyAll()
                 )
