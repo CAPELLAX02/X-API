@@ -12,9 +12,11 @@ import com.x.backend.repositories.PostRepository;
 import com.x.backend.services.user.UserService;
 import com.x.backend.utils.api.BaseApiResponse;
 import com.x.backend.utils.builder.CommentResponseBuilder;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.sound.sampled.Port;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -43,8 +45,9 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public BaseApiResponse<CommentResponse> createComment(String username, Long postId, CreateCommentRequest req) {
         ApplicationUser commentAuthor = userService.getUserByUsername(username);
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new PostNotFoundException(postId));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
+
+        validateReplyPermission(commentAuthor, post);
 
         Comment comment = new Comment();
         comment.setAuthor(commentAuthor);
@@ -66,8 +69,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public BaseApiResponse<List<CommentResponse>> getCommentsByPost(Long postId) {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new PostNotFoundException(postId));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
 
         List<Comment> allComments = commentRepository.findAllByPostOrderByCreatedAtDesc(post);
 
@@ -82,6 +84,37 @@ public class CommentServiceImpl implements CommentService {
                 .toList();
 
         return BaseApiResponse.success(topLevelComments, "Comments retrieved successfully");
+    }
+
+    private boolean isUserMentionedInPost(ApplicationUser user, Post post) {
+        String content = post.getContent();
+        String nickname = user.getNickname();
+        return content != null && content.contains("@" + nickname);
+    }
+
+    private void validateReplyPermission(ApplicationUser currentUser, Post post) {
+        switch (post.getReplyRestriction()) {
+            case NO_ONE -> {
+                throw new AccessDeniedException("Replies are disabled for this post");
+            }
+            case FOLLOWERS_ONLY -> {
+                ApplicationUser author = post.getAuthor();
+                if (!author.getFollowers().contains(currentUser)) {
+                    throw new AccessDeniedException("Only followers can reply to this post");
+                }
+            }
+            case MENTIONED_ONLY -> {
+                if (!isUserMentionedInPost(currentUser, post)) {
+                    throw new AccessDeniedException("Only mentioned users can reply to this post");
+                }
+            }
+            case EVERYONE -> {
+                // No restriction
+            }
+            default -> {
+                throw new AccessDeniedException("Unsupported reply restriction: " + post.getReplyRestriction());
+            }
+        }
     }
 
 }

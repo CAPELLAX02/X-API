@@ -35,8 +35,12 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<BaseApiResponse<PostResponse>> getPostById(@PathVariable Long postId) {
-        BaseApiResponse<PostResponse> res = postService.getPostById(postId);
+    public ResponseEntity<BaseApiResponse<PostResponse>> getPostById(
+            @PathVariable Long postId,
+            @AuthenticationPrincipal ApplicationUser user
+    ) {
+        String username = (user != null) ? user.getUsername() : null;
+        BaseApiResponse<PostResponse> res = postService.getPostByIdWithAccessControl(postId, username);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 

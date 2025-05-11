@@ -15,7 +15,7 @@ public interface PostService {
             List<MultipartFile> postImages
     );
 
-    BaseApiResponse<PostResponse> getPostById(Long postId);
+    BaseApiResponse<PostResponse> getPostByIdWithAccessControl(Long postId, String currentUsername);
 
     BaseApiResponse<List<PostResponse>> getPostsByAuthor(String author);
 

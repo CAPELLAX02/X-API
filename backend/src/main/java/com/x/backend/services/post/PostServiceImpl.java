@@ -12,6 +12,7 @@ import com.x.backend.services.image.PostImageService;
 import com.x.backend.services.user.UserService;
 import com.x.backend.utils.api.BaseApiResponse;
 import com.x.backend.utils.builder.PostResponseBuilder;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -95,10 +96,43 @@ public class PostServiceImpl implements PostService {
         return BaseApiResponse.success(postResponse, "Post created successfully.");
     }
 
+    private boolean isUserMentionedInPost(ApplicationUser user, Post post) {
+        String content = post.getContent();
+        String nickname = user.getNickname();
+        return content != null && content.contains("@" + nickname);
+    }
+
+    private void validatePostViewPermission(ApplicationUser viewer, Post post) {
+        switch (post.getAudience()) {
+            case PRIVATE -> {
+                if (viewer == null || !post.getAuthor().getId().equals(viewer.getId())) {
+                    throw new AccessDeniedException("This post is private.");
+                }
+            }
+            case FOLLOWERS_ONLY -> {
+                if (viewer == null || !post.getAuthor().getFollowers().contains(viewer)) {
+                    throw new AccessDeniedException("Only followers can view this post.");
+                }
+            }
+            case MENTIONED_ONLY -> {
+                if (viewer == null || !isUserMentionedInPost(viewer, post)) {
+                    throw new AccessDeniedException("Only mentioned users can view this post.");
+                }
+            }
+            case EVERYONE -> {
+                // No restriction
+            }
+            default -> {
+                throw new AccessDeniedException("Unsupported audience: " + post.getAudience());
+            }
+        }
+    }
+
     @Override
-    public BaseApiResponse<PostResponse> getPostById(Long postId) {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new PostNotFoundException(postId));
+    public BaseApiResponse<PostResponse> getPostByIdWithAccessControl(Long postId, String currentUsername) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
+        ApplicationUser viewer = (currentUsername != null) ? userService.getUserByUsername(currentUsername) : null;
+        validatePostViewPermission(viewer, post);
         PostResponse postResponse = postResponseBuilder.buildPostResponse(post);
         return BaseApiResponse.success(postResponse, "Post retrieved successfully.");
     }
