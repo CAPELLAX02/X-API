@@ -9,8 +9,10 @@ import com.x.backend.repositories.PostRepository;
 import com.x.backend.services.user.UserService;
 import com.x.backend.utils.api.BaseApiResponse;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class PostBookmarkServiceImpl implements PostBookmarkService {
 
     private final PostRepository postRepository;

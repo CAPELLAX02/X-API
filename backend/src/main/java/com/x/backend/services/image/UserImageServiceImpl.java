@@ -10,20 +10,21 @@ import com.x.backend.services.user.UserService;
 import com.x.backend.utils.api.BaseApiResponse;
 import com.x.backend.utils.builder.ImageResponseBuilder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
+@Transactional
 public class UserImageServiceImpl extends ImageUploadService {
 
     private final ApplicationUserRepository applicationUserRepository;
     private final UserService userService;
     private final ImageResponseBuilder imageResponseBuilder;
 
-    public UserImageServiceImpl(
-            ImageRepository imageRepository,
-            ApplicationUserRepository applicationUserRepository,
-            UserService userService,
-            ImageResponseBuilder imageResponseBuilder
+    public UserImageServiceImpl(ImageRepository imageRepository,
+                                ApplicationUserRepository applicationUserRepository,
+                                UserService userService,
+                                ImageResponseBuilder imageResponseBuilder
     ) {
         super(imageRepository);
         this.applicationUserRepository = applicationUserRepository;
@@ -34,8 +35,10 @@ public class UserImageServiceImpl extends ImageUploadService {
     public BaseApiResponse<ImageResponse> uploadProfileImage(MultipartFile file, String username) {
         Image image = storeImage(file, ImageType.PROFILE_PICTURE);
         ApplicationUser user = userService.getUserByUsername(username);
+
         user.setProfilePicture(image);
         applicationUserRepository.save(user);
+
         ImageResponse imageRes = imageResponseBuilder.buildImageResponse(image);
         return BaseApiResponse.success(imageRes, "Profile image uploaded successfully.");
     }
@@ -43,8 +46,10 @@ public class UserImageServiceImpl extends ImageUploadService {
     public BaseApiResponse<ImageResponse> uploadBannerImage(MultipartFile file, String username) {
         Image image = storeImage(file, ImageType.BANNER_PICTURE);
         ApplicationUser user = userService.getUserByUsername(username);
+
         user.setBannerPicture(image);
         applicationUserRepository.save(user);
+
         ImageResponse imageRes = imageResponseBuilder.buildImageResponse(image);
         return BaseApiResponse.success(imageRes, "Banner image uploaded successfully.");
     }

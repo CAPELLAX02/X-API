@@ -11,8 +11,10 @@ import com.x.backend.repositories.PostRepository;
 import com.x.backend.services.user.UserService;
 import com.x.backend.utils.api.BaseApiResponse;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class PostLikeServiceImpl implements PostLikeService {
 
     private final LikeRepository likeRepository;
@@ -21,8 +23,8 @@ public class PostLikeServiceImpl implements PostLikeService {
 
     public PostLikeServiceImpl(LikeRepository likeRepository,
                                PostRepository postRepository,
-                               UserService userService)
-    {
+                               UserService userService
+    ) {
         this.likeRepository = likeRepository;
         this.postRepository = postRepository;
         this.userService = userService;

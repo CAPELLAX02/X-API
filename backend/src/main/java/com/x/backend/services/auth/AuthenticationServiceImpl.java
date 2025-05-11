@@ -33,18 +33,6 @@ import java.util.Objects;
 @Transactional
 public class AuthenticationServiceImpl implements AuthenticationService {
 
-    /**
-     * Initial registration process will be as follows:
-     *      1. register
-     *      2. setPhoneNumber
-     *      3. sendEmailVerification
-     *      4. completeEmailVerification
-     *      5. setPassword
-     *      6. login
-     */
-
-    // TODO: Trace the last 3 passwords of the user as in banking mobile applications.
-
     private final ApplicationUserRepository applicationUserRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final UsernameGenerationService usernameGenerationService;

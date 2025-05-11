@@ -8,18 +8,23 @@ import com.x.backend.utils.api.BaseApiResponse;
 import com.x.backend.utils.builder.UserResponseBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Transactional
 public class FollowServiceImpl implements FollowService {
 
     private final UserService userService;
     private final ApplicationUserRepository applicationUserRepository;
     private final UserResponseBuilder userResponseBuilder;
 
-    public FollowServiceImpl(UserService userService, ApplicationUserRepository applicationUserRepository, UserResponseBuilder userResponseBuilder) {
+    public FollowServiceImpl(UserService userService,
+                             ApplicationUserRepository applicationUserRepository,
+                             UserResponseBuilder userResponseBuilder
+    ) {
         this.userService = userService;
         this.applicationUserRepository = applicationUserRepository;
         this.userResponseBuilder = userResponseBuilder;
