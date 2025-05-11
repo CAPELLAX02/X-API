@@ -9,6 +9,7 @@ import com.x.backend.services.user.UserServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -154,6 +155,14 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE,"/posts/{postId}/repost/undo").authenticated()
                         .requestMatchers(HttpMethod.GET,   "/posts/{postId}/count-repost").permitAll()
                         .requestMatchers(HttpMethod.GET,   "/posts/{postId}/repost/status").authenticated()
+
+                        .requestMatchers(HttpMethod.POST,  "/posts/{postId}/bookmark").authenticated()
+                        .requestMatchers(HttpMethod.DELETE,"/posts/{postId}/bookmark").authenticated()
+                        .requestMatchers(HttpMethod.GET,   "/posts/{postId}/bookmark/status").authenticated()
+                        .requestMatchers(HttpMethod.GET,   "/posts/{postId}/bookmark/count").permitAll()
+
+                        .requestMatchers(HttpMethod.POST,  "/posts/{postId}/poll/vote").authenticated()
+                        .requestMatchers(HttpMethod.DELETE,"/posts/{postId}/poll/revoke").authenticated()
 
                         .anyRequest().denyAll()
                 )
