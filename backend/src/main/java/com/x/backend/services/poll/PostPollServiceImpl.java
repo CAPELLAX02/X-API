@@ -1,12 +1,10 @@
 package com.x.backend.services.poll;
 
 import com.x.backend.dto.poll.request.PollVoteRequest;
-import com.x.backend.exceptions.poll.InvalidPollOptionIndexException;
-import com.x.backend.exceptions.poll.PollAlreadyVotedInException;
-import com.x.backend.exceptions.poll.PollHasExpiredException;
-import com.x.backend.exceptions.poll.PostDoesNotHaveAPollException;
+import com.x.backend.exceptions.poll.*;
 import com.x.backend.exceptions.post.PostNotFoundException;
 import com.x.backend.models.entities.*;
+import com.x.backend.repositories.PollRepository;
 import com.x.backend.repositories.PollVoteRepository;
 import com.x.backend.repositories.PostRepository;
 import com.x.backend.services.user.UserService;
@@ -24,14 +22,16 @@ public class PostPollServiceImpl implements PostPollService {
     private final UserService userService;
     private final PostRepository postRepository;
     private final PollVoteRepository pollVoteRepository;
+    private final PollRepository pollRepository;
 
     public PostPollServiceImpl(UserService userService,
                                PostRepository postRepository,
-                               PollVoteRepository pollVoteRepository
-    ) {
+                               PollVoteRepository pollVoteRepository,
+                               PollRepository pollRepository) {
         this.userService = userService;
         this.postRepository = postRepository;
         this.pollVoteRepository = pollVoteRepository;
+        this.pollRepository = pollRepository;
     }
 
     @Override
@@ -64,6 +64,23 @@ public class PostPollServiceImpl implements PostPollService {
         pollVoteRepository.save(vote);
 
         return BaseApiResponse.success("Poll vote recorded successfully.");
+    }
+
+    // TODO: Think about which is more convenient in "voteInPoll" and "revokePollVote" methods:
+    //              BaseApiResponse<String>    OR    BaseApiResponse<PostResponse>
+
+    @Override
+    public BaseApiResponse<String> revokePollVote(String username, Long pollId) {
+        ApplicationUser user = userService.getUserByUsername(username);
+        Poll poll = pollRepository.findById(pollId).orElseThrow(() -> new PollNotFoundException(pollId));
+
+        if (poll.getExpiresAt().isBefore(LocalDateTime.now()))
+            throw new PollHasExpiredException();
+
+        PollVote existingVote = pollVoteRepository.findByPollIdAndUserId(pollId, user.getId()).orElseThrow(PollVoteNotFoundException::new);
+        pollVoteRepository.delete(existingVote);
+
+        return BaseApiResponse.success("Poll vote revoked successfully.");
     }
 
 }

@@ -2,7 +2,6 @@ package com.x.backend.controllers;
 
 import com.x.backend.dto.poll.request.PollVoteRequest;
 import com.x.backend.models.entities.ApplicationUser;
-import com.x.backend.services.poll.PollVoteService;
 import com.x.backend.services.poll.PostPollService;
 import com.x.backend.utils.api.BaseApiResponse;
 import org.springframework.http.ResponseEntity;
@@ -22,13 +21,24 @@ public class PostPollController {
 
     @PostMapping("/vote")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<BaseApiResponse<String>> voteOnPoll(
+    public ResponseEntity<BaseApiResponse<String>> voteInPoll(
             @PathVariable Long postId,
             @RequestBody PollVoteRequest req,
             @AuthenticationPrincipal ApplicationUser user
     ) {
         String username = user.getUsername();
         BaseApiResponse<String> res = postPollService.voteInPoll(username, postId, req);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
+
+    @DeleteMapping("/revoke")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<BaseApiResponse<String>> revokePollVote(
+            @PathVariable Long postId,
+            @AuthenticationPrincipal ApplicationUser user
+    ) {
+        String username = user.getUsername();
+        BaseApiResponse<String> res = postPollService.revokePollVote(username, postId);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
