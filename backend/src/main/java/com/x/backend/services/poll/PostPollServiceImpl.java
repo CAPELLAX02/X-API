@@ -1,0 +1,69 @@
+package com.x.backend.services.poll;
+
+import com.x.backend.dto.poll.request.PollVoteRequest;
+import com.x.backend.exceptions.poll.InvalidPollOptionIndexException;
+import com.x.backend.exceptions.poll.PollAlreadyVotedInException;
+import com.x.backend.exceptions.poll.PollHasExpiredException;
+import com.x.backend.exceptions.poll.PostDoesNotHaveAPollException;
+import com.x.backend.exceptions.post.PostNotFoundException;
+import com.x.backend.models.entities.*;
+import com.x.backend.repositories.PollVoteRepository;
+import com.x.backend.repositories.PostRepository;
+import com.x.backend.services.user.UserService;
+import com.x.backend.utils.api.BaseApiResponse;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Service
+@Transactional
+public class PostPollServiceImpl implements PostPollService {
+
+    private final UserService userService;
+    private final PostRepository postRepository;
+    private final PollVoteRepository pollVoteRepository;
+
+    public PostPollServiceImpl(UserService userService,
+                               PostRepository postRepository,
+                               PollVoteRepository pollVoteRepository
+    ) {
+        this.userService = userService;
+        this.postRepository = postRepository;
+        this.pollVoteRepository = pollVoteRepository;
+    }
+
+    @Override
+    public BaseApiResponse<String> voteInPoll(String username, Long postId, PollVoteRequest req) {
+        ApplicationUser user = userService.getUserByUsername(username);
+        Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
+
+        Poll poll = post.getPoll();
+
+        if (poll == null)
+            throw new PostDoesNotHaveAPollException();
+
+        if (poll.getExpiresAt().isBefore(LocalDateTime.now()))
+            throw new PollHasExpiredException();
+
+        if (pollVoteRepository.existsByUserIdAndPollId(user.getId(), poll.getId()))
+            throw new PollAlreadyVotedInException();
+
+        List<PollOption> pollOptions = poll.getOptions();
+
+        if (req.selectedOptionIndex() < 0 || req.selectedOptionIndex() >= pollOptions.size())
+            throw new InvalidPollOptionIndexException(req.selectedOptionIndex());
+
+        PollOption selectedOption = pollOptions.get(req.selectedOptionIndex());
+
+        PollVote vote = new PollVote();
+        vote.setPoll(poll);
+        vote.setOption(selectedOption);
+        vote.setUser(user);
+        pollVoteRepository.save(vote);
+
+        return BaseApiResponse.success("Poll vote recorded successfully.");
+    }
+
+}
