@@ -17,7 +17,6 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.sound.sampled.Port;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -25,17 +24,17 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-public class CommentServiceImpl implements CommentService {
+public class PostCommentServiceImpl implements PostCommentService {
 
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final UserService userService;
     private final CommentResponseBuilder commentResponseBuilder;
 
-    public CommentServiceImpl(CommentRepository commentRepository,
-                              PostRepository postRepository,
-                              UserService userService,
-                              CommentResponseBuilder commentResponseBuilder)
+    public PostCommentServiceImpl(CommentRepository commentRepository,
+                                  PostRepository postRepository,
+                                  UserService userService,
+                                  CommentResponseBuilder commentResponseBuilder)
     {
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;

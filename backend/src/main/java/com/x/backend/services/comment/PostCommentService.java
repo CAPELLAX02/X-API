@@ -17,7 +17,7 @@ import java.util.List;
  * and retrieval of comment threads belonging to a specific post.
  * </p>
  */
-public interface CommentService {
+public interface PostCommentService {
 
     /**
      * Creates a new comment for a given post, optionally as a reply to another comment.

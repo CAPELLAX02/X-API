@@ -143,10 +143,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE,"/posts/{postId}/unlike").authenticated()
                         .requestMatchers(HttpMethod.GET,   "/posts/{postId}/likes").permitAll()
 
-                        .requestMatchers(HttpMethod.POST,  "/comments/post/{postId}").authenticated()
-                        .requestMatchers(HttpMethod.PUT,   "/comments/{commentId}/edit").authenticated()
-                        .requestMatchers(HttpMethod.DELETE,"/comments/{commentId}/delete").authenticated()
-                        .requestMatchers(HttpMethod.GET,   "/comments/post/{postId}").permitAll()
+                        .requestMatchers(HttpMethod.POST,  "/posts/{postId}/comments").authenticated()
+                        .requestMatchers(HttpMethod.PUT,   "/posts/{postId}/comments").authenticated()
+                        .requestMatchers(HttpMethod.DELETE,"/posts/{postId}/comments").authenticated()
+                        .requestMatchers(HttpMethod.GET,   "/posts/{postId}/comments").permitAll()
 
                         .requestMatchers(HttpMethod.PUT,   "/comments/{commentId}/like").authenticated()
                         .requestMatchers(HttpMethod.DELETE,"/comments/{commentId}/unlike").authenticated()
