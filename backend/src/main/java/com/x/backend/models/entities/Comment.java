@@ -3,6 +3,7 @@ package com.x.backend.models.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -60,6 +61,10 @@ public class Comment {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @UpdateTimestamp
+    @Column(name = "edited_at")
+    private LocalDateTime editedAt;
+
     public Comment() {}
 
     public Comment(
@@ -71,7 +76,8 @@ public class Comment {
             Comment parentComment,
             Set<ApplicationUser> likes,
             boolean isDeleted,
-            LocalDateTime createdAt
+            LocalDateTime createdAt,
+            LocalDateTime editedAt
     ) {
         this.id = id;
         this.post = post;
@@ -82,6 +88,7 @@ public class Comment {
         this.likes = likes;
         this.isDeleted = isDeleted;
         this.createdAt = createdAt;
+        this.editedAt = editedAt;
     }
 
     public Long getId() {
@@ -154,6 +161,14 @@ public class Comment {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getEditedAt() {
+        return editedAt;
+    }
+
+    public void setEditedAt(LocalDateTime editedAt) {
+        this.editedAt = editedAt;
     }
 
 }

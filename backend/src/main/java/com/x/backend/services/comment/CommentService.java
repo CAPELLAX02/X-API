@@ -5,6 +5,7 @@ import com.x.backend.dto.comment.response.CommentResponse;
 import com.x.backend.exceptions.post.CommentNotFoundException;
 import com.x.backend.exceptions.post.PostNotFoundException;
 import com.x.backend.utils.api.BaseApiResponse;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.security.access.AccessDeniedException;
 
 import java.util.List;
@@ -38,6 +39,10 @@ public interface CommentService {
      * @throws AccessDeniedException if the user is not allowed to reply due to post restrictions
      */
     BaseApiResponse<CommentResponse> createComment(String username, Long postId, CreateCommentRequest req);
+
+    BaseApiResponse<CommentResponse> editComment(String username, Long commentId, @NotBlank(message = "New comment cannot be empty.") String newContent);
+
+    BaseApiResponse<String> deleteComment(String username, Long commentId);
 
     /**
      * Retrieves all comments associated with a given post, structured into a hierarchical format.

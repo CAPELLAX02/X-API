@@ -12,6 +12,7 @@ import com.x.backend.repositories.PostRepository;
 import com.x.backend.services.user.UserService;
 import com.x.backend.utils.api.BaseApiResponse;
 import com.x.backend.utils.builder.CommentResponseBuilder;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,6 +66,37 @@ public class CommentServiceImpl implements CommentService {
         CommentResponse commentResponse = commentResponseBuilder.buildCommentResponse(savedComment);
 
         return BaseApiResponse.success(commentResponse, "Comment created successfully");
+    }
+
+    @Override
+    public BaseApiResponse<CommentResponse> editComment(String username, Long commentId, @NotBlank(message = "New comment cannot be empty.") String newContent) {
+        ApplicationUser commentAuthor = userService.getUserByUsername(username);
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new CommentNotFoundException(commentId));
+
+        if (!comment.getAuthor().getId().equals(commentAuthor.getId())) {
+            throw new AccessDeniedException("You do not have permission to edit this comment");
+        }
+
+        comment.setContent(newContent);
+        comment.setEditedAt(LocalDateTime.now());
+
+        Comment editedComment = commentRepository.save(comment);
+        CommentResponse commentResponse = commentResponseBuilder.buildCommentResponse(editedComment);
+
+        return BaseApiResponse.success(commentResponse, "Comment edited successfully");
+    }
+
+    @Override
+    public BaseApiResponse<String> deleteComment(String username, Long commentId) {
+        ApplicationUser commentAuthor = userService.getUserByUsername(username);
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new CommentNotFoundException(commentId));
+
+        if (!comment.getAuthor().getId().equals(commentAuthor.getId())) {
+            throw new AccessDeniedException("You do not have permission to delete this comment");
+        }
+        commentRepository.delete(comment);
+
+        return BaseApiResponse.success("Comment deleted successfully");
     }
 
     @Override

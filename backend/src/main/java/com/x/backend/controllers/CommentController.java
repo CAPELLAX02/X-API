@@ -32,8 +32,28 @@ public class CommentController {
             @Valid @RequestBody CreateCommentRequest req,
             @AuthenticationPrincipal ApplicationUser user
     ) {
-        String username = user.getUsername();
-        BaseApiResponse<CommentResponse> res = commentService.createComment(username, postId, req);
+        BaseApiResponse<CommentResponse> res = commentService.createComment(user.getUsername(), postId, req);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
+
+    @PutMapping("/{commentId}/edit")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<BaseApiResponse<CommentResponse>> editComment(
+            @PathVariable Long commentId,
+            @RequestBody @Valid String newContent,
+            @AuthenticationPrincipal ApplicationUser user
+    ) {
+        BaseApiResponse<CommentResponse> res = commentService.editComment(user.getUsername(), commentId, newContent);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
+
+    @DeleteMapping("/{commentId}/delete")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<BaseApiResponse<String>> deleteComment(
+            @PathVariable Long commentId,
+            @AuthenticationPrincipal ApplicationUser user
+    ) {
+        BaseApiResponse<String> res = commentService.deleteComment(user.getUsername(), commentId);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 

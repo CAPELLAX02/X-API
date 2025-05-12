@@ -144,6 +144,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET,   "/posts/{postId}/likes").permitAll()
 
                         .requestMatchers(HttpMethod.POST,  "/comments/post/{postId}").authenticated()
+                        .requestMatchers(HttpMethod.PUT,   "/comments/{commentId}/edit").authenticated()
+                        .requestMatchers(HttpMethod.DELETE,"/comments/{commentId}/delete").authenticated()
                         .requestMatchers(HttpMethod.GET,   "/comments/post/{postId}").permitAll()
 
                         .requestMatchers(HttpMethod.PUT,   "/comments/{commentId}/like").authenticated()
