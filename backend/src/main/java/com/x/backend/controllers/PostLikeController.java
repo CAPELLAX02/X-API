@@ -24,8 +24,7 @@ public class PostLikeController {
             @PathVariable Long postId,
             @AuthenticationPrincipal ApplicationUser user
     ) {
-        String username = user.getUsername();
-        BaseApiResponse<String> res = postLikeService.likePost(username, postId);
+        BaseApiResponse<String> res = postLikeService.likePost(user.getUsername(), postId);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
@@ -35,8 +34,7 @@ public class PostLikeController {
             @PathVariable Long postId,
             @AuthenticationPrincipal ApplicationUser user
     ) {
-        String username = user.getUsername();
-        BaseApiResponse<String> res = postLikeService.unlikePost(username, postId);
+        BaseApiResponse<String> res = postLikeService.unlikePost(user.getUsername(), postId);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 

@@ -23,8 +23,6 @@ public class PostCommentController {
         this.postCommentService = postCommentService;
     }
 
-    // TODO: Add @Valid annotation every required endpoint requests...
-
     @PostMapping("/{postId}/comments")
     @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<BaseApiResponse<CommentResponse>> createComment(
@@ -40,7 +38,7 @@ public class PostCommentController {
     @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<BaseApiResponse<CommentResponse>> editComment(
             @PathVariable Long commentId,
-            @RequestBody @Valid String newContent,
+            @Valid @RequestBody String newContent,
             @AuthenticationPrincipal ApplicationUser user
     ) {
         BaseApiResponse<CommentResponse> res = postCommentService.editComment(user.getUsername(), commentId, newContent);

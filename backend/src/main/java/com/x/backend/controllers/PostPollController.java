@@ -4,6 +4,7 @@ import com.x.backend.dto.poll.request.PollVoteRequest;
 import com.x.backend.models.entities.ApplicationUser;
 import com.x.backend.services.poll.PostPollService;
 import com.x.backend.utils.api.BaseApiResponse;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,11 +24,10 @@ public class PostPollController {
     @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<BaseApiResponse<String>> voteInPoll(
             @PathVariable Long postId,
-            @RequestBody PollVoteRequest req,
+            @Valid @RequestBody PollVoteRequest req,
             @AuthenticationPrincipal ApplicationUser user
     ) {
-        String username = user.getUsername();
-        BaseApiResponse<String> res = postPollService.voteInPoll(username, postId, req);
+        BaseApiResponse<String> res = postPollService.voteInPoll(user.getUsername(), postId, req);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
@@ -37,8 +37,7 @@ public class PostPollController {
             @PathVariable Long postId,
             @AuthenticationPrincipal ApplicationUser user
     ) {
-        String username = user.getUsername();
-        BaseApiResponse<String> res = postPollService.revokePollVote(username, postId);
+        BaseApiResponse<String> res = postPollService.revokePollVote(user.getUsername(), postId);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 

@@ -24,8 +24,7 @@ public class CommentLikeController {
             @PathVariable Long commentId,
             @AuthenticationPrincipal ApplicationUser user
     ) {
-        String authenticatedUsername = user.getUsername();
-        BaseApiResponse<String> res = commentLikeService.likeComment(authenticatedUsername, commentId);
+        BaseApiResponse<String> res = commentLikeService.likeComment(user.getUsername(), commentId);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
@@ -34,8 +33,7 @@ public class CommentLikeController {
             @PathVariable Long commentId,
             @AuthenticationPrincipal ApplicationUser user
     ) {
-        String authenticatedUsername = user.getUsername();
-        BaseApiResponse<String> res = commentLikeService.unlikeComment(authenticatedUsername, commentId);
+        BaseApiResponse<String> res = commentLikeService.unlikeComment(user.getUsername(), commentId);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 

@@ -29,8 +29,7 @@ public class UserImageController {
             @RequestParam("image") MultipartFile file,
             @AuthenticationPrincipal ApplicationUser user
     ) {
-        String username = user.getUsername();
-        BaseApiResponse<ImageResponse> res = userImageService.uploadProfileImage(file, username);
+        BaseApiResponse<ImageResponse> res = userImageService.uploadProfileImage(file, user.getUsername());
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
@@ -40,8 +39,7 @@ public class UserImageController {
             @RequestParam("image") MultipartFile file,
             @AuthenticationPrincipal ApplicationUser user
     ) {
-        String username = user.getUsername();
-        BaseApiResponse<ImageResponse> res = userImageService.uploadBannerImage(file, username);
+        BaseApiResponse<ImageResponse> res = userImageService.uploadBannerImage(file, user.getUsername());
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 

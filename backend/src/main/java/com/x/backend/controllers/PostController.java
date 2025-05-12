@@ -30,7 +30,7 @@ public class PostController {
             @AuthenticationPrincipal ApplicationUser user
     ) {
         String username = user.getUsername();
-        BaseApiResponse<PostResponse> res = postService.createPost(username, req, postImages);
+        BaseApiResponse<PostResponse> res = postService.createPost(user.getUsername(), req, postImages);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
@@ -54,8 +54,7 @@ public class PostController {
     public ResponseEntity<BaseApiResponse<List<PostResponse>>> getPostTimeline(
             @AuthenticationPrincipal ApplicationUser currentUser
     ) {
-        String currentUsername = currentUser.getUsername();
-        BaseApiResponse<List<PostResponse>> res = postService.getTimeline(currentUsername);
+        BaseApiResponse<List<PostResponse>> res = postService.getTimeline(currentUser.getUsername());
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 

@@ -61,8 +61,7 @@ public class AuthController {
             @Valid @RequestBody ChangePhoneNumberRequest req,
             @AuthenticationPrincipal ApplicationUser user
     ) {
-        String authenticatedUsername = user.getUsername();
-        BaseApiResponse<String> res = authenticationService.changePhoneNumber(authenticatedUsername, req);
+        BaseApiResponse<String> res = authenticationService.changePhoneNumber(user.getUsername(), req);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
@@ -96,8 +95,7 @@ public class AuthController {
             @Valid @RequestBody ChangePasswordRequest req,
             @AuthenticationPrincipal ApplicationUser user
     ) {
-        String authenticatedUsername = user.getUsername();
-        BaseApiResponse<String> res = authenticationService.changePassword(authenticatedUsername, req);
+        BaseApiResponse<String> res = authenticationService.changePassword(user.getUsername(), req);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
@@ -116,8 +114,7 @@ public class AuthController {
     @PostMapping("/logout")
     @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<BaseApiResponse<String>> logout(@AuthenticationPrincipal ApplicationUser user) {
-        String authenticatedUsername = user.getUsername();
-        BaseApiResponse<String> res = authenticationService.logout(authenticatedUsername);
+        BaseApiResponse<String> res = authenticationService.logout(user.getUsername());
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
