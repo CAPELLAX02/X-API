@@ -9,76 +9,72 @@ import com.x.backend.exceptions.user.UserNotFoundByEmailException;
 import com.x.backend.utils.api.BaseApiResponse;
 
 /**
- * AuthenticationService defines the contract for all authentication-related workflows
- * within the application. It encapsulates user registration, login, email verification,
- * password setup and recovery, token lifecycle management, and session invalidation.
- * <p>
- * This service plays a central role in securing the platform by enforcing:
- * <ul>
- *     <li>Email-based identity validation</li>
- *     <li>Phone number uniqueness and assignment</li>
- *     <li>Password history tracking and reuse prevention</li>
- *     <li>JWT access and refresh token lifecycle with session-level invalidation</li>
- *     <li>Support for login via multiple identifiers (username, email, phone)</li>
- * </ul>
- * <p>
- * AuthenticationService is stateless and should be used in conjunction with a token-based
- * authentication system such as JWT. All operations are idempotent where applicable,
- * and rely on rate-limited flows to prevent abuse.
+ * AuthenticationService provides all necessary user authentication operations
+ * including registration, email verification, password setup and recovery,
+ * login, logout, and token management. It supports a multi-step registration
+ * flow and enforces account security through features like password history tracking
+ * and email-based verification codes.
  *
- * <p>
- * Example onboarding flow:
+ * <p>Typical user registration flow:
  * <ol>
- *     <li>{@code startRegistration}</li>
- *     <li>{@code setPhoneNumber}</li>
- *     <li>{@code sendVerificationEmail} → {@code completeEmailVerification}</li>
- *     <li>{@code setPassword}</li>
- *     <li>{@code login}</li>
+ *     <li>{@link #startRegistration(StartRegistrationRequest)}</li>
+ *     <li>{@link #setPhoneNumber(SetPhoneNumberRequest)}</li>
+ *     <li>{@link #sendVerificationEmail(SendVerificationEmailRequest)}</li>
+ *     <li>{@link #completeEmailVerification(CompleteEmailVerificationRequest)}</li>
+ *     <li>{@link #setPassword(SetPasswordRequest)}</li>
+ *     <li>{@link #login(LoginRequest)}</li>
  * </ol>
  *
- * Implemented by {@link com.x.backend.services.auth.AuthenticationServiceImpl}.
+ * <p>Each method in this interface is designed to return a {@link BaseApiResponse}
+ * to provide consistent API behavior with status and payload wrapping.
  */
 public interface AuthenticationService {
 
     /**
-     * Begins the user registration process by saving the basic user profile
-     * (name, email, date of birth) and generating a unique system username.
-     * The account remains disabled until email verification and password setup are completed.
+     * Starts the registration process by creating a disabled user with a unique username and default role.
      *
-     * @param req contains first name, last name, email, and date of birth
-     * @return a generated system username for the user
-     * @throws EmailAlreadyInUseException if the email is already registered
+     * @param req the registration request containing:
+     *            - {@code firstName}: user's first name
+     *            - {@code lastName}: user's last name
+     *            - {@code email}: user's email address
+     *            - {@code dateOfBirth}: user's birthdate
+     * @return the generated username in the response
+     * @throws EmailAlreadyInUseException if a user with the given email already exists
+     * @throws UsernameAlreadyInUseException not expected to be thrown, would occur if the system had generated the exact same username upon a successful registration
      */
     BaseApiResponse<StartRegistrationResponse> startRegistration(StartRegistrationRequest req);
 
     /**
-     * Sends a verification code to the email address of the given username.
-     * This code is valid for 5 minutes.
+     * Sends a verification code to the user's registered email address.
+     * This code is valid for 5 minutes and is required to complete the email verification step.
      *
-     * @param req contains the username to send verification code to
-     * @return the expiry timestamp of the verification code
-     * @throws EmailAlreadyVerifiedException if the user's account is already verified
-     * @throws EmailFailedToSentException if the email could not be sent
+     * @param req contains the {@code username} to send the code to
+     * @return expiry timestamp of the verification code
+     * @throws EmailAlreadyVerifiedException if the user is already verified
+     * @throws EmailFailedToSentException if email delivery fails
      */
     BaseApiResponse<SendVerificationEmailResponse> sendVerificationEmail(SendVerificationEmailRequest req) throws EmailFailedToSentException;
 
     /**
-     * Sends a new email verification code to the user if the last one is expired or nearly expired.
-     * Enforces a cooldown period of 60 seconds to prevent abuse.
+     * Resends the email verification code if the last request is at least 1 minute old.
      *
-     * @param req contains the username to resend verification code to
-     * @return the new expiry timestamp
-     * @throws TooManyRequestsException if the request is made too soon after the previous one
-     * @throws EmailFailedToSentException if the email could not be sent
+     * @param req contains the {@code username}
+     * @return expiry timestamp of the new code
+     * @throws EmailAlreadyVerifiedException if the user is already verified
+     * @throws TooManyRequestsException if the resend interval has not passed
+     * @throws EmailFailedToSentException if email delivery fails
      */
     BaseApiResponse<SendVerificationEmailResponse> resendVerificationEmail(SendVerificationEmailRequest req) throws EmailFailedToSentException;
 
     /**
-     * Validates the provided verification code and enables the user's account upon success.
+     * Completes the email verification by validating the code.
      *
-     * @param req contains username and the verification code
-     * @return success message if verification is complete
-     * @throws InvalidVerificationCodeException if the code is incorrect
+     * @param req contains:
+     *            - {@code username}: target user
+     *            - {@code verificationCode}: code sent via email
+     * @return success message
+     * @throws EmailAlreadyVerifiedException if already verified
+     * @throws InvalidVerificationCodeException if the code does not match
      * @throws ExpiredVerificationCodeException if the code has expired
      */
     BaseApiResponse<String> completeEmailVerification(CompleteEmailVerificationRequest req);
@@ -87,25 +83,27 @@ public interface AuthenticationService {
      * Assigns a phone number to the user during onboarding.
      * Phone numbers must be unique across the platform.
      *
-     * @param req contains username and phone number
+     * @param req contains:
+     *            - {@code username}
+     *            - {@code phoneNumber}
      * @return confirmation message
-     * @throws PhoneNumberAlreadyInUseException if the phone is already linked to another user
+     * @throws PhoneNumberAlreadyInUseException if the number is already used by another user
      */
     BaseApiResponse<String> setPhoneNumber(SetPhoneNumberRequest req);
 
     /**
      * Allows an authenticated user to update their phone number.
      *
-     * @param username the username of the user performing the change
-     * @param req contains the new phone number
-     * @return a message indicating the change was successful
+     * @param username current user
+     * @param req contains:
+     *            - {@code newPhoneNumber}
+     * @return confirmation message
      * @throws PhoneNumberAlreadyInUseException if the new number is already taken
      */
     BaseApiResponse<String> changePhoneNumber(String username, ChangePhoneNumberRequest req);
 
     /**
-     * Sets the user's password for the first time after verification.
-     * This is part of the onboarding process and can only be done once.
+     * Sets the user's password for the first time after verification, as a part of onboarding process.
      *
      * @param req contains username and new password
      * @return success message
@@ -117,9 +115,10 @@ public interface AuthenticationService {
      * Sends a one-time password recovery code to the user's email.
      * This code expires in 5 minutes.
      *
-     * @param req contains the registered email
-     * @return expiry time of the recovery code
-     * @throws UserNotFoundByEmailException if no user is found with the given email
+     * @param req contains:
+     *            - {@code email}
+     * @return code expiry timestamp
+     * @throws UserNotFoundByEmailException if the email is not associated with any account
      * @throws EmailFailedToSentException if the email fails to send
      */
     BaseApiResponse<SendPasswordRecoveryEmailResponse> sendPasswordRecoveryEmail(SendPasswordRecoveryEmailRequest req) throws EmailFailedToSentException;
@@ -128,21 +127,27 @@ public interface AuthenticationService {
      * Resends the password recovery code if a recent one is not already active.
      * Enforces a cooldown window.
      *
-     * @param req contains the email address
-     * @return new code expiry time
-     * @throws TooManyRequestsException if requested too soon
-     * @throws EmailFailedToSentException if sending fails
+     * @param req contains:
+     *            - {@code email}
+     * @return new code's expiry time
+     * @throws UserNotFoundByEmailException if email is not found
+     * @throws TooManyRequestsException if 1 minute has not passed since the last code
+     * @throws EmailFailedToSentException if email delivery fails
      */
     BaseApiResponse<SendPasswordRecoveryEmailResponse> resendPasswordRecoveryEmail(SendPasswordRecoveryEmailRequest req) throws EmailFailedToSentException;
 
     /**
      * Validates the password recovery code and resets the user's password.
-     * Also checks for reuse of any of the last 3 passwords.
+     * Also checks for reuse of the last 3 passwords.
      *
-     * @param req contains email, code, and new password (entered twice)
-     * @return confirmation message
-     * @throws InvalidPasswordRecoveryCodeException if code is invalid
-     * @throws ExpiredPasswordRecoveryCodeException if code has expired
+     * @param req contains:
+     *            - {@code email}
+     *            - {@code passwordRecoveryCode}
+     *            - {@code newPassword}
+     *            - {@code newPasswordAgain}
+     * @return success message
+     * @throws InvalidPasswordRecoveryCodeException if code is incorrect
+     * @throws ExpiredPasswordRecoveryCodeException if the code is expired
      * @throws PasswordDoesNotMatchException if new passwords do not match
      * @throws PasswordReusedException if new password was used recently
      */
@@ -152,38 +157,45 @@ public interface AuthenticationService {
      * Changes the user's password after validating the current one.
      * Prevents reuse of recently used passwords.
      *
-     * @param username the user initiating the change
-     * @param req contains current password and new password (entered twice)
-     * @return confirmation message
-     * @throws PasswordDoesNotMatchException if old password is wrong or new ones don't match
-     * @throws PasswordReusedException if password was used recently
+     * @param username current username
+     * @param req contains:
+     *            - {@code oldPassword}
+     *            - {@code newPassword}
+     *            - {@code newPasswordAgain}
+     * @return success message
+     * @throws PasswordDoesNotMatchException if the old password is wrong or new passwords mismatch
+     * @throws PasswordReusedException if new password was recently used
      */
     BaseApiResponse<String> changePassword(String username, ChangePasswordRequest req);
 
     /**
-     * Authenticates the user based on their login credentials (username/email/phone).
-     * Issues a new access token and refresh token on success.
+     * Authenticates a user using one of multiple login strategies (email, phone, or username).
+     * Invalidates the previous access token using the JWT blacklist, for further security measure.
      *
-     * @param req contains login identifier and password
-     * @return a valid JWT token pair and expiration info
-     * @throws InvalidLoginCredentialsException if validation fails
-     * @throws UserIsNotEnabledException if email verification is not complete
+     * @param req contains:
+     *            - login identifier (email, phone, or username)
+     *            - password
+     * @return JWT access & refresh tokens with expiration time
+     * @throws InvalidLoginCredentialsException if request is malformed
+     * @throws InvalidLoginRequestKeyException if no matching strategy exists
+     * @throws UserIsNotEnabledException if the user is not email verified
      */
     BaseApiResponse<AuthTokenResponse> login(LoginRequest req);
 
     /**
      * Refreshes the user's access token using a valid refresh token.
-     * Invalidates the previous access token session.
+     * Invalidates the previous access token manipulating the JWT blacklist.
      *
-     * @param req contains the refresh token
-     * @return new JWT token pair
-     * @throws RefreshTokenNotFoundException if the token does not exist
-     * @throws InvalidOrExpiredRefreshTokenException if the token is expired or invalid
+     * @param req contains:
+     *            - {@code refreshToken}
+     * @return new access & refresh tokens with expiration
+     * @throws RefreshTokenNotFoundException if token is not in storage
+     * @throws InvalidOrExpiredRefreshTokenException if token has expired
      */
     BaseApiResponse<AuthTokenResponse> refreshToken(RefreshTokenRequest req);
 
     /**
-     * Logs the user out by deleting their refresh token and invalidating current sessions.
+     * Logs the user out by deleting their refresh token and invalidating access token.
      *
      * @param username of the user to logout
      * @return logout confirmation
