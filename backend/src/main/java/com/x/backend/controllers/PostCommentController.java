@@ -3,7 +3,7 @@ package com.x.backend.controllers;
 import com.x.backend.dto.comment.request.CreateCommentRequest;
 import com.x.backend.dto.comment.request.EditCommentRequest;
 import com.x.backend.dto.comment.response.CommentResponse;
-import com.x.backend.models.entities.ApplicationUser;
+import com.x.backend.models.user.user.ApplicationUser;
 import com.x.backend.services.comment.PostCommentService;
 import com.x.backend.utils.api.BaseApiResponse;
 import jakarta.validation.Valid;

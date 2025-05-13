@@ -1,6 +1,6 @@
 package com.x.backend.services.token;
 
-import com.x.backend.models.entities.ApplicationUser;
+import com.x.backend.models.user.user.ApplicationUser;
 import io.jsonwebtoken.Claims;
 
 import java.util.List;

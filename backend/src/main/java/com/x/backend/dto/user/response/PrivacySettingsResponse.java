@@ -1,6 +1,6 @@
 package com.x.backend.dto.user.response;
 
-import com.x.backend.models.enums.PrivacyLevel;
+import com.x.backend.models.user.auth.enums.PrivacyLevel;
 
 public record PrivacySettingsResponse(
 

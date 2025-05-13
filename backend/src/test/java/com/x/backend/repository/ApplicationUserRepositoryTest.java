@@ -1,7 +1,7 @@
 package com.x.backend.repository;
 
 import com.x.backend.AbstractPostgreSQLTestContainer;
-import com.x.backend.models.entities.ApplicationUser;
+import com.x.backend.models.user.user.ApplicationUser;
 import com.x.backend.repositories.ApplicationUserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;

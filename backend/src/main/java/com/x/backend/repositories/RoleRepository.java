@@ -1,7 +1,7 @@
 package com.x.backend.repositories;
 
-import com.x.backend.models.entities.Role;
-import com.x.backend.models.enums.RoleType;
+import com.x.backend.models.user.auth.Role;
+import com.x.backend.models.user.auth.enums.RoleType;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 

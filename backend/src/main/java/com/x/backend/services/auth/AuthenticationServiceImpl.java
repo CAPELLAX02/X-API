@@ -1,7 +1,12 @@
 package com.x.backend.services.auth;
 
-import com.x.backend.models.entities.*;
-import com.x.backend.models.enums.PrivacyLevel;
+import com.x.backend.models.user.auth.PasswordHistory;
+import com.x.backend.models.user.auth.RefreshToken;
+import com.x.backend.models.user.auth.ValidAccessToken;
+import com.x.backend.models.user.user.ApplicationUser;
+import com.x.backend.models.user.user.PrivacySettings;
+import com.x.backend.models.user.auth.Role;
+import com.x.backend.models.user.auth.enums.PrivacyLevel;
 import com.x.backend.repositories.*;
 import com.x.backend.security.password.PasswordEncodingConfig;
 import com.x.backend.dto.auth.request.*;
@@ -13,7 +18,7 @@ import com.x.backend.exceptions.auth.*;
 import com.x.backend.exceptions.common.TooManyRequestsException;
 import com.x.backend.exceptions.email.EmailFailedToSentException;
 import com.x.backend.exceptions.user.UserNotFoundByEmailException;
-import com.x.backend.models.enums.RoleType;
+import com.x.backend.models.user.auth.enums.RoleType;
 import com.x.backend.services.auth.strategies.LoginStrategy;
 import com.x.backend.services.email.MailService;
 import com.x.backend.services.token.JwtService;

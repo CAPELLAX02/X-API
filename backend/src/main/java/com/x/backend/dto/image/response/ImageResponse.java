@@ -1,6 +1,6 @@
 package com.x.backend.dto.image.response;
 
-import com.x.backend.models.enums.ImageType;
+import com.x.backend.models.image.enums.ImageType;
 
 import java.time.LocalDateTime;
 

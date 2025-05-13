@@ -1,7 +1,7 @@
 package com.x.backend.utils.builder;
 
 import com.x.backend.dto.image.response.ImageResponse;
-import com.x.backend.models.entities.Image;
+import com.x.backend.models.image.Image;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

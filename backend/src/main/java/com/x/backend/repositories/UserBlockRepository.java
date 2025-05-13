@@ -1,6 +1,6 @@
 package com.x.backend.repositories;
 
-import com.x.backend.models.entities.UserBlock;
+import com.x.backend.models.user.user.UserBlock;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;

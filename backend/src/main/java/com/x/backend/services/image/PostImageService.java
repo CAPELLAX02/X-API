@@ -1,10 +1,8 @@
 package com.x.backend.services.image;
 
-import com.x.backend.dto.image.response.ImageResponse;
-import com.x.backend.models.entities.Image;
-import com.x.backend.models.enums.ImageType;
+import com.x.backend.models.image.Image;
+import com.x.backend.models.image.enums.ImageType;
 import com.x.backend.repositories.ImageRepository;
-import com.x.backend.utils.api.BaseApiResponse;
 import com.x.backend.utils.builder.ImageResponseBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

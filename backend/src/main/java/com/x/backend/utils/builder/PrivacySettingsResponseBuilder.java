@@ -1,7 +1,7 @@
 package com.x.backend.utils.builder;
 
 import com.x.backend.dto.user.response.PrivacySettingsResponse;
-import com.x.backend.models.entities.PrivacySettings;
+import com.x.backend.models.user.user.PrivacySettings;
 import org.springframework.stereotype.Component;
 
 @Component

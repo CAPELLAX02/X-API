@@ -1,6 +1,6 @@
 package com.x.backend.dto.user.request;
 
-import com.x.backend.models.enums.PrivacyLevel;
+import com.x.backend.models.user.auth.enums.PrivacyLevel;
 import jakarta.validation.constraints.NotNull;
 
 public record UpdatePrivacySettingsRequest(

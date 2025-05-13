@@ -1,7 +1,7 @@
 package com.x.backend.dto.post.response;
 
-import com.x.backend.models.enums.Audience;
-import com.x.backend.models.enums.ReplyRestriction;
+import com.x.backend.models.post.enums.Audience;
+import com.x.backend.models.post.enums.ReplyRestriction;
 
 import java.time.LocalDateTime;
 import java.util.List;

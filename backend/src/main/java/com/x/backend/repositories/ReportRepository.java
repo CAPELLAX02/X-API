@@ -1,7 +1,7 @@
 package com.x.backend.repositories;
 
-import com.x.backend.models.entities.Report;
-import com.x.backend.models.enums.ReportStatus;
+import com.x.backend.models.user.user.Report;
+import com.x.backend.models.user.user.enums.ReportStatus;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 

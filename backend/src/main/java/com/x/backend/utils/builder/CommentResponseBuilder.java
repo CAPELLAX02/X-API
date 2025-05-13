@@ -1,7 +1,7 @@
 package com.x.backend.utils.builder;
 
 import com.x.backend.dto.comment.response.CommentResponse;
-import com.x.backend.models.entities.Comment;
+import com.x.backend.models.post.comment.Comment;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

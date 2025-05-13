@@ -6,7 +6,7 @@ import com.x.backend.dto.auth.response.SendPasswordRecoveryEmailResponse;
 import com.x.backend.dto.auth.response.SendVerificationEmailResponse;
 import com.x.backend.dto.auth.response.StartRegistrationResponse;
 import com.x.backend.exceptions.email.EmailFailedToSentException;
-import com.x.backend.models.entities.ApplicationUser;
+import com.x.backend.models.user.user.ApplicationUser;
 import com.x.backend.services.auth.AuthenticationService;
 import com.x.backend.utils.api.BaseApiResponse;
 import jakarta.validation.Valid;

@@ -1,8 +1,8 @@
 package com.x.backend.repository;
 
 import com.x.backend.AbstractPostgreSQLTestContainer;
-import com.x.backend.models.entities.ApplicationUser;
-import com.x.backend.models.entities.RefreshToken;
+import com.x.backend.models.user.user.ApplicationUser;
+import com.x.backend.models.user.auth.RefreshToken;
 import com.x.backend.repositories.ApplicationUserRepository;
 import com.x.backend.repositories.RefreshTokenRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -12,10 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.sql.Ref;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

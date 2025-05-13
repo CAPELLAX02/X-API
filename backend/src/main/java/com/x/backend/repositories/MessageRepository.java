@@ -1,6 +1,6 @@
 package com.x.backend.repositories;
 
-import com.x.backend.models.entities.Message;
+import com.x.backend.models.message.Message;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 

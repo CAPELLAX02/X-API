@@ -1,7 +1,7 @@
 package com.x.backend.repositories;
 
-import com.x.backend.models.entities.ApplicationUser;
-import com.x.backend.models.entities.Post;
+import com.x.backend.models.user.user.ApplicationUser;
+import com.x.backend.models.post.poll.Post;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Query;

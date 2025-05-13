@@ -1,6 +1,6 @@
 package com.x.backend.repositories;
 
-import com.x.backend.models.entities.Notification;
+import com.x.backend.models.notification.Notification;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;

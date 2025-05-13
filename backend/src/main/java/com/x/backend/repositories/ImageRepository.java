@@ -1,7 +1,7 @@
 package com.x.backend.repositories;
 
-import com.x.backend.models.entities.Image;
-import com.x.backend.models.enums.ImageType;
+import com.x.backend.models.image.Image;
+import com.x.backend.models.image.enums.ImageType;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 

@@ -1,6 +1,6 @@
 package com.x.backend.repositories;
 
-import com.x.backend.models.entities.Poll;
+import com.x.backend.models.post.poll.Poll;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 

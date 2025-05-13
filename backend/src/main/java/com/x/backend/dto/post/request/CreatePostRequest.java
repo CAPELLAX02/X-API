@@ -1,7 +1,7 @@
 package com.x.backend.dto.post.request;
 
-import com.x.backend.models.enums.Audience;
-import com.x.backend.models.enums.ReplyRestriction;
+import com.x.backend.models.post.enums.Audience;
+import com.x.backend.models.post.enums.ReplyRestriction;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.*;
 

@@ -1,7 +1,7 @@
 package com.x.backend.repositories;
 
-import com.x.backend.models.entities.ApplicationUser;
-import com.x.backend.models.entities.RefreshToken;
+import com.x.backend.models.user.user.ApplicationUser;
+import com.x.backend.models.user.auth.RefreshToken;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

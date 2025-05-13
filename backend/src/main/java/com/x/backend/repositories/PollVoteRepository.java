@@ -1,6 +1,6 @@
 package com.x.backend.repositories;
 
-import com.x.backend.models.entities.PollVote;
+import com.x.backend.models.post.poll.PollVote;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;

@@ -1,6 +1,6 @@
 package com.x.backend.controllers;
 
-import com.x.backend.models.entities.ApplicationUser;
+import com.x.backend.models.user.user.ApplicationUser;
 import com.x.backend.services.post.PostRepostService;
 import com.x.backend.utils.api.BaseApiResponse;
 import org.springframework.http.ResponseEntity;
