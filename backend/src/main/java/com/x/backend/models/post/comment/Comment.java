@@ -1,8 +1,8 @@
 package com.x.backend.models.post.comment;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.x.backend.models.user.user.ApplicationUser;
 import com.x.backend.models.post.poll.Post;
+import com.x.backend.models.user.user.ApplicationUser;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -41,12 +41,7 @@ public class Comment {
     private String content;
 
     @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Comment> replies = new HashSet<>();
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_comment_id")
-    @JsonIgnore
-    private Comment parentComment;
+    private Set<SubComment> subComments = new HashSet<>();
 
     @ManyToMany
     @JoinTable(
@@ -69,24 +64,21 @@ public class Comment {
 
     public Comment() {}
 
-    public Comment(
-            Long id,
-            Post post,
-            ApplicationUser author,
-            String content,
-            Set<Comment> replies,
-            Comment parentComment,
-            Set<ApplicationUser> likes,
-            boolean isDeleted,
-            LocalDateTime createdAt,
-            LocalDateTime editedAt
+    public Comment(Long id,
+                   Post post,
+                   ApplicationUser author,
+                   String content,
+                   Set<SubComment> subComments,
+                   Set<ApplicationUser> likes,
+                   boolean isDeleted,
+                   LocalDateTime createdAt,
+                   LocalDateTime editedAt
     ) {
         this.id = id;
         this.post = post;
         this.author = author;
         this.content = content;
-        this.replies = replies;
-        this.parentComment = parentComment;
+        this.subComments = subComments;
         this.likes = likes;
         this.isDeleted = isDeleted;
         this.createdAt = createdAt;
@@ -125,20 +117,12 @@ public class Comment {
         this.content = content;
     }
 
-    public Set<Comment> getReplies() {
-        return replies;
+    public Set<SubComment> getSubComments() {
+        return subComments;
     }
 
-    public void setReplies(Set<Comment> replies) {
-        this.replies = replies;
-    }
-
-    public Comment getParentComment() {
-        return parentComment;
-    }
-
-    public void setParentComment(Comment parentComment) {
-        this.parentComment = parentComment;
+    public void setSubComments(Set<SubComment> subComments) {
+        this.subComments = subComments;
     }
 
     public Set<ApplicationUser> getLikes() {
