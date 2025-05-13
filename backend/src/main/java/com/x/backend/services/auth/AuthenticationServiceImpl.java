@@ -239,7 +239,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (!user.isEnabled()) {
             throw new UserIsNotEnabledException();
         }
-        user.setPassword(passwordEncodingConfig.passwordEncoder().encode(req.password()));
+        String encodedPassword = passwordEncodingConfig.passwordEncoder().encode(req.password());
+        user.setPassword(encodedPassword);
+        savePasswordHistory(user, encodedPassword);
         applicationUserRepository.save(user);
         return BaseApiResponse.success("User password set successfully.");
     }

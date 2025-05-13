@@ -1,6 +1,7 @@
 package com.x.backend.services.comment;
 
 import com.x.backend.dto.comment.request.CreateCommentRequest;
+import com.x.backend.dto.comment.request.EditCommentRequest;
 import com.x.backend.dto.comment.response.CommentResponse;
 import com.x.backend.exceptions.post.CommentNotFoundException;
 import com.x.backend.exceptions.post.PostNotFoundException;
@@ -12,7 +13,6 @@ import com.x.backend.repositories.PostRepository;
 import com.x.backend.services.user.UserService;
 import com.x.backend.utils.api.BaseApiResponse;
 import com.x.backend.utils.builder.CommentResponseBuilder;
-import jakarta.validation.constraints.NotBlank;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,8 +34,8 @@ public class PostCommentServiceImpl implements PostCommentService {
     public PostCommentServiceImpl(CommentRepository commentRepository,
                                   PostRepository postRepository,
                                   UserService userService,
-                                  CommentResponseBuilder commentResponseBuilder)
-    {
+                                  CommentResponseBuilder commentResponseBuilder
+    ) {
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
         this.userService = userService;
@@ -68,7 +68,7 @@ public class PostCommentServiceImpl implements PostCommentService {
     }
 
     @Override
-    public BaseApiResponse<CommentResponse> editComment(String username, Long commentId, @NotBlank(message = "New comment cannot be empty.") String newContent) {
+    public BaseApiResponse<CommentResponse> editComment(String username, Long commentId, EditCommentRequest req) {
         ApplicationUser commentAuthor = userService.getUserByUsername(username);
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new CommentNotFoundException(commentId));
 
@@ -76,7 +76,7 @@ public class PostCommentServiceImpl implements PostCommentService {
             throw new AccessDeniedException("You do not have permission to edit this comment");
         }
 
-        comment.setContent(newContent);
+        comment.setContent(req.newContent());
         comment.setEditedAt(LocalDateTime.now());
 
         Comment editedComment = commentRepository.save(comment);
@@ -125,9 +125,7 @@ public class PostCommentServiceImpl implements PostCommentService {
 
     private void validateReplyPermission(ApplicationUser currentUser, Post post) {
         switch (post.getReplyRestriction()) {
-            case NO_ONE -> {
-                throw new AccessDeniedException("Replies are disabled for this post");
-            }
+            case NO_ONE -> throw new AccessDeniedException("Replies are disabled for this post");
             case FOLLOWERS_ONLY -> {
                 ApplicationUser author = post.getAuthor();
                 if (!author.getFollowers().contains(currentUser)) {
@@ -142,9 +140,7 @@ public class PostCommentServiceImpl implements PostCommentService {
             case EVERYONE -> {
                 // No restriction
             }
-            default -> {
-                throw new AccessDeniedException("Unsupported reply restriction: " + post.getReplyRestriction());
-            }
+            default -> throw new AccessDeniedException("Unsupported reply restriction: " + post.getReplyRestriction());
         }
     }
 

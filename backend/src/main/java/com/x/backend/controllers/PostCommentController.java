@@ -1,6 +1,7 @@
 package com.x.backend.controllers;
 
 import com.x.backend.dto.comment.request.CreateCommentRequest;
+import com.x.backend.dto.comment.request.EditCommentRequest;
 import com.x.backend.dto.comment.response.CommentResponse;
 import com.x.backend.models.entities.ApplicationUser;
 import com.x.backend.services.comment.PostCommentService;
@@ -38,10 +39,10 @@ public class PostCommentController {
     @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<BaseApiResponse<CommentResponse>> editComment(
             @PathVariable Long commentId,
-            @Valid @RequestBody String newContent,
+            @Valid @RequestBody EditCommentRequest req,
             @AuthenticationPrincipal ApplicationUser user
     ) {
-        BaseApiResponse<CommentResponse> res = postCommentService.editComment(user.getUsername(), commentId, newContent);
+        BaseApiResponse<CommentResponse> res = postCommentService.editComment(user.getUsername(), commentId, req);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 

@@ -4,6 +4,7 @@ import com.x.backend.dto.user.response.UserResponse;
 import com.x.backend.exceptions.auth.*;
 import com.x.backend.exceptions.image.FailedToUploadImageException;
 import com.x.backend.exceptions.image.MaxImageLimitExceededException;
+import com.x.backend.exceptions.post.CommentHaveNotLikedException;
 import com.x.backend.exceptions.user.NicknameAlreadyInUseException;
 import com.x.backend.utils.api.BaseApiResponse;
 import jakarta.mail.MessagingException;
@@ -29,6 +30,16 @@ import java.util.Objects;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+//    @ExceptionHandler(CommentHaveNotLikedException.class)
+//    public ResponseEntity<BaseApiResponse<String>> handleCommentHaveNotLikedException(CommentHaveNotLikedException e) {
+//        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseApiResponse.error(e.getMessage(), HttpStatus.BAD_REQUEST));
+//    }
+
+    @ExceptionHandler(CustomRuntimeException.class)
+    public ResponseEntity<BaseApiResponse<String>> handleCustomRuntimeException(CustomRuntimeException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseApiResponse.error(e.getMessage(), HttpStatus.BAD_REQUEST));
+    }
 
     @ExceptionHandler(MaxImageLimitExceededException.class)
     public ResponseEntity<BaseApiResponse<String>> handleMaxImageLimitExceededException(MaxImageLimitExceededException e) {
@@ -112,7 +123,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<BaseApiResponse<Object>> handleAccessDeniedException(AccessDeniedException e) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(BaseApiResponse.error("You do not have permission to access this resource or perform this action", HttpStatus.FORBIDDEN));
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(BaseApiResponse.error(e.getMessage() != null ? "You do not have permission to access this resource or perform this action" : e.getMessage(), HttpStatus.FORBIDDEN));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

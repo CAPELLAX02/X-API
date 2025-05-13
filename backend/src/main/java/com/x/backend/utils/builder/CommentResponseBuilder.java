@@ -17,6 +17,7 @@ public class CommentResponseBuilder {
                 comment.getContent(),
                 comment.getAuthor().getUsername(),
                 comment.getParentComment() != null ? comment.getParentComment().getId() : null,
+                comment.getLikes().size(),
                 comment.getCreatedAt(),
                 List.of()
         );
@@ -34,6 +35,7 @@ public class CommentResponseBuilder {
                 comment.getContent(),
                 comment.getAuthor().getUsername(),
                 comment.getParentComment() != null ? comment.getParentComment().getId() : null,
+                comment.getLikes().size(),
                 comment.getCreatedAt(),
                 replies
         );

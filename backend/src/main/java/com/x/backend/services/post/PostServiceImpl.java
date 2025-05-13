@@ -71,6 +71,8 @@ public class PostServiceImpl implements PostService {
             throw new MaxImageLimitExceededException(5);
         }
 
+        Post savedPost = postRepository.save(post);
+
         if (req.hasPoll() && req.pollOptions() != null && req.pollExpiryDate() != null) {
             Poll poll = new Poll();
             poll.setPost(post);
@@ -91,7 +93,6 @@ public class PostServiceImpl implements PostService {
             pollOptionRepository.saveAll(options);
         }
 
-        Post savedPost = postRepository.save(post);
         PostResponse postResponse = postResponseBuilder.buildPostResponse(savedPost);
         return BaseApiResponse.success(postResponse, "Post created successfully.");
     }

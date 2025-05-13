@@ -8,6 +8,7 @@ public record CommentResponse(
         String content,
         String authorUsername,
         Long parentCommentId,
+        Integer likes,
         LocalDateTime createdAt,
         List<CommentResponse> replies
 ) {

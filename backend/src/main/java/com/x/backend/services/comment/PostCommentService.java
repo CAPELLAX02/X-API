@@ -1,6 +1,7 @@
 package com.x.backend.services.comment;
 
 import com.x.backend.dto.comment.request.CreateCommentRequest;
+import com.x.backend.dto.comment.request.EditCommentRequest;
 import com.x.backend.dto.comment.response.CommentResponse;
 import com.x.backend.exceptions.post.CommentNotFoundException;
 import com.x.backend.exceptions.post.PostNotFoundException;
@@ -40,8 +41,31 @@ public interface PostCommentService {
      */
     BaseApiResponse<CommentResponse> createComment(String username, Long postId, CreateCommentRequest req);
 
-    BaseApiResponse<CommentResponse> editComment(String username, Long commentId, @NotBlank(message = "New comment cannot be empty.") String newContent);
+    /**
+     * Edits the content of a comment created by the authenticated user.
+     *
+     * @param username the username of the currently authenticated user attempting the edit
+     * @param commentId the ID of the comment to be edited
+     * @param req contains the new content to replace the old comment text
+     * @return a response containing the updated comment
+     *
+     * @throws CommentNotFoundException if the comment with given ID does not exist
+     * @throws AccessDeniedException if the comment does not belong to the current user
+     * @throws IllegalArgumentException if the new content is invalid (e.g., blank or too long)
+     */
+    BaseApiResponse<CommentResponse> editComment(String username, Long commentId, EditCommentRequest req);
 
+    /**
+     * Soft deletes the comment by marking it as deleted.
+     * Only the original author of the comment is allowed to perform this action.
+     *
+     * @param username the username of the user attempting the deletion
+     * @param commentId the ID of the comment to delete
+     * @return a success message wrapped in a BaseApiResponse
+     *
+     * @throws CommentNotFoundException if the comment is not found by ID
+     * @throws AccessDeniedException if the user is not the author of the comment
+     */
     BaseApiResponse<String> deleteComment(String username, Long commentId);
 
     /**

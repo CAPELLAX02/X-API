@@ -97,72 +97,128 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
 
+                        // Register User
                         .requestMatchers(HttpMethod.POST,  "/auth/register").permitAll()
+                        // Send Verification Email
                         .requestMatchers(HttpMethod.POST,  "/auth/email/verification/send").permitAll()
+                        // Resend Verification Email
                         .requestMatchers(HttpMethod.POST,  "/auth/email/verification/resend").permitAll()
+                        // Complete Email Verification
                         .requestMatchers(HttpMethod.PUT,   "/auth/verify").permitAll()
+                        // Set Phone Number
                         .requestMatchers(HttpMethod.PUT,   "/auth/phone").permitAll()
+                        // Change Phone Number
                         .requestMatchers(HttpMethod.PUT,   "/auth/update/phone").authenticated()
+                        // Set Password
                         .requestMatchers(HttpMethod.PUT,   "/auth/password").permitAll()
+                        // Send Password Recovery Email
                         .requestMatchers(HttpMethod.POST,  "/auth/email/password-recovery/send").permitAll()
+                        // Resend Password Recovery Email
                         .requestMatchers(HttpMethod.POST,  "/auth/email/password-recovery/resend").permitAll()
+                        // Recover Password
                         .requestMatchers(HttpMethod.PUT,   "/auth/recover-password").permitAll()
+                        // Change Password
                         .requestMatchers(HttpMethod.PUT,   "/auth/update/password").authenticated()
+                        // Login
                         .requestMatchers(HttpMethod.POST,  "/auth/login").permitAll()
+                        // Refresh Token
                         .requestMatchers(HttpMethod.POST,  "/auth/token/refresh").permitAll()
+                        // Logout
                         .requestMatchers(HttpMethod.POST,  "/auth/logout").authenticated()
 
+                        // Get Current User
                         .requestMatchers(HttpMethod.GET,   "/users/me").authenticated()
+                        // Set Nickname
                         .requestMatchers(HttpMethod.PUT,   "/users/me/nickname").authenticated()
+                        // Change Nickname
                         .requestMatchers(HttpMethod.PUT,   "/users/me/update/nickname").authenticated()
+                        // Get Users by Nickname
                         .requestMatchers(HttpMethod.GET,   "/users/nickname/{nickname}").permitAll()
+                        // Search Users by Nickname
                         .requestMatchers(HttpMethod.GET,   "/users/search").permitAll()
+                        // Update Biography
                         .requestMatchers(HttpMethod.PUT,   "/users/me/profile/bio").authenticated()
+                        // Update Location
                         .requestMatchers(HttpMethod.PUT,   "/users/me/profile/location").authenticated()
+                        // Update Website
                         .requestMatchers(HttpMethod.PUT,   "/users/me/profile/website").authenticated()
 
+                        // Get Privacy Settings
                         .requestMatchers(HttpMethod.GET,   "/users/me/privacy-settings").authenticated()
+                        // Update Privacy Settings
                         .requestMatchers(HttpMethod.PUT,   "/users/me/update/privacy-settings").authenticated()
 
+                        // Upload Profile Image
                         .requestMatchers(HttpMethod.POST,  "/users/image/upload/pp").authenticated()
+                        // Upload Banner Image
                         .requestMatchers(HttpMethod.POST,  "/users/image/upload/banner").authenticated()
 
+                        // Get All Followers
                         .requestMatchers(HttpMethod.GET,   "/users/me/followers").authenticated()
+                        // Get All Followings
                         .requestMatchers(HttpMethod.GET,   "/users/me/following").authenticated()
+                        // Follow User
                         .requestMatchers(HttpMethod.PUT,   "/users/me/follow/{username}").authenticated()
+                        // Unfollow User
                         .requestMatchers(HttpMethod.DELETE,"/users/me/unfollow/{username}").authenticated()
+                        // Is Following
                         .requestMatchers(HttpMethod.GET,   "/users/me/check/{username}").authenticated()
 
+                        // Create Post
                         .requestMatchers(HttpMethod.POST,  "/posts/create").authenticated()
+                        // Get Post by ID
                         .requestMatchers(HttpMethod.GET,   "/posts/{postId}").permitAll()
-                        .requestMatchers(HttpMethod.GET,   "/author/{username}").permitAll()
-                        .requestMatchers(HttpMethod.GET,   "/posts/create").authenticated()
+                        // Get Posts by Author
+                        .requestMatchers(HttpMethod.GET,   "/posts/author/{username}").permitAll()
+                        // Get Timeline
+                        .requestMatchers(HttpMethod.GET,   "/posts/timeline").authenticated()
+                        // Get User Post Count
                         .requestMatchers(HttpMethod.GET,   "/user/{username}/post-count").permitAll()
 
+                        // Like Post
                         .requestMatchers(HttpMethod.PUT,   "/posts/{postId}/like").authenticated()
+                        // Unlike Post
                         .requestMatchers(HttpMethod.DELETE,"/posts/{postId}/unlike").authenticated()
+                        // Get Post Like Count
                         .requestMatchers(HttpMethod.GET,   "/posts/{postId}/likes").permitAll()
 
+                        // Create Comment
                         .requestMatchers(HttpMethod.POST,  "/posts/{postId}/comments").authenticated()
-                        .requestMatchers(HttpMethod.PUT,   "/posts/{postId}/comments").authenticated()
-                        .requestMatchers(HttpMethod.DELETE,"/posts/{postId}/comments").authenticated()
+                        // Edit Comment
+                        .requestMatchers(HttpMethod.PUT,   "/posts/comments/{commentId}").authenticated()
+                        // Delete Comment
+                        .requestMatchers(HttpMethod.DELETE,"/posts/comments/{commentId}").authenticated()
+                        // Get Post Comments
                         .requestMatchers(HttpMethod.GET,   "/posts/{postId}/comments").permitAll()
 
+                        // Like Comment
                         .requestMatchers(HttpMethod.PUT,   "/comments/{commentId}/like").authenticated()
+                        // Unlike Comment
                         .requestMatchers(HttpMethod.DELETE,"/comments/{commentId}/unlike").authenticated()
+                        // Get Comment Like
                         .requestMatchers(HttpMethod.GET,   "/comments/{commentId}/like-count").permitAll()
 
+                        // Repost Post
                         .requestMatchers(HttpMethod.POST,  "/posts/{postId}/repost").authenticated()
+                        // Undo Post Repost
                         .requestMatchers(HttpMethod.DELETE,"/posts/{postId}/repost/undo").authenticated()
+                        // Get Post Repost Count
                         .requestMatchers(HttpMethod.GET,   "/posts/{postId}/count-repost").permitAll()
+                        // Has Post Reposted
                         .requestMatchers(HttpMethod.GET,   "/posts/{postId}/repost/status").authenticated()
 
+                        // Bookmark Post
                         .requestMatchers(HttpMethod.POST,  "/posts/{postId}/bookmark").authenticated()
+                        // Remove Post Bookmark
                         .requestMatchers(HttpMethod.DELETE,"/posts/{postId}/bookmark").authenticated()
+                        // Has User Bookmarked
                         .requestMatchers(HttpMethod.GET,   "/posts/{postId}/bookmark/status").authenticated()
+                        // Get Post Bookmark Count
                         .requestMatchers(HttpMethod.GET,   "/posts/{postId}/bookmark/count").permitAll()
 
+                        // Vote in to Poll
                         .requestMatchers(HttpMethod.POST,  "/posts/{postId}/poll/vote").authenticated()
+                        // Revoke Vote Poll
                         .requestMatchers(HttpMethod.DELETE,"/posts/{postId}/poll/revoke").authenticated()
 
                         .anyRequest().denyAll()
