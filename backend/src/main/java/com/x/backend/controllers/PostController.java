@@ -5,6 +5,7 @@ import com.x.backend.dto.post.response.PostResponse;
 import com.x.backend.models.entities.ApplicationUser;
 import com.x.backend.services.post.PostService;
 import com.x.backend.utils.api.BaseApiResponse;
+import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,11 +26,10 @@ public class PostController {
 
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<BaseApiResponse<PostResponse>> createPost(
-            @RequestPart("post") CreatePostRequest req,
+            @Valid @RequestPart("post") CreatePostRequest req,
             @RequestPart(value = "postImages", required = false) List<MultipartFile> postImages,
             @AuthenticationPrincipal ApplicationUser user
     ) {
-        String username = user.getUsername();
         BaseApiResponse<PostResponse> res = postService.createPost(user.getUsername(), req, postImages);
         return ResponseEntity.status(res.getStatus()).body(res);
     }

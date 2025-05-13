@@ -7,31 +7,32 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record PostResponse(
-
         Long id,
-        String authorUsername,
-        String authorNickname,
-        String authorProfileImageUrl,
-
+        AuthorInfo author,
         String content,
         LocalDateTime createdAt,
         boolean isReply,
         Long replyToPostId,
-
-        int likeCount,
-        int commentCount,
-        int repostCount,
-        int bookmarkCount,
-        int viewCount,
-        boolean likedByCurrentUser,
-        boolean bookmarkedByCurrentUser,
-
+        Engagement engagement,
         List<String> mediaUrls,
-
         Audience audience,
         ReplyRestriction replyRestriction,
-
-        PollResponse poll // nullable
-
+        PollResponse poll
 ) {
+    public record AuthorInfo(
+            String username,
+            String nickname,
+            String profileImageUrl
+    ) {
+    }
+    public record Engagement(
+            int likeCount,
+            int commentCount,
+            int repostCount,
+            int bookmarkCount,
+            int viewCount,
+            boolean likedByCurrentUser,
+            boolean bookmarkedByCurrentUser
+    ) {
+    }
 }

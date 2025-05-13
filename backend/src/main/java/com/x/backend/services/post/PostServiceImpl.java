@@ -1,6 +1,7 @@
 package com.x.backend.services.post;
 
 import com.x.backend.dto.post.request.CreatePostRequest;
+import com.x.backend.dto.post.request.PostInteractionContext;
 import com.x.backend.dto.post.response.PostResponse;
 import com.x.backend.exceptions.image.MaxImageLimitExceededException;
 import com.x.backend.exceptions.post.PostNotFoundException;
@@ -47,6 +48,24 @@ public class PostServiceImpl implements PostService {
         this.postImageService = postImageService;
     }
 
+    private PostInteractionContext buildPostInteractionContext(Post post, ApplicationUser user) {
+        boolean liked = post.getLikes().stream().anyMatch(like -> like.getUser().equals(user));
+        boolean bookmarked = post.getBookmarks().contains(user);
+        boolean hasVoted = false;
+        int selectedIndex = -1;
+
+        if (post.getPoll() != null) {
+            List<PollVote> votes = post.getPoll().getVotes();
+            hasVoted = votes.stream().anyMatch(vote -> vote.getUser().equals(user));
+            selectedIndex = votes.stream()
+                    .filter(vote -> vote.getUser().equals(user))
+                    .findFirst()
+                    .map(vote -> post.getPoll().getOptions().indexOf(vote.getOption()))
+                    .orElse(-1);
+        }
+        return new PostInteractionContext(liked, bookmarked, hasVoted, selectedIndex);
+    }
+
     @Override
     public BaseApiResponse<PostResponse> createPost(
             String username,
@@ -73,13 +92,15 @@ public class PostServiceImpl implements PostService {
 
         Post savedPost = postRepository.save(post);
 
-        if (req.hasPoll() && req.pollOptions() != null && req.pollExpiryDate() != null) {
+        if (req.poll() != null) {
+            var pollReq = req.poll();
+
             Poll poll = new Poll();
             poll.setPost(post);
-            poll.setExpiresAt(req.pollExpiryDate());
+            poll.setExpiresAt(pollReq.pollExpiryDate());
 
             List<PollOption> options = new ArrayList<>();
-            for (String optionText : req.pollOptions()) {
+            for (String optionText : pollReq.pollOptions()) {
                 PollOption option = new PollOption();
                 option.setPoll(poll);
                 option.setOptionText(optionText);
@@ -93,7 +114,7 @@ public class PostServiceImpl implements PostService {
             pollOptionRepository.saveAll(options);
         }
 
-        PostResponse postResponse = postResponseBuilder.buildPostResponse(savedPost);
+        PostResponse postResponse = postResponseBuilder.build(savedPost, buildPostInteractionContext(savedPost, author));
         return BaseApiResponse.success(postResponse, "Post created successfully.");
     }
 
@@ -120,21 +141,25 @@ public class PostServiceImpl implements PostService {
                     throw new AccessDeniedException("Only mentioned users can view this post.");
                 }
             }
-            case EVERYONE -> {
-                // No restriction
-            }
-            default -> {
-                throw new AccessDeniedException("Unsupported audience: " + post.getAudience());
-            }
+            case EVERYONE -> { /* No restriction */ }
+            default -> throw new AccessDeniedException("Unsupported audience: " + post.getAudience());
         }
     }
 
     @Override
     public BaseApiResponse<PostResponse> getPostByIdWithAccessControl(Long postId, String currentUsername) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
-        ApplicationUser viewer = (currentUsername != null) ? userService.getUserByUsername(currentUsername) : null;
+        ApplicationUser viewer = (currentUsername != null)
+                ? userService.getUserByUsername(currentUsername)
+                : null;
+
         validatePostViewPermission(viewer, post);
-        PostResponse postResponse = postResponseBuilder.buildPostResponse(post);
+
+        PostInteractionContext ctx = (viewer != null)
+                ? buildPostInteractionContext(post, viewer)
+                : new PostInteractionContext(false, false, false, -1); // anonymous user
+
+        PostResponse postResponse = postResponseBuilder.build(post, ctx);
         return BaseApiResponse.success(postResponse, "Post retrieved successfully.");
     }
 
@@ -143,7 +168,7 @@ public class PostServiceImpl implements PostService {
         ApplicationUser authorUser = userService.getUserByUsername(author);
         List<Post> posts = postRepository.findAllByAuthorOrderByCreatedAtDesc(authorUser);
         List<PostResponse> postResponseList = posts.stream()
-                .map(postResponseBuilder::buildPostResponse)
+                .map(p -> postResponseBuilder.build(p, buildPostInteractionContext(p, authorUser)))
                 .toList();
 
         return BaseApiResponse.success(postResponseList, "Posts of author (" + author + ") retrieved successfully.");
@@ -157,7 +182,7 @@ public class PostServiceImpl implements PostService {
 
         List<Post> timelinePosts = postRepository.findAllByAuthorInOrderByCreatedAtDesc(followedUsers);
         List<PostResponse> responseList = timelinePosts.stream()
-                .map(postResponseBuilder::buildPostResponse)
+                .map(p -> postResponseBuilder.build(p, buildPostInteractionContext(p, user)))
                 .toList();
 
         return BaseApiResponse.success(responseList, "Post timeline retrieved successfully.");
