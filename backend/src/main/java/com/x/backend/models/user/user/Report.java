@@ -1,7 +1,7 @@
 package com.x.backend.models.user.user;
 
 import com.x.backend.models.post.comment.Comment;
-import com.x.backend.models.post.poll.Post;
+import com.x.backend.models.post.Post;
 import com.x.backend.models.user.user.enums.ReportStatus;
 import jakarta.persistence.*;
 

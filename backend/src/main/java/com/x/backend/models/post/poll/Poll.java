@@ -1,5 +1,6 @@
 package com.x.backend.models.post.poll;
 
+import com.x.backend.models.post.Post;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;

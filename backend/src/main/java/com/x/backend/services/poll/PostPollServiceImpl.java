@@ -7,7 +7,7 @@ import com.x.backend.models.user.user.ApplicationUser;
 import com.x.backend.models.post.poll.Poll;
 import com.x.backend.models.post.poll.PollOption;
 import com.x.backend.models.post.poll.PollVote;
-import com.x.backend.models.post.poll.Post;
+import com.x.backend.models.post.Post;
 import com.x.backend.repositories.PollRepository;
 import com.x.backend.repositories.PollVoteRepository;
 import com.x.backend.repositories.PostRepository;

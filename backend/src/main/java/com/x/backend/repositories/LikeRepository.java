@@ -2,7 +2,7 @@ package com.x.backend.repositories;
 
 import com.x.backend.models.user.user.ApplicationUser;
 import com.x.backend.models.post.Like;
-import com.x.backend.models.post.poll.Post;
+import com.x.backend.models.post.Post;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;

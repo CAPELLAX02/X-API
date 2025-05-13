@@ -1,7 +1,7 @@
 package com.x.backend.models.post.comment;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.x.backend.models.post.poll.Post;
+import com.x.backend.models.post.Post;
 import com.x.backend.models.user.user.ApplicationUser;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
