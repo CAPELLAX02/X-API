@@ -1,6 +1,8 @@
 package com.x.backend.exceptions.auth;
 
-public class ExpiredPasswordRecoveryCodeException extends RuntimeException {
+import com.x.backend.exceptions.CustomRuntimeException;
+
+public class ExpiredPasswordRecoveryCodeException extends CustomRuntimeException {
     public ExpiredPasswordRecoveryCodeException(String message) {
         super(message);
     }

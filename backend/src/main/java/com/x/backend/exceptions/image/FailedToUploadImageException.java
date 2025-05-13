@@ -1,6 +1,8 @@
 package com.x.backend.exceptions.image;
 
-public class FailedToUploadImageException extends RuntimeException {
+import com.x.backend.exceptions.CustomRuntimeException;
+
+public class FailedToUploadImageException extends CustomRuntimeException {
     public FailedToUploadImageException(String message) {
         super(message);
     }

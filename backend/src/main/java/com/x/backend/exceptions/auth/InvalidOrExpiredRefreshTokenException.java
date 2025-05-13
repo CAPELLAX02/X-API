@@ -1,10 +1,8 @@
 package com.x.backend.exceptions.auth;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import com.x.backend.exceptions.CustomRuntimeException;
 
-@ResponseStatus(HttpStatus.BAD_REQUEST)
-public class InvalidOrExpiredRefreshTokenException extends RuntimeException {
+public class InvalidOrExpiredRefreshTokenException extends CustomRuntimeException {
     public InvalidOrExpiredRefreshTokenException() {
         super("Invalid or expired refresh token");
     }

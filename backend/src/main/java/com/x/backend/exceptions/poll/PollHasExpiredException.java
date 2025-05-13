@@ -1,6 +1,8 @@
 package com.x.backend.exceptions.poll;
 
-public class PollHasExpiredException extends RuntimeException {
+import com.x.backend.exceptions.CustomRuntimeException;
+
+public class PollHasExpiredException extends CustomRuntimeException {
     public PollHasExpiredException() {
         super("This poll has expired.");
     }

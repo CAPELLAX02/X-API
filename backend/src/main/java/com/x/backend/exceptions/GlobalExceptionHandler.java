@@ -1,11 +1,6 @@
 package com.x.backend.exceptions;
 
 import com.x.backend.dto.user.response.UserResponse;
-import com.x.backend.exceptions.auth.*;
-import com.x.backend.exceptions.image.FailedToUploadImageException;
-import com.x.backend.exceptions.image.MaxImageLimitExceededException;
-import com.x.backend.exceptions.post.CommentHaveNotLikedException;
-import com.x.backend.exceptions.user.NicknameAlreadyInUseException;
 import com.x.backend.utils.api.BaseApiResponse;
 import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityNotFoundException;
@@ -31,74 +26,9 @@ import java.util.Objects;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-//    @ExceptionHandler(CommentHaveNotLikedException.class)
-//    public ResponseEntity<BaseApiResponse<String>> handleCommentHaveNotLikedException(CommentHaveNotLikedException e) {
-//        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseApiResponse.error(e.getMessage(), HttpStatus.BAD_REQUEST));
-//    }
-
     @ExceptionHandler(CustomRuntimeException.class)
     public ResponseEntity<BaseApiResponse<String>> handleCustomRuntimeException(CustomRuntimeException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseApiResponse.error(e.getMessage(), HttpStatus.BAD_REQUEST));
-    }
-
-    @ExceptionHandler(MaxImageLimitExceededException.class)
-    public ResponseEntity<BaseApiResponse<String>> handleMaxImageLimitExceededException(MaxImageLimitExceededException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseApiResponse.error(e.getMessage(), HttpStatus.BAD_REQUEST));
-    }
-
-    @ExceptionHandler(PasswordNotSetYetException.class)
-    public ResponseEntity<BaseApiResponse<String>> handlePasswordNotSetYetException(PasswordNotSetYetException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(BaseApiResponse.error(e.getMessage(), HttpStatus.UNAUTHORIZED));
-    }
-
-    @ExceptionHandler(FailedToUploadImageException.class)
-    public ResponseEntity<BaseApiResponse<String>> handleFailedToUploadImageException(FailedToUploadImageException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseApiResponse.error(e.getMessage(), HttpStatus.BAD_REQUEST));
-    }
-
-    @ExceptionHandler(NicknameAlreadyInUseException.class)
-    public ResponseEntity<BaseApiResponse<String>> nicknameAlreadyInUseException(NicknameAlreadyInUseException e) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(BaseApiResponse.error(e.getMessage(), HttpStatus.CONFLICT));
-    }
-
-    @ExceptionHandler(UserIsNotEnabledException.class)
-    public ResponseEntity<BaseApiResponse<String>> handleUserIsNotEnabledException(UserIsNotEnabledException ex) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(BaseApiResponse.error(ex.getMessage(), HttpStatus.UNAUTHORIZED));
-    }
-
-    @ExceptionHandler(InvalidLoginCredentialsException.class)
-    public ResponseEntity<BaseApiResponse<String>> handleInvalidLoginCredentialsException(InvalidLoginCredentialsException ex) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(BaseApiResponse.error(ex.getMessage(), HttpStatus.UNAUTHORIZED));
-    }
-
-    @ExceptionHandler(PasswordReusedException.class)
-    public ResponseEntity<BaseApiResponse<String>> handlePasswordReusedException(PasswordReusedException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(BaseApiResponse.error(ex.getMessage(), HttpStatus.CONFLICT));
-    }
-
-    @ExceptionHandler(PasswordDoesNotMatchException .class)
-    public ResponseEntity<BaseApiResponse<String>> handlePasswordDoesNotMatchException(PasswordDoesNotMatchException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseApiResponse.error(ex.getMessage(), HttpStatus.BAD_REQUEST));
-    }
-
-    @ExceptionHandler(ExpiredPasswordRecoveryCodeException.class)
-    public ResponseEntity<BaseApiResponse<String>> handleExpiredPasswordRecoveryCodeException(ExpiredPasswordRecoveryCodeException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseApiResponse.error(ex.getMessage(), HttpStatus.BAD_REQUEST));
-    }
-
-    @ExceptionHandler(InvalidPasswordRecoveryCodeException.class)
-    public ResponseEntity<BaseApiResponse<String>> handleInvalidPasswordRecoveryCodeException(InvalidPasswordRecoveryCodeException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseApiResponse.error(ex.getMessage(), HttpStatus.BAD_REQUEST));
-    }
-
-    @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<BaseApiResponse<String>> handleUsernameNotFoundException(UsernameNotFoundException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(BaseApiResponse.error("User not found with the provided username", HttpStatus.UNAUTHORIZED));
-    }
-
-    @ExceptionHandler(InvalidVerificationCodeException.class)
-    public ResponseEntity<BaseApiResponse<String>> invalidVerificationCodeException(InvalidVerificationCodeException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseApiResponse.error(ex.getMessage(), HttpStatus.BAD_REQUEST));
     }
 
     @ExceptionHandler(AlreadyExistsException.class)
@@ -109,6 +39,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<BaseApiResponse<String>> handleNotFoundException(NotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(BaseApiResponse.error(e.getMessage(), HttpStatus.NOT_FOUND));
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<BaseApiResponse<String>> handleUsernameNotFoundException(UsernameNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(BaseApiResponse.error("User not found with the provided username", HttpStatus.UNAUTHORIZED));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

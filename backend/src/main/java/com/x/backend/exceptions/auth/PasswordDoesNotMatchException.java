@@ -1,6 +1,8 @@
 package com.x.backend.exceptions.auth;
 
-public class PasswordDoesNotMatchException extends RuntimeException {
+import com.x.backend.exceptions.CustomRuntimeException;
+
+public class PasswordDoesNotMatchException extends CustomRuntimeException {
     public PasswordDoesNotMatchException(String message) {
         super(message);
     }

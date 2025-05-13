@@ -1,6 +1,8 @@
 package com.x.backend.exceptions.auth;
 
-public class PasswordReusedException extends RuntimeException {
+import com.x.backend.exceptions.CustomRuntimeException;
+
+public class PasswordReusedException extends CustomRuntimeException {
     public PasswordReusedException(String message) {
         super(message);
     }

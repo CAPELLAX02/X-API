@@ -1,6 +1,8 @@
 package com.x.backend.exceptions.user;
 
-public class NicknameAlreadyInUseException extends RuntimeException {
+import com.x.backend.exceptions.AlreadyExistsException;
+
+public class NicknameAlreadyInUseException extends AlreadyExistsException {
     public NicknameAlreadyInUseException(String nickname) {
         super("Nickname already in use: " + nickname);
     }
