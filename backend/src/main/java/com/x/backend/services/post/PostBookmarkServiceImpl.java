@@ -3,7 +3,7 @@ package com.x.backend.services.post;
 import com.x.backend.exceptions.post.PostAlreadyBookmarkedException;
 import com.x.backend.exceptions.post.PostHaveNotBookmarkedException;
 import com.x.backend.exceptions.post.PostNotFoundException;
-import com.x.backend.models.user.user.ApplicationUser;
+import com.x.backend.models.user.ApplicationUser;
 import com.x.backend.models.post.Post;
 import com.x.backend.repositories.PostRepository;
 import com.x.backend.services.user.UserService;

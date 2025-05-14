@@ -1,4 +1,4 @@
-package com.x.backend.models.user.user;
+package com.x.backend.models.user;
 
 import com.x.backend.models.user.auth.enums.PrivacyLevel;
 import jakarta.persistence.*;

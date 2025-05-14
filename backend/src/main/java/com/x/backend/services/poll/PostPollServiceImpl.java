@@ -3,7 +3,7 @@ package com.x.backend.services.poll;
 import com.x.backend.dto.poll.request.PollVoteRequest;
 import com.x.backend.exceptions.poll.*;
 import com.x.backend.exceptions.post.PostNotFoundException;
-import com.x.backend.models.user.user.ApplicationUser;
+import com.x.backend.models.user.ApplicationUser;
 import com.x.backend.models.post.poll.Poll;
 import com.x.backend.models.post.poll.PollOption;
 import com.x.backend.models.post.poll.PollVote;

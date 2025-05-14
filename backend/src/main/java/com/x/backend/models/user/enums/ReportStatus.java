@@ -1,4 +1,4 @@
-package com.x.backend.models.user.user.enums;
+package com.x.backend.models.user.enums;
 
 public enum ReportStatus {
 

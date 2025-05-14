@@ -27,15 +27,16 @@ public interface PostSubCommentService {
     /**
      * Creates a new subcomment under a given parent comment.
      *
-     * @param username the username of the subcomment author
-     * @param postId   the post to which the parent comment belongs
-     * @param req      the request payload containing content and parent comment ID
+     * @param username   the username of the subcomment author
+     * @param postId     the post to which the parent comment belongs
+     * @param commentId  the parent comment ID
+     * @param req        the request payload containing content
      * @return a response containing the created subcomment
      * @throws CommentNotFoundException if the parent comment does not exist
      * @throws PostNotFoundException if the post does not exist
      * @throws AccessDeniedException if the user is not allowed to reply
      */
-    BaseApiResponse<SubCommentResponse> createSubComment(String username, Long postId, CreateSubCommentRequest req);
+    BaseApiResponse<SubCommentResponse> createSubComment(String username, Long postId, Long commentId, CreateSubCommentRequest req);
 
     /**
      * Edits an existing subcomment.

@@ -1,6 +1,6 @@
 package com.x.backend.services.token.filter;
 
-import com.x.backend.models.user.user.ApplicationUser;
+import com.x.backend.models.user.ApplicationUser;
 import com.x.backend.repositories.ValidAccessTokenRepository;
 import com.x.backend.services.token.JwtService;
 import com.x.backend.services.user.UserServiceImpl;

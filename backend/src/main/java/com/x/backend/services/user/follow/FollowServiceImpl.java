@@ -1,7 +1,7 @@
 package com.x.backend.services.user.follow;
 
 import com.x.backend.dto.user.response.UserResponse;
-import com.x.backend.models.user.user.ApplicationUser;
+import com.x.backend.models.user.ApplicationUser;
 import com.x.backend.repositories.ApplicationUserRepository;
 import com.x.backend.services.user.UserService;
 import com.x.backend.utils.api.BaseApiResponse;

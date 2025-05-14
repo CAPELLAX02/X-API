@@ -3,7 +3,7 @@ package com.x.backend.controllers;
 import com.x.backend.dto.user.request.*;
 import com.x.backend.dto.user.response.PrivacySettingsResponse;
 import com.x.backend.dto.user.response.UserResponse;
-import com.x.backend.models.user.user.ApplicationUser;
+import com.x.backend.models.user.ApplicationUser;
 import com.x.backend.services.user.UserService;
 import com.x.backend.services.user.follow.FollowService;
 import com.x.backend.services.user.privacy.PrivacySettingsService;

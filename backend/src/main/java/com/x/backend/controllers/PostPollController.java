@@ -1,7 +1,7 @@
 package com.x.backend.controllers;
 
 import com.x.backend.dto.poll.request.PollVoteRequest;
-import com.x.backend.models.user.user.ApplicationUser;
+import com.x.backend.models.user.ApplicationUser;
 import com.x.backend.services.poll.PostPollService;
 import com.x.backend.utils.api.BaseApiResponse;
 import jakarta.validation.Valid;

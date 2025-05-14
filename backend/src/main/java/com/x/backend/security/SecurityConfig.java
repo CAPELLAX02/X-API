@@ -184,12 +184,18 @@ public class SecurityConfig {
 
                         // Create Comment
                         .requestMatchers(HttpMethod.POST,  "/posts/{postId}/comments").authenticated()
-                        // Edit Comment
-                        .requestMatchers(HttpMethod.PUT,   "/posts/comments/{commentId}").authenticated()
-                        // Delete Comment
-                        .requestMatchers(HttpMethod.DELETE,"/posts/comments/{commentId}").authenticated()
                         // Get Post Comments
                         .requestMatchers(HttpMethod.GET,   "/posts/{postId}/comments").permitAll()
+                        // Edit Comment
+                        .requestMatchers(HttpMethod.PUT,   "/comments/{commentId}").authenticated()
+                        // Delete Comment
+                        .requestMatchers(HttpMethod.DELETE,"/comments/{commentId}").authenticated()
+                        // Create Sub-Comment
+                        .requestMatchers(HttpMethod.POST,  "/posts/{postId}/comments/{commentId}/replies").authenticated()
+                        // Edit Sub-Comment
+                        .requestMatchers(HttpMethod.PUT,   "/sub-comments/{subCommentId}").authenticated()
+                        // Delete Sub-Comment
+                        .requestMatchers(HttpMethod.DELETE,"/sub-comments/{subCommentId}").authenticated()
 
                         // Like Comment
                         .requestMatchers(HttpMethod.PUT,   "/comments/{commentId}/like").authenticated()

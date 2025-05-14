@@ -6,7 +6,7 @@ import com.x.backend.dto.post.response.PostResponse;
 import com.x.backend.exceptions.image.MaxImageLimitExceededException;
 import com.x.backend.exceptions.post.PostNotFoundException;
 import com.x.backend.models.image.Image;
-import com.x.backend.models.user.user.ApplicationUser;
+import com.x.backend.models.user.ApplicationUser;
 import com.x.backend.models.post.poll.Poll;
 import com.x.backend.models.post.poll.PollOption;
 import com.x.backend.models.post.poll.PollVote;

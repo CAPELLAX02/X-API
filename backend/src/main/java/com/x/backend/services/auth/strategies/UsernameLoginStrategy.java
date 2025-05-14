@@ -3,7 +3,7 @@ package com.x.backend.services.auth.strategies;
 import com.x.backend.dto.auth.request.LoginRequest;
 import com.x.backend.exceptions.auth.InvalidLoginCredentialsException;
 import com.x.backend.exceptions.auth.PasswordNotSetYetException;
-import com.x.backend.models.user.user.ApplicationUser;
+import com.x.backend.models.user.ApplicationUser;
 import com.x.backend.repositories.ApplicationUserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

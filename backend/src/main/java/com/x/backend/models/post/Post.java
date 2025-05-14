@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.x.backend.models.post.comment.Comment;
 import com.x.backend.models.image.Image;
 import com.x.backend.models.post.poll.Poll;
-import com.x.backend.models.user.user.ApplicationUser;
+import com.x.backend.models.user.ApplicationUser;
 import com.x.backend.models.post.enums.Audience;
 import com.x.backend.models.post.enums.ReplyRestriction;
 import jakarta.persistence.*;

@@ -4,7 +4,7 @@ import com.x.backend.dto.user.response.UserResponse;
 import com.x.backend.dto.user.request.ChangeNicknameRequest;
 import com.x.backend.dto.user.request.SetNicknameRequest;
 import com.x.backend.exceptions.user.NicknameAlreadyInUseException;
-import com.x.backend.models.user.user.ApplicationUser;
+import com.x.backend.models.user.ApplicationUser;
 import com.x.backend.repositories.ApplicationUserRepository;
 import com.x.backend.utils.api.BaseApiResponse;
 import com.x.backend.utils.builder.UserResponseBuilder;

@@ -3,7 +3,7 @@ package com.x.backend.services.like;
 import com.x.backend.exceptions.post.PostAlreadyLikedException;
 import com.x.backend.exceptions.post.PostHaveNotLikedException;
 import com.x.backend.exceptions.post.PostNotFoundException;
-import com.x.backend.models.user.user.ApplicationUser;
+import com.x.backend.models.user.ApplicationUser;
 import com.x.backend.models.post.Like;
 import com.x.backend.models.post.Post;
 import com.x.backend.repositories.LikeRepository;

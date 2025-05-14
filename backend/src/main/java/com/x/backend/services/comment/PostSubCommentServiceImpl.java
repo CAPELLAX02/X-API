@@ -8,7 +8,7 @@ import com.x.backend.exceptions.post.PostNotFoundException;
 import com.x.backend.models.post.Post;
 import com.x.backend.models.post.comment.Comment;
 import com.x.backend.models.post.comment.SubComment;
-import com.x.backend.models.user.user.ApplicationUser;
+import com.x.backend.models.user.ApplicationUser;
 import com.x.backend.repositories.CommentRepository;
 import com.x.backend.repositories.PostRepository;
 import com.x.backend.repositories.SubCommentRepository;
@@ -47,10 +47,10 @@ public class PostSubCommentServiceImpl implements PostSubCommentService {
     }
 
     @Override
-    public BaseApiResponse<SubCommentResponse> createSubComment(String username, Long postId, CreateSubCommentRequest req) {
+    public BaseApiResponse<SubCommentResponse> createSubComment(String username, Long postId, Long parentCommentId, CreateSubCommentRequest req) {
         ApplicationUser subCommentAuthor = userService.getUserByUsername(username);
         Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
-        Comment parentComment = commentRepository.findById(req.parentCommentId()).orElseThrow(() -> new CommentNotFoundException(req.parentCommentId()));
+        Comment parentComment = commentRepository.findById(parentCommentId).orElseThrow(() -> new CommentNotFoundException(parentCommentId));
 
         validateReplyPermission(subCommentAuthor, post);
 

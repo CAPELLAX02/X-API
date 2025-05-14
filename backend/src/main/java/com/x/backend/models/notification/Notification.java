@@ -1,7 +1,7 @@
 package com.x.backend.models.notification;
 
 import com.x.backend.models.notification.enums.NotificationType;
-import com.x.backend.models.user.user.ApplicationUser;
+import com.x.backend.models.user.ApplicationUser;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 

@@ -1,8 +1,8 @@
-package com.x.backend.models.user.user;
+package com.x.backend.models.user;
 
 import com.x.backend.models.post.comment.Comment;
 import com.x.backend.models.post.Post;
-import com.x.backend.models.user.user.enums.ReportStatus;
+import com.x.backend.models.user.enums.ReportStatus;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;

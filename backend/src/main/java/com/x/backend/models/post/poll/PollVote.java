@@ -1,6 +1,6 @@
 package com.x.backend.models.post.poll;
 
-import com.x.backend.models.user.user.ApplicationUser;
+import com.x.backend.models.user.ApplicationUser;
 import jakarta.persistence.*;
 
 @Entity

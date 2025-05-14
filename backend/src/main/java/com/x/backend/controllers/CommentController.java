@@ -1,6 +1,6 @@
 package com.x.backend.controllers;
 
-import com.x.backend.dto.comment.request.CreateCommentRequest;
+import com.x.backend.dto.comment.request.EditCommentRequest;
 import com.x.backend.dto.comment.response.CommentResponse;
 import com.x.backend.models.user.ApplicationUser;
 import com.x.backend.services.comment.PostCommentService;
@@ -11,32 +11,34 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/posts/{postId}/comments")
-public class PostCommentController {
+@RequestMapping("/comments")
+public class CommentController {
 
     private final PostCommentService postCommentService;
 
-    public PostCommentController(PostCommentService postCommentService) {
+    public CommentController(PostCommentService postCommentService) {
         this.postCommentService = postCommentService;
     }
 
-    @PostMapping
+    @PutMapping("/{commentId}")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<BaseApiResponse<CommentResponse>> createComment(
-            @PathVariable Long postId,
-            @Valid @RequestBody CreateCommentRequest req,
+    public ResponseEntity<BaseApiResponse<CommentResponse>> editComment(
+            @PathVariable Long commentId,
+            @Valid @RequestBody EditCommentRequest req,
             @AuthenticationPrincipal ApplicationUser user
     ) {
-        BaseApiResponse<CommentResponse> res = postCommentService.createComment(user.getUsername(), postId, req);
+        BaseApiResponse<CommentResponse> res = postCommentService.editComment(user.getUsername(), commentId, req);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    @GetMapping
-    public ResponseEntity<BaseApiResponse<List<CommentResponse>>> getCommentsByPost(@PathVariable Long postId) {
-        BaseApiResponse<List<CommentResponse>> res = postCommentService.getCommentsByPost(postId);
+    @DeleteMapping("/{commentId}")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<BaseApiResponse<String>> deleteComment(
+            @PathVariable Long commentId,
+            @AuthenticationPrincipal ApplicationUser user
+    ) {
+        BaseApiResponse<String> res = postCommentService.deleteComment(user.getUsername(), commentId);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 

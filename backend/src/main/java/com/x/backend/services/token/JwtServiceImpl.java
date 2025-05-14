@@ -1,6 +1,6 @@
 package com.x.backend.services.token;
 
-import com.x.backend.models.user.user.ApplicationUser;
+import com.x.backend.models.user.ApplicationUser;
 import com.x.backend.security.rsa.RSAKeyProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;

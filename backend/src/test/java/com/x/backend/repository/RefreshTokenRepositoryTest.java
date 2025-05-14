@@ -1,7 +1,7 @@
 package com.x.backend.repository;
 
 import com.x.backend.AbstractPostgreSQLTestContainer;
-import com.x.backend.models.user.user.ApplicationUser;
+import com.x.backend.models.user.ApplicationUser;
 import com.x.backend.models.user.auth.RefreshToken;
 import com.x.backend.repositories.ApplicationUserRepository;
 import com.x.backend.repositories.RefreshTokenRepository;

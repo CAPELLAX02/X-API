@@ -1,7 +1,7 @@
 package com.x.backend.models.post;
 
 import com.x.backend.models.post.comment.Comment;
-import com.x.backend.models.user.user.ApplicationUser;
+import com.x.backend.models.user.ApplicationUser;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 

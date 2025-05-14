@@ -1,7 +1,7 @@
 package com.x.backend.utils.builder;
 
 import com.x.backend.dto.user.response.UserResponse;
-import com.x.backend.models.user.user.ApplicationUser;
+import com.x.backend.models.user.ApplicationUser;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

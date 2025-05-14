@@ -3,7 +3,7 @@ package com.x.backend.services.like;
 import com.x.backend.exceptions.post.CommentAlreadyLikedException;
 import com.x.backend.exceptions.post.CommentHaveNotLikedException;
 import com.x.backend.exceptions.post.CommentNotFoundException;
-import com.x.backend.models.user.user.ApplicationUser;
+import com.x.backend.models.user.ApplicationUser;
 import com.x.backend.models.post.comment.Comment;
 import com.x.backend.repositories.CommentRepository;
 import com.x.backend.services.user.UserService;

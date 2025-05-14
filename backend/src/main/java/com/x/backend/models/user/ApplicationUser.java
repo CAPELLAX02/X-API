@@ -1,4 +1,4 @@
-package com.x.backend.models.user.user;
+package com.x.backend.models.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.x.backend.models.image.Image;

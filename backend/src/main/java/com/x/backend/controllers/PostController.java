@@ -2,7 +2,7 @@ package com.x.backend.controllers;
 
 import com.x.backend.dto.post.request.CreatePostRequest;
 import com.x.backend.dto.post.response.PostResponse;
-import com.x.backend.models.user.user.ApplicationUser;
+import com.x.backend.models.user.ApplicationUser;
 import com.x.backend.services.post.PostService;
 import com.x.backend.utils.api.BaseApiResponse;
 import jakarta.validation.Valid;
