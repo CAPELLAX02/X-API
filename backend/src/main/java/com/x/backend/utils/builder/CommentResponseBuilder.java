@@ -1,43 +1,45 @@
 package com.x.backend.utils.builder;
 
 import com.x.backend.dto.comment.response.CommentResponse;
+import com.x.backend.dto.comment.response.SubCommentResponse;
 import com.x.backend.models.post.comment.Comment;
+import com.x.backend.models.post.comment.SubComment;
 import org.springframework.stereotype.Component;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Component
 public class CommentResponseBuilder {
 
-    public CommentResponse buildCommentResponse(Comment comment) {
-        return new CommentResponse(
-                comment.getId(),
-                comment.getContent(),
-                comment.getAuthor().getUsername(),
-                comment.getParentComment() != null ? comment.getParentComment().getId() : null,
-                comment.getLikes().size(),
-                comment.getCreatedAt(),
-                List.of()
-        );
+    private final SubCommentResponseBuilder subCommentResponseBuilder;
+
+    public CommentResponseBuilder(SubCommentResponseBuilder subCommentResponseBuilder) {
+        this.subCommentResponseBuilder = subCommentResponseBuilder;
     }
 
-    public CommentResponse buildCommentResponse(Comment comment, Map<Long, List<Comment>> groupedReplies) {
-        List<CommentResponse> replies = Optional.ofNullable(groupedReplies.get(comment.getId()))
-                .orElse(List.of())
+    public CommentResponse build(Comment comment) {
+        return build(comment, null);
+    }
+
+    public CommentResponse build(Comment comment, Map<Long, List<SubComment>> subCommentsMap) {
+        List<SubCommentResponse> subCommentsList = comment.getSubComments()
                 .stream()
-                .map(c -> buildCommentResponse(c, groupedReplies))
+                .sorted(Comparator.comparing(SubComment::getCreatedAt))
+                .map(subCommentResponseBuilder::build)
                 .toList();
 
         return new CommentResponse(
                 comment.getId(),
-                comment.getContent(),
                 comment.getAuthor().getUsername(),
-                comment.getParentComment() != null ? comment.getParentComment().getId() : null,
+                comment.getAuthor().getNickname(),
+                comment.getContent(),
                 comment.getLikes().size(),
+                subCommentsList,
+                comment.isDeleted(),
                 comment.getCreatedAt(),
-                replies
+                comment.getEditedAt()
         );
     }
 
