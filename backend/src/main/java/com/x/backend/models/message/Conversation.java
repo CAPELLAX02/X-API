@@ -43,7 +43,7 @@ public class Conversation {
     @Column(name = "is_group_chat", nullable = false)
     private boolean isGroupChat = false;
 
-    @Column(name = "group_name", nullable = false)
+    @Column(name = "group_name")
     private String groupName;
 
     @CreationTimestamp
@@ -55,14 +55,13 @@ public class Conversation {
 
     public Conversation() {}
 
-    public Conversation(
-            Long id,
-            Set<ApplicationUser> participants,
-            Set<Message> messages,
-            boolean isGroupChat,
-            String groupName,
-            LocalDateTime createdAt,
-            LocalDateTime lastMessageSentAt
+    public Conversation(Long id,
+                        Set<ApplicationUser> participants,
+                        Set<Message> messages,
+                        boolean isGroupChat,
+                        String groupName,
+                        LocalDateTime createdAt,
+                        LocalDateTime lastMessageSentAt
     ) {
         this.id = id;
         this.participants = participants;

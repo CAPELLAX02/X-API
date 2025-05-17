@@ -12,9 +12,9 @@ import java.time.LocalDateTime;
 @Table(
         name = "messages",
         indexes = {
-                @Index(name = "idx_message_", columnList = "conversation_id"),
-                @Index(name = "idx_message_", columnList = "sender_id"),
-                @Index(name = "idx_message_", columnList = "is_read")
+                @Index(name = "idx_message_conversation", columnList = "conversation_id"),
+                @Index(name = "idx_message_sender", columnList = "sender_id"),
+                @Index(name = "idx_message_read", columnList = "is_read")
         }
 )
 public class Message {
@@ -32,7 +32,7 @@ public class Message {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender_id", nullable = false)
     @JsonIgnore
-    private ApplicationUser user;
+    private ApplicationUser sender;
 
     @Column(name = "content", length = 2000)
     private String content;
@@ -61,21 +61,20 @@ public class Message {
 
     public Message() {}
 
-    public Message(
-            Long id,
-            Conversation conversation,
-            ApplicationUser user,
-            String content,
-            Image mediaAttachment,
-            boolean isRead,
-            boolean isDeletedForSender,
-            boolean isDeletedForReceiver,
-            Message replyTo,
-            LocalDateTime sentAt
+    public Message(Long id,
+                   Conversation conversation,
+                   ApplicationUser sender,
+                   String content,
+                   Image mediaAttachment,
+                   boolean isRead,
+                   boolean isDeletedForSender,
+                   boolean isDeletedForReceiver,
+                   Message replyTo,
+                   LocalDateTime sentAt
     ) {
         this.id = id;
         this.conversation = conversation;
-        this.user = user;
+        this.sender = sender;
         this.content = content;
         this.mediaAttachment = mediaAttachment;
         this.isRead = isRead;
@@ -101,12 +100,12 @@ public class Message {
         this.conversation = conversation;
     }
 
-    public ApplicationUser getUser() {
-        return user;
+    public ApplicationUser getSender() {
+        return sender;
     }
 
-    public void setUser(ApplicationUser user) {
-        this.user = user;
+    public void setSender(ApplicationUser sender) {
+        this.sender = sender;
     }
 
     public String getContent() {

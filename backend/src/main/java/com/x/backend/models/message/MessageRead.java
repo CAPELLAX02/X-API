@@ -9,14 +9,8 @@ import java.time.LocalDateTime;
 @Table(
         name = "message_reads",
         indexes = {
-                @Index(
-                        name = "idx_message_read_user",
-                        columnList = "user_id"
-                ),
-                @Index(
-                        name = "idx_message_read_message",
-                        columnList = "message_id"
-                )
+                @Index(name = "idx_message_read_user", columnList = "user_id"),
+                @Index(name = "idx_message_read_message", columnList = "message_id")
         },
         uniqueConstraints = {
                 @UniqueConstraint(
@@ -48,7 +42,11 @@ public class MessageRead {
 
     public MessageRead() {}
 
-    public MessageRead(Long id, ApplicationUser user, Message message, LocalDateTime readAt) {
+    public MessageRead(Long id,
+                       ApplicationUser user,
+                       Message message,
+                       LocalDateTime readAt
+    ) {
         this.id = id;
         this.user = user;
         this.message = message;
