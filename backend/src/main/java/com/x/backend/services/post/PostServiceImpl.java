@@ -43,8 +43,8 @@ public class PostServiceImpl implements PostService {
             PollRepository pollRepository,
             UserService userService,
             PostResponseBuilder postResponseBuilder,
-            PostImageService postImageService)
-    {
+            PostImageService postImageService
+    ) {
         this.postRepository = postRepository;
         this.pollOptionRepository = pollOptionRepository;
         this.pollRepository = pollRepository;
@@ -85,6 +85,15 @@ public class PostServiceImpl implements PostService {
         post.setAudience(req.audience());
         post.setReplyRestriction(req.replyRestriction());
         post.setScheduledDate(req.scheduledDate());
+
+        if (req.replyToPostId() != null) {
+            Post parentPost = postRepository.findById(req.replyToPostId()).orElseThrow(() -> new PostNotFoundException(req.replyToPostId()));
+
+            validatePostViewPermission(author, parentPost);
+
+            post.setReplyTo(parentPost);
+            post.setReply(true);
+        }
 
         if (postImages != null && !postImages.isEmpty()) {
             List<Image> uploadedImages = postImageService.uploadPostImages(postImages);

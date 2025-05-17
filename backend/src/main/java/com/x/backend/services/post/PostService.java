@@ -27,6 +27,7 @@ public interface PostService {
      *                     - {@code content}: textual content of the post
      *                     - {@code audience}: visibility level (e.g., public, followers only)
      *                     - {@code replyRestriction}: who can reply
+     *                     - {@code replyToPostId}: (optional) decides if the post is a reply post to another post
      *                     - {@code pollOptions} (optional): list of poll choices if a poll is included
      *                     - {@code pollExpiryDate} (optional): when the poll expires
      *                     - {@code scheduledDate} (optional): for scheduling future posts

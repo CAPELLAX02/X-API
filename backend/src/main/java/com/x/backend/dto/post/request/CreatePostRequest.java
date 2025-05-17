@@ -24,7 +24,10 @@ public record CreatePostRequest(
         LocalDateTime scheduledDate,
 
         @Nullable
-        PollRequest poll
+        PollRequest poll, // if null, then no poll
+
+        @Nullable
+        Long replyToPostId // if null, then it's not a reply post
 
 ) {
         public record PollRequest(
