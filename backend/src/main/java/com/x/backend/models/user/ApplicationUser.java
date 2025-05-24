@@ -10,6 +10,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.security.auth.Subject;
+import java.security.Principal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -31,7 +33,7 @@ import java.util.Set;
                 @UniqueConstraint(name = "uq_nickname", columnNames = "nickname")
         }
 )
-public class ApplicationUser implements UserDetails {
+public class ApplicationUser implements UserDetails, Principal {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -408,4 +410,10 @@ public class ApplicationUser implements UserDetails {
     public void setPasswordRecoveryCodeExpiry(Instant passwordRecoveryCodeExpiry) {
         this.passwordRecoveryCodeExpiry = passwordRecoveryCodeExpiry;
     }
+
+    @Override
+    public String getName() {
+        return username;
+    }
+
 }

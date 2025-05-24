@@ -9,10 +9,17 @@ import java.util.List;
 @Repository
 public interface MessageRepository extends BaseRepository<Message, Long> {
 
-    List<Message> findByConversationIdOrderBySentAtDesc(Long conversationId);
+    @Query("""
+        SELECT m FROM Message m
+        WHERE m.conversation.id = :conversationId
+          AND (m.sender.id = :userId OR m.recipient.id = :userId)
+        ORDER BY m.sentAt DESC
+    """)
+    List<Message> findMessagesInConversationByUser(Long conversationId, Long userId);
 
-    @Query("SELECT COUNT(m) FROM Message m WHERE m.conversation.id = :conversationId AND m.user.id <> :userId AND m.isRead = false")
-    long countUnreadMessages(Long conversationId, Long userId);
+    List<Message> findByConversationIdOrderBySentAtAsc(Long conversationId);
 
-    List<Message> findByUserIdAndConversationIdOrderBySentAtDesc(Long userId, Long conversationId);
+    long countByConversationIdAndRecipientIdAndIsReadFalse(Long conversationId, Long recipientId);
+
+    List<Message> findByRecipientIdAndIsReadFalse(Long recipientId);
 }

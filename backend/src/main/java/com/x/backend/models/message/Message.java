@@ -34,6 +34,11 @@ public class Message {
     @JsonIgnore
     private ApplicationUser sender;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "recipient", nullable = false)
+    @JsonIgnore
+    private ApplicationUser recipient;
+
     @Column(name = "content", length = 2000)
     private String content;
 
@@ -64,6 +69,7 @@ public class Message {
     public Message(Long id,
                    Conversation conversation,
                    ApplicationUser sender,
+                   ApplicationUser recipient,
                    String content,
                    Image mediaAttachment,
                    boolean isRead,
@@ -75,6 +81,7 @@ public class Message {
         this.id = id;
         this.conversation = conversation;
         this.sender = sender;
+        this.recipient = recipient;
         this.content = content;
         this.mediaAttachment = mediaAttachment;
         this.isRead = isRead;
@@ -106,6 +113,14 @@ public class Message {
 
     public void setSender(ApplicationUser sender) {
         this.sender = sender;
+    }
+
+    public ApplicationUser getRecipient() {
+        return recipient;
+    }
+
+    public void setRecipient(ApplicationUser recipient) {
+        this.recipient = recipient;
     }
 
     public String getContent() {

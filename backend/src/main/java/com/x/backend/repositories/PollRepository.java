@@ -17,4 +17,5 @@ public interface PollRepository extends BaseRepository<Poll, Long> {
 
     @Query("SELECT p FROM Poll p JOIN p.votes v GROUP BY p ORDER BY COUNT(v) DESC")
     List<Poll> findMostVotedPolls();
+
 }

@@ -227,6 +227,9 @@ public class SecurityConfig {
                         // Revoke Vote Poll
                         .requestMatchers(HttpMethod.DELETE,"/posts/{postId}/poll/revoke").authenticated()
 
+                        // WebSocket Connection Permission
+                        .requestMatchers("/ws/**").permitAll()
+
                         .anyRequest().denyAll()
                 )
                 .exceptionHandling(exception -> exception
