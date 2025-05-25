@@ -40,11 +40,9 @@
     <input type="text" id="token" placeholder="JWT Token">
     <button onclick="connect()">Connect</button>
     <p id="status">Not connected</p>
-
     <input type="text" id="recipient" placeholder="Recipient ID">
     <textarea id="content" placeholder="Message content"></textarea>
     <button onclick="sendMessage()">Send Message</button>
-
     <div id="log"></div>
 </div>
 
@@ -65,41 +63,55 @@
             { Authorization: "Bearer " + token },
             function (frame) {
                 document.getElementById("status").textContent = "✅ Connected";
-                log("CONNECTED: " + frame.headers["user-name"]);
+                log("CONNECTED HEADERS: " + JSON.stringify(frame.headers));
+                log("CONNECTED USER: " + frame.headers['user-name']);
 
                 stompClient.subscribe("/user/queue/ack", function (msg) {
-                    log("Server response: " + msg.body);
+                    log("🔔 ACK: " + msg.body);
+                });
+
+                stompClient.subscribe("/topic/errors", function (msg) {
+                    log("🚨 ERROR TOPIC: " + msg.body);
                 });
             },
             function (error) {
                 document.getElementById("status").textContent = "❌ Connection failed";
-                log("ERROR: " + error);
+                log("❌ CONNECT ERROR: " + JSON.stringify(error));
             }
         );
     }
 
     function sendMessage() {
         if (!stompClient || !stompClient.connected) {
-            alert("Bağlantı yok. Lütfen önce connect tuşuna bas.");
+            alert("Bağlantı yok. Lütfen önce bağlanın.");
             return;
         }
 
         const recipientId = document.getElementById("recipient").value.trim();
         const content = document.getElementById("content").value.trim();
 
+        if (!recipientId || !content) {
+            alert("Alıcı ve mesaj alanları boş olamaz.");
+            return;
+        }
+
         const body = {
             recipientId: Number(recipientId),
             content: content
         };
 
-        stompClient.send("/app/chat.send", {}, JSON.stringify(body));
-        log("Gönderildi: " + JSON.stringify(body));
+        try {
+            stompClient.send("/app/chat.send", {}, JSON.stringify(body));
+            log("📤 Sent: " + JSON.stringify(body));
+        } catch (e) {
+            log("❌ SEND ERROR: " + e.message);
+        }
     }
 
     function log(msg) {
         const logDiv = document.getElementById("log");
         const p = document.createElement("p");
-        p.textContent = msg;
+        p.textContent = new Date().toLocaleTimeString() + " | " + msg;
         logDiv.appendChild(p);
         logDiv.scrollTop = logDiv.scrollHeight;
     }

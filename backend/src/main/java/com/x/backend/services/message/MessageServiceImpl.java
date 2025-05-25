@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Service
@@ -44,23 +45,30 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public MessageResponse sendMessage(String senderUsername, SendMessageRequest req) {
-        // Determine the participants
-        ApplicationUser sender = applicationUserRepository.findByUsername(senderUsername).orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + senderUsername));
-        ApplicationUser recipient = applicationUserRepository.findById(req.recipientId()).orElseThrow(() -> new UserNotFoundByIdException(req.recipientId()));
+        ApplicationUser sender = applicationUserRepository.findByUsername(senderUsername)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + senderUsername));
+
+        ApplicationUser recipient = applicationUserRepository.findById(req.recipientId())
+                .orElseThrow(() -> new UserNotFoundByIdException(req.recipientId()));
 
         // Find or create conversation between participants
         Conversation conversation = conversationRepository.findDirectConversationBetween(sender.getId(), recipient.getId())
                 .orElseGet(() -> {
                     Conversation conv = new Conversation();
-                    conv.setParticipants(Set.of(sender, recipient));
+                    conv.setParticipants(new HashSet<>(Set.of(sender, recipient)));
+//                    conv.setGroupChat(false);
+//                    conv.setGroupName(null);
+                    // TODO: Handle the group chat conversation as a distinct logic
                     conv.setCreatedAt(LocalDateTime.now());
+                    conv.setLastMessageSentAt(LocalDateTime.now());
                     return conversationRepository.save(conv);
                 });
 
         // Optional replyTo
         Message replyTo = null;
         if (req.replyToMessageId() != null) {
-            replyTo = messageRepository.findById(req.replyToMessageId()).orElseThrow(() -> new MessageNotFoundException(req.replyToMessageId()));
+            replyTo = messageRepository.findById(req.replyToMessageId())
+                    .orElseThrow(() -> new MessageNotFoundException(req.replyToMessageId()));
         }
 
         // Create message
@@ -72,9 +80,17 @@ public class MessageServiceImpl implements MessageService {
         message.setReplyTo(replyTo);
         message.setSentAt(LocalDateTime.now());
 
+        message.setRead(false);
+        message.setDeletedForSender(false);
+        message.setDeletedForReceiver(false);
+//        message.setMediaAttachment(null);
+        // TODO: Handle the medias in messages later on.
+
+        messageRepository.save(message);
+
+        conversation.setLastMessageSentAt(message.getSentAt());
         conversationRepository.save(conversation);
 
-        // Prepare and send response
         MessageResponse messageResponse = messageResponseBuilder.build(message);
 
         messagingTemplate.convertAndSendToUser(
@@ -85,5 +101,6 @@ public class MessageServiceImpl implements MessageService {
 
         return messageResponse;
     }
+
 
 }

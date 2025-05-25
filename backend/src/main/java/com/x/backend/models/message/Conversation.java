@@ -44,7 +44,7 @@ public class Conversation {
     private boolean isGroupChat = false;
 
     @Column(name = "group_name")
-    private String groupName;
+    private String groupName = null;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
