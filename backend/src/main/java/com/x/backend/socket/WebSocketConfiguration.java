@@ -7,6 +7,21 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+/**
+ * Configures the WebSocket messaging infrastructure for STOMP-based communication.
+ *
+ * <p>This class registers the main WebSocket endpoint, sets up message broker routing,
+ * and applies authentication logic via a custom {@link WebSocketAuthChannelInterceptor}.
+ * It enables support for both application-specific and user-targeted message destinations.
+ * </p>
+ *
+ * <p>Key components:</p>
+ * <ul>
+ *     <li><b>STOMP endpoint:</b> exposed at <code>/ws</code> with SockJS fallback</li>
+ *     <li><b>App prefix:</b> messages from client are routed to <code>/app/**</code> methods</li>
+ *     <li><b>User destinations:</b> messages from server to a specific user are sent via <code>/user/**</code></li>
+ * </ul>
+ */
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer {
@@ -26,9 +41,12 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.setApplicationDestinationPrefixes("/app");                // Client -> Server
-        registry.enableSimpleBroker("/user", "/topic");  // Server -> Client
-        registry.setUserDestinationPrefix("/user");                        // User-specific
+        // Client -> Server
+        registry.setApplicationDestinationPrefixes("/app");
+        // Server -> Client
+        registry.enableSimpleBroker("/user", "/topic");
+        // User-specific
+        registry.setUserDestinationPrefix("/user");
     }
 
     @Override
