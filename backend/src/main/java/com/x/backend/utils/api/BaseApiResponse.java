@@ -3,6 +3,7 @@ package com.x.backend.utils.api;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.springframework.http.HttpStatus;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -14,21 +15,21 @@ public class BaseApiResponse<T> {
     private final String message;
     private T data;
     private Map<String, String> errors;
-    private final LocalDateTime timestamp;
+    private final Instant timestamp;
 
     public BaseApiResponse(T data, String message, HttpStatus status) {
         this.success = status.is2xxSuccessful();
         this.status = status;
         this.message = message;
         this.data = data;
-        this.timestamp = LocalDateTime.now();
+        this.timestamp = Instant.now();
     }
 
     public BaseApiResponse(String errorMessage, HttpStatus status) {
         this.success = false;
         this.status = status;
         this.message = errorMessage;
-        this.timestamp = LocalDateTime.now();
+        this.timestamp = Instant.now();
     }
 
     public BaseApiResponse(String errorMessage, HttpStatus status, Map<String, String> errors) {
@@ -36,7 +37,7 @@ public class BaseApiResponse<T> {
         this.status = status;
         this.message = errorMessage;
         this.errors = errors;
-        this.timestamp = LocalDateTime.now();
+        this.timestamp = Instant.now();
     }
 
     public static <T> BaseApiResponse<T> success(T data, String message, HttpStatus status) {
@@ -83,7 +84,7 @@ public class BaseApiResponse<T> {
         return errors;
     }
 
-    public LocalDateTime getTimestamp() {
+    public Instant getTimestamp() {
         return timestamp;
     }
 }
