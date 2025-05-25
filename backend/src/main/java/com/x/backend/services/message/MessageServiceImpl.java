@@ -6,16 +6,20 @@ import com.x.backend.exceptions.message.MessageNotFoundException;
 import com.x.backend.exceptions.user.UserNotFoundByIdException;
 import com.x.backend.models.message.Conversation;
 import com.x.backend.models.message.Message;
+import com.x.backend.models.message.MessageRead;
 import com.x.backend.models.user.ApplicationUser;
 import com.x.backend.repositories.ApplicationUserRepository;
 import com.x.backend.repositories.ConversationRepository;
+import com.x.backend.repositories.MessageReadRepository;
 import com.x.backend.repositories.MessageRepository;
 import com.x.backend.utils.builder.MessageResponseBuilder;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -27,18 +31,21 @@ public class MessageServiceImpl implements MessageService {
     private final ApplicationUserRepository applicationUserRepository;
     private final ConversationRepository conversationRepository;
     private final MessageRepository messageRepository;
+    private final MessageReadRepository messageReadRepository;
     private final SimpMessagingTemplate messagingTemplate;
     private final MessageResponseBuilder messageResponseBuilder;
 
     public MessageServiceImpl(ApplicationUserRepository applicationUserRepository,
                               ConversationRepository conversationRepository,
                               MessageRepository messageRepository,
+                              MessageReadRepository messageReadRepository,
                               SimpMessagingTemplate messagingTemplate,
                               MessageResponseBuilder messageResponseBuilder
     ) {
         this.applicationUserRepository = applicationUserRepository;
         this.conversationRepository = conversationRepository;
         this.messageRepository = messageRepository;
+        this.messageReadRepository = messageReadRepository;
         this.messagingTemplate = messagingTemplate;
         this.messageResponseBuilder = messageResponseBuilder;
     }
@@ -100,6 +107,35 @@ public class MessageServiceImpl implements MessageService {
         );
 
         return messageResponse;
+    }
+
+    @Override
+    public void markMessageAsRead(String username, Long messageId) {
+        Message message = messageRepository.findById(messageId).orElseThrow(() -> new MessageNotFoundException(messageId));
+        ApplicationUser user = applicationUserRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+
+        if (!message.getRecipient().getId().equals(user.getId())) {
+            throw new AccessDeniedException("Only the recipient can mark this message as read.");
+        }
+
+        if (!message.isRead())  {
+            message.setRead(true);
+            MessageRead readMessage = new MessageRead();
+            readMessage.setUser(user);
+            readMessage.setMessage(message);
+            readMessage.setReadAt(LocalDateTime.now());
+            messageReadRepository.save(readMessage);
+        }
+    }
+
+    @Override
+    public MessageResponse editMessage(String username, Long messageId, String newContent) {
+        return null;
+    }
+
+    @Override
+    public void deleteMessage(String username, Long messageId) {
+
     }
 
 

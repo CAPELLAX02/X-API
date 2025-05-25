@@ -29,13 +29,6 @@ public class MessageSocketController {
         this.messageService = messageService;
     }
 
-    /**
-     * Processes an incoming direct message request and returns an acknowledgment to the sender.
-     *
-     * @param req  the validated message request payload
-     * @param user the authenticated principal of the sender
-     * @return a {@link MessageResponse} containing message metadata
-     */
     @MessageMapping("/chat.send")
     @SendToUser("/queue/ack")
     public MessageResponse handleSendMessage(
@@ -44,6 +37,16 @@ public class MessageSocketController {
     ) {
         String username = user.getName();
         return messageService.sendMessage(username, req);
+    }
+
+    @MessageMapping("/chat.read")
+    @SendToUser("/queue/read-status")
+    public void handleReadMessage(
+            @Payload Long messageId,
+            Principal user
+    ) {
+        String username = user.getName();
+        messageService.markMessageAsRead(username, messageId);
     }
 
 }
