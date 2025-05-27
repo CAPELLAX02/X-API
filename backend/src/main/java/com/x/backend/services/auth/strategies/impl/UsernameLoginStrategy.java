@@ -1,10 +1,11 @@
-package com.x.backend.services.auth.strategies;
+package com.x.backend.services.auth.strategies.impl;
 
 import com.x.backend.dto.auth.request.LoginRequest;
 import com.x.backend.exceptions.auth.InvalidLoginCredentialsException;
 import com.x.backend.exceptions.auth.PasswordNotSetYetException;
 import com.x.backend.models.user.ApplicationUser;
 import com.x.backend.repositories.ApplicationUserRepository;
+import com.x.backend.services.auth.strategies.LoginStrategy;
 import jakarta.transaction.Transactional;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
