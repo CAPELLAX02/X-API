@@ -24,8 +24,8 @@ import com.x.backend.services.email.MailService;
 import com.x.backend.services.token.JwtService;
 import com.x.backend.services.user.UserService;
 import com.x.backend.utils.api.BaseApiResponse;
-import com.x.backend.utils.auth.CodeGenerator;
-import com.x.backend.utils.auth.UsernameGenerationService;
+import com.x.backend.services.auth.util.CodeGenerator;
+import com.x.backend.services.auth.util.UsernameGenerationService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -1,4 +1,4 @@
-package com.x.backend.utils.auth;
+package com.x.backend.services.auth.util;
 
 import com.x.backend.repositories.ApplicationUserRepository;
 import org.springframework.security.core.token.Sha512DigestUtils;

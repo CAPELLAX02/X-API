@@ -26,6 +26,11 @@ import java.util.Objects;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<BaseApiResponse<Object>> handleAccessDeniedException(AccessDeniedException e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(BaseApiResponse.error(e.getMessage() != null ? "You do not have permission to access this resource or perform this action" : e.getMessage(), HttpStatus.FORBIDDEN));
+    }
+
     @ExceptionHandler(CustomRuntimeException.class)
     public ResponseEntity<BaseApiResponse<String>> handleCustomRuntimeException(CustomRuntimeException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseApiResponse.error(e.getMessage(), HttpStatus.BAD_REQUEST));
@@ -54,11 +59,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<BaseApiResponse<Object>> handleEntityNotFoundException(EntityNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(BaseApiResponse.error(e.getMessage(), HttpStatus.NOT_FOUND));
-    }
-
-    @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<BaseApiResponse<Object>> handleAccessDeniedException(AccessDeniedException e) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(BaseApiResponse.error(e.getMessage() != null ? "You do not have permission to access this resource or perform this action" : e.getMessage(), HttpStatus.FORBIDDEN));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

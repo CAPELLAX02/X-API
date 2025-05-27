@@ -1,4 +1,4 @@
-package com.x.backend.utils.auth;
+package com.x.backend.services.auth.util;
 
 import org.springframework.stereotype.Component;
 
