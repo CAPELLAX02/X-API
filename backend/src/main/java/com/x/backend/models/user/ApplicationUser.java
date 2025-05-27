@@ -416,4 +416,8 @@ public class ApplicationUser implements UserDetails, Principal {
         return username;
     }
 
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
+
 }
