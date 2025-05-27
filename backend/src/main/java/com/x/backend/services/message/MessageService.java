@@ -29,6 +29,15 @@ public interface MessageService {
     void markMessageAsRead(String username, Long messageId);
 
     /**
+     * Marks the specified message as unread by the recipient.
+     * This should only be called by the message recipient.
+     *
+     * @param username the username of the authenticated user (recipient)
+     * @param messageId the ID of the message to be mark as unread
+     */
+    void undoMarkMessageAsRead(String username, Long messageId);
+
+    /**
      * Edits the content of a previously sent message.
      * Only the original sender can perform this action.
      *

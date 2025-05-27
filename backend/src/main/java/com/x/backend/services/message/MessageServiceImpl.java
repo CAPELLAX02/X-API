@@ -2,6 +2,8 @@ package com.x.backend.services.message;
 
 import com.x.backend.dto.message.request.SendMessageRequest;
 import com.x.backend.dto.message.response.MessageResponse;
+import com.x.backend.exceptions.message.MessageAlreadyMarkedAsReadException;
+import com.x.backend.exceptions.message.MessageHaveNotMarkedAsReadException;
 import com.x.backend.exceptions.message.MessageNotFoundException;
 import com.x.backend.exceptions.user.UserNotFoundByIdException;
 import com.x.backend.models.message.Conversation;
@@ -50,13 +52,22 @@ public class MessageServiceImpl implements MessageService {
         this.messageResponseBuilder = messageResponseBuilder;
     }
 
+    private Message getMessageById(Long messageId) {
+        return messageRepository.findById(messageId).orElseThrow(() -> new MessageNotFoundException(messageId));
+    }
+
+    private ApplicationUser getUserById(Long userId) {
+        return applicationUserRepository.findById(userId).orElseThrow(() -> new UserNotFoundByIdException(userId));
+    }
+
+    private ApplicationUser getUserByUsername(String username) {
+        return applicationUserRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
+    }
+
     @Override
     public MessageResponse sendMessage(String senderUsername, SendMessageRequest req) {
-        ApplicationUser sender = applicationUserRepository.findByUsername(senderUsername)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + senderUsername));
-
-        ApplicationUser recipient = applicationUserRepository.findById(req.recipientId())
-                .orElseThrow(() -> new UserNotFoundByIdException(req.recipientId()));
+        ApplicationUser sender = getUserByUsername(senderUsername);
+        ApplicationUser recipient = getUserById(req.recipientId());
 
         // Find or create conversation between participants
         Conversation conversation = conversationRepository.findDirectConversationBetween(sender.getId(), recipient.getId())
@@ -111,32 +122,76 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public void markMessageAsRead(String username, Long messageId) {
-        Message message = messageRepository.findById(messageId).orElseThrow(() -> new MessageNotFoundException(messageId));
-        ApplicationUser user = applicationUserRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+        ApplicationUser user = getUserByUsername(username);
+        Message message = getMessageById(messageId);
 
         if (!message.getRecipient().getId().equals(user.getId())) {
             throw new AccessDeniedException("Only the recipient can mark this message as read.");
         }
 
-        if (!message.isRead())  {
-            message.setRead(true);
-            MessageRead readMessage = new MessageRead();
-            readMessage.setUser(user);
-            readMessage.setMessage(message);
-            readMessage.setReadAt(LocalDateTime.now());
-            messageReadRepository.save(readMessage);
+        if (message.isRead()) {
+            throw new MessageAlreadyMarkedAsReadException();
         }
+
+        message.setRead(true);
+        MessageRead readMessage = new MessageRead();
+        readMessage.setUser(user);
+        readMessage.setMessage(message);
+        readMessage.setReadAt(LocalDateTime.now());
+        messageReadRepository.save(readMessage);
+    }
+
+    @Override
+    public void undoMarkMessageAsRead(String username, Long messageId) {
+        Message message = getMessageById(messageId);
+        ApplicationUser user = getUserByUsername(username);
+
+        if (!message.getRecipient().getId().equals(user.getId())) {
+            throw new AccessDeniedException("Only the recipient can undo the read status of this message.");
+        }
+
+        if (!message.isRead()) {
+            throw new MessageHaveNotMarkedAsReadException();
+        }
+
+        messageReadRepository.findByUserIdAndMessage(user.getId(), message)
+                .ifPresent(messageReadRepository::delete);
+
+        message.setRead(false);
+        messageRepository.save(message);
     }
 
     @Override
     public MessageResponse editMessage(String username, Long messageId, String newContent) {
-        return null;
+        Message message = getMessageById(messageId);
+        ApplicationUser user = getUserByUsername(username);
+
+        if (!message.getSender().getId().equals(user.getId())) {
+            throw new AccessDeniedException("You are not authorized to edit this message.");
+        }
+
+        message.setContent(newContent);
+        messageRepository.save(message);
+
+        return messageResponseBuilder.build(message);
     }
 
     @Override
     public void deleteMessage(String username, Long messageId) {
+        Message message = getMessageById(messageId);
+        ApplicationUser user = getUserByUsername(username);
 
+        if (message.getSender().getUsername().equals(username)) {
+            message.setDeletedForSender(true);
+        }
+        else if (message.getRecipient().getUsername().equals(username)) {
+            message.setDeletedForReceiver(true);
+        }
+        else {
+            throw new AccessDeniedException("You are not authorized to delete this message.");
+        }
+
+        messageRepository.save(message);
     }
-
 
 }
