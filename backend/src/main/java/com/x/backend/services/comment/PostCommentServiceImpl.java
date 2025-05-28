@@ -27,10 +27,10 @@ public class PostCommentServiceImpl implements PostCommentService {
     private final UserService userService;
     private final CommentResponseBuilder commentResponseBuilder;
 
-    public PostCommentServiceImpl(CommentRepository commentRepository,
-                                  PostRepository postRepository,
-                                  UserService userService,
-                                  CommentResponseBuilder commentResponseBuilder
+    public PostCommentServiceImpl(final CommentRepository commentRepository,
+                                  final PostRepository postRepository,
+                                  final UserService userService,
+                                  final CommentResponseBuilder commentResponseBuilder
     ) {
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;

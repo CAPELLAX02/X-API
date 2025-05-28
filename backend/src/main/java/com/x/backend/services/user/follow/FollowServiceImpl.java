@@ -21,9 +21,9 @@ public class FollowServiceImpl implements FollowService {
     private final ApplicationUserRepository applicationUserRepository;
     private final UserResponseBuilder userResponseBuilder;
 
-    public FollowServiceImpl(UserService userService,
-                             ApplicationUserRepository applicationUserRepository,
-                             UserResponseBuilder userResponseBuilder
+    public FollowServiceImpl(final UserService userService,
+                             final ApplicationUserRepository applicationUserRepository,
+                             final UserResponseBuilder userResponseBuilder
     ) {
         this.userService = userService;
         this.applicationUserRepository = applicationUserRepository;

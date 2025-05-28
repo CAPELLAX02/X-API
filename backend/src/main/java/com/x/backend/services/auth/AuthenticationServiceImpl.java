@@ -41,18 +41,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final PasswordHistoryRepository passwordHistoryRepository;
     private final ValidAccessTokenRepository validAccessTokenRepository;
 
-    public AuthenticationServiceImpl(ApplicationUserRepository userRepository,
-                                     UsernameGenerationService usernameGenerationService,
-                                     MailService mailService,
-                                     PasswordEncodingConfig passwordEncoderConfig,
-                                     List<LoginStrategy> loginStrategies,
-                                     JwtService jwtService,
-                                     RefreshTokenRepository refreshTokenRepository,
-                                     UserService userService,
-                                     RoleRepository roleRepository,
-                                     PrivacySettingsRepository privacySettingsRepository,
-                                     PasswordHistoryRepository passwordHistoryRepository,
-                                     ValidAccessTokenRepository validAccessTokenRepository
+    public AuthenticationServiceImpl(final ApplicationUserRepository userRepository,
+                                     final UsernameGenerationService usernameGenerationService,
+                                     final MailService mailService,
+                                     final PasswordEncodingConfig passwordEncoderConfig,
+                                     final List<LoginStrategy> loginStrategies,
+                                     final JwtService jwtService,
+                                     final RefreshTokenRepository refreshTokenRepository,
+                                     final UserService userService,
+                                     final RoleRepository roleRepository,
+                                     final PrivacySettingsRepository privacySettingsRepository,
+                                     final PasswordHistoryRepository passwordHistoryRepository,
+                                     final ValidAccessTokenRepository validAccessTokenRepository
     ) {
         this.userRepository = userRepository;
         this.usernameGenerationService = usernameGenerationService;

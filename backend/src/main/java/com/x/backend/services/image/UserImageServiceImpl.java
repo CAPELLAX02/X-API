@@ -21,10 +21,10 @@ public class UserImageServiceImpl extends ImageUploadService {
     private final UserService userService;
     private final ImageResponseBuilder imageResponseBuilder;
 
-    public UserImageServiceImpl(ImageRepository imageRepository,
-                                ApplicationUserRepository applicationUserRepository,
-                                UserService userService,
-                                ImageResponseBuilder imageResponseBuilder
+    public UserImageServiceImpl(final ImageRepository imageRepository,
+                                final ApplicationUserRepository applicationUserRepository,
+                                final UserService userService,
+                                final ImageResponseBuilder imageResponseBuilder
     ) {
         super(imageRepository);
         this.applicationUserRepository = applicationUserRepository;

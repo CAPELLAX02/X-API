@@ -21,7 +21,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -37,12 +36,12 @@ public class MessageServiceImpl implements MessageService {
     private final SimpMessagingTemplate messagingTemplate;
     private final MessageResponseBuilder messageResponseBuilder;
 
-    public MessageServiceImpl(ApplicationUserRepository applicationUserRepository,
-                              ConversationRepository conversationRepository,
-                              MessageRepository messageRepository,
-                              MessageReadRepository messageReadRepository,
-                              SimpMessagingTemplate messagingTemplate,
-                              MessageResponseBuilder messageResponseBuilder
+    public MessageServiceImpl(final ApplicationUserRepository applicationUserRepository,
+                              final ConversationRepository conversationRepository,
+                              final MessageRepository messageRepository,
+                              final MessageReadRepository messageReadRepository,
+                              final SimpMessagingTemplate messagingTemplate,
+                              final MessageResponseBuilder messageResponseBuilder
     ) {
         this.applicationUserRepository = applicationUserRepository;
         this.conversationRepository = conversationRepository;

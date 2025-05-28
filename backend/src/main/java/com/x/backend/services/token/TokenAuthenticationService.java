@@ -15,9 +15,9 @@ public class TokenAuthenticationService {
     private final UserService userService;
     private final ValidAccessTokenRepository validAccessTokenRepository;
 
-    public TokenAuthenticationService(JwtService jwtService,
-                                      UserService userService,
-                                      ValidAccessTokenRepository validAccessTokenRepository
+    public TokenAuthenticationService(final JwtService jwtService,
+                                      final UserService userService,
+                                      final ValidAccessTokenRepository validAccessTokenRepository
     ) {
         this.jwtService = jwtService;
         this.userService = userService;

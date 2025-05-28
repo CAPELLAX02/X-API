@@ -14,9 +14,8 @@ public class PostImageService extends ImageUploadService {
 
     private final ImageResponseBuilder imageResponseBuilder;
 
-    public PostImageService(
-            ImageRepository imageRepository,
-            ImageResponseBuilder imageResponseBuilder
+    public PostImageService(final ImageRepository imageRepository,
+                            final ImageResponseBuilder imageResponseBuilder
     ) {
         super(imageRepository);
         this.imageResponseBuilder = imageResponseBuilder;

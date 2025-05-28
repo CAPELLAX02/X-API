@@ -21,9 +21,9 @@ public class PostLikeServiceImpl implements PostLikeService {
     private final PostRepository postRepository;
     private final UserService userService;
 
-    public PostLikeServiceImpl(LikeRepository likeRepository,
-                               PostRepository postRepository,
-                               UserService userService
+    public PostLikeServiceImpl(final LikeRepository likeRepository,
+                               final PostRepository postRepository,
+                               final UserService userService
     ) {
         this.likeRepository = likeRepository;
         this.postRepository = postRepository;

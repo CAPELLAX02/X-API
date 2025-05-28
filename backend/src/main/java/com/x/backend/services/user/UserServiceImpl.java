@@ -25,9 +25,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final ApplicationUserRepository applicationUserRepository;
     private final UserResponseBuilder userResponseBuilder;
 
-    public UserServiceImpl(
-            ApplicationUserRepository applicationUserRepository,
-            UserResponseBuilder userResponseBuilder
+    public UserServiceImpl(final ApplicationUserRepository applicationUserRepository,
+                           final UserResponseBuilder userResponseBuilder
     ) {
         this.applicationUserRepository = applicationUserRepository;
         this.userResponseBuilder = userResponseBuilder;

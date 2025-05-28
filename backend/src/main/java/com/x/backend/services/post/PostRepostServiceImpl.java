@@ -18,8 +18,8 @@ public class PostRepostServiceImpl implements PostRepostService {
     private final PostRepository postRepository;
     private final UserService userService;
 
-    public PostRepostServiceImpl(PostRepository postRepository,
-                                 UserService userService
+    public PostRepostServiceImpl(final PostRepository postRepository,
+                                 final UserService userService
     ) {
         this.postRepository = postRepository;
         this.userService = userService;

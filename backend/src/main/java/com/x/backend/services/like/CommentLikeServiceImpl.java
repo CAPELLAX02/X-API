@@ -18,7 +18,9 @@ public class CommentLikeServiceImpl implements CommentLikeService {
     private final CommentRepository commentRepository;
     private final UserService userService;
 
-    public CommentLikeServiceImpl(CommentRepository commentRepository, UserService userService) {
+    public CommentLikeServiceImpl(final CommentRepository commentRepository,
+                                  final UserService userService)
+    {
         this.commentRepository = commentRepository;
         this.userService = userService;
     }

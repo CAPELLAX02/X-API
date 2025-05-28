@@ -37,13 +37,12 @@ public class PostServiceImpl implements PostService {
     private final PostResponseBuilder postResponseBuilder;
     private final PostImageService postImageService;
 
-    public PostServiceImpl(
-            PostRepository postRepository,
-            PollOptionRepository pollOptionRepository,
-            PollRepository pollRepository,
-            UserService userService,
-            PostResponseBuilder postResponseBuilder,
-            PostImageService postImageService
+    public PostServiceImpl(final PostRepository postRepository,
+                           final PollOptionRepository pollOptionRepository,
+                           final PollRepository pollRepository,
+                           final UserService userService,
+                           final PostResponseBuilder postResponseBuilder,
+                           final PostImageService postImageService
     ) {
         this.postRepository = postRepository;
         this.pollOptionRepository = pollOptionRepository;

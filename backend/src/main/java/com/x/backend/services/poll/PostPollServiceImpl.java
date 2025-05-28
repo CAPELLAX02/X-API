@@ -28,10 +28,11 @@ public class PostPollServiceImpl implements PostPollService {
     private final PollVoteRepository pollVoteRepository;
     private final PollRepository pollRepository;
 
-    public PostPollServiceImpl(UserService userService,
-                               PostRepository postRepository,
-                               PollVoteRepository pollVoteRepository,
-                               PollRepository pollRepository) {
+    public PostPollServiceImpl(final UserService userService,
+                               final PostRepository postRepository,
+                               final PollVoteRepository pollVoteRepository,
+                               final PollRepository pollRepository
+    ) {
         this.userService = userService;
         this.postRepository = postRepository;
         this.pollVoteRepository = pollVoteRepository;

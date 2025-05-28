@@ -18,7 +18,9 @@ public class PostBookmarkServiceImpl implements PostBookmarkService {
     private final PostRepository postRepository;
     private final UserService userService;
 
-    public PostBookmarkServiceImpl(PostRepository postRepository, UserService userService) {
+    public PostBookmarkServiceImpl(final PostRepository postRepository,
+                                   final UserService userService
+    ) {
         this.postRepository = postRepository;
         this.userService = userService;
     }

@@ -31,12 +31,12 @@ public class PostSubCommentServiceImpl implements PostSubCommentService {
     private final CommentResponseBuilder commentResponseBuilder;
     private final SubCommentResponseBuilder subCommentResponseBuilder;
 
-    public PostSubCommentServiceImpl(SubCommentRepository subCommentRepository,
-                                     CommentRepository commentRepository,
-                                     PostRepository postRepository,
-                                     UserService userService,
-                                     CommentResponseBuilder commentResponseBuilder,
-                                     SubCommentResponseBuilder subCommentResponseBuilder
+    public PostSubCommentServiceImpl(final SubCommentRepository subCommentRepository,
+                                     final CommentRepository commentRepository,
+                                     final PostRepository postRepository,
+                                     final UserService userService,
+                                     final CommentResponseBuilder commentResponseBuilder,
+                                     final SubCommentResponseBuilder subCommentResponseBuilder
     ) {
         this.subCommentRepository = subCommentRepository;
         this.commentRepository = commentRepository;

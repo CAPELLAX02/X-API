@@ -20,9 +20,9 @@ public class PrivacySettingsServiceImpl implements PrivacySettingsService {
     private final PrivacySettingsRepository privacySettingsRepository;
     private final PrivacySettingsResponseBuilder privacySettingsResponseBuilder;
 
-    public PrivacySettingsServiceImpl(UserService userService,
-                                      PrivacySettingsRepository privacySettingsRepository,
-                                      PrivacySettingsResponseBuilder privacySettingsResponseBuilder
+    public PrivacySettingsServiceImpl(final UserService userService,
+                                      final PrivacySettingsRepository privacySettingsRepository,
+                                      final PrivacySettingsResponseBuilder privacySettingsResponseBuilder
     ) {
         this.userService = userService;
         this.privacySettingsRepository = privacySettingsRepository;
