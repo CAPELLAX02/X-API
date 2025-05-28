@@ -16,7 +16,7 @@ public class PostPollController {
 
     private final PostPollService postPollService;
 
-    public PostPollController(PostPollService postPollService) {
+    public PostPollController(final PostPollService postPollService) {
         this.postPollService = postPollService;
     }
 

@@ -17,7 +17,7 @@ public class CommentController {
 
     private final PostCommentService postCommentService;
 
-    public CommentController(PostCommentService postCommentService) {
+    public CommentController(final PostCommentService postCommentService) {
         this.postCommentService = postCommentService;
     }
 

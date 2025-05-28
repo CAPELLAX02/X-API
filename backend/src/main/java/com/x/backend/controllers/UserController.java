@@ -25,9 +25,9 @@ public class UserController {
     private final PrivacySettingsService privacySettingsService;
     private final FollowService followService;
 
-    public UserController(UserService userService,
-                          PrivacySettingsService privacySettingsService,
-                          FollowService followService
+    public UserController(final UserService userService,
+                          final PrivacySettingsService privacySettingsService,
+                          final FollowService followService
     ) {
         this.userService = userService;
         this.privacySettingsService = privacySettingsService;

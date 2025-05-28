@@ -17,7 +17,7 @@ public class PostSubCommentController {
 
     private final PostSubCommentService postSubCommentService;
 
-    public PostSubCommentController(PostSubCommentService postSubCommentService) {
+    public PostSubCommentController(final PostSubCommentService postSubCommentService) {
         this.postSubCommentService = postSubCommentService;
     }
 

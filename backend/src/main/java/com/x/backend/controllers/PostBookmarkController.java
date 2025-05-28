@@ -14,7 +14,7 @@ public class PostBookmarkController {
 
     private final PostBookmarkService postBookmarkService;
 
-    public PostBookmarkController(PostBookmarkService postBookmarkService) {
+    public PostBookmarkController(final PostBookmarkService postBookmarkService) {
         this.postBookmarkService = postBookmarkService;
     }
 

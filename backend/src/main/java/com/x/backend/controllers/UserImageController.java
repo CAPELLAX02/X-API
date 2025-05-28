@@ -19,7 +19,7 @@ public class UserImageController {
 
     private final UserImageServiceImpl userImageService;
 
-    public UserImageController(UserImageServiceImpl userImageService) {
+    public UserImageController(final UserImageServiceImpl userImageService) {
         this.userImageService = userImageService;
     }
 

@@ -14,7 +14,7 @@ public class CommentLikeController {
 
     private final CommentLikeService commentLikeService;
 
-    public CommentLikeController(CommentLikeService commentLikeService) {
+    public CommentLikeController(final CommentLikeService commentLikeService) {
         this.commentLikeService = commentLikeService;
     }
 

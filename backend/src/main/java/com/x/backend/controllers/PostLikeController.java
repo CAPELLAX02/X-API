@@ -14,7 +14,7 @@ public class PostLikeController {
 
     private final PostLikeService postLikeService;
 
-    public PostLikeController(PostLikeService postLikeService) {
+    public PostLikeController(final PostLikeService postLikeService) {
         this.postLikeService = postLikeService;
     }
 

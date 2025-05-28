@@ -14,7 +14,7 @@ public class PostRepostController {
 
     private final PostRepostService postRepostService;
 
-    public PostRepostController(PostRepostService postRepostService) {
+    public PostRepostController(final PostRepostService postRepostService) {
         this.postRepostService = postRepostService;
     }
 
