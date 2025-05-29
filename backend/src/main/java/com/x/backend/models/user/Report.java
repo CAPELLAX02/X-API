@@ -2,6 +2,7 @@ package com.x.backend.models.user;
 
 import com.x.backend.models.post.comment.Comment;
 import com.x.backend.models.post.Post;
+import com.x.backend.models.user.enums.ReportReasonType;
 import com.x.backend.models.user.enums.ReportStatus;
 import jakarta.persistence.*;
 
@@ -20,7 +21,7 @@ public class Report {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "report_id", nullable = false, updatable = false, unique = true)
+    @Column(name = "report_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -39,34 +40,45 @@ public class Report {
     @JoinColumn(name = "reported_comment_id")
     private Comment reportedComment;
 
-    @Column(name = "reason", nullable = false, length = 500)
-    private String reason;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "reason_type", nullable = false)
+    private ReportReasonType reasonType;
+
+    @Column(name = "reason_description", length = 500)
+    private String reasonDescription;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false, length = 20)
+    @Column(name = "status", nullable = false)
     private ReportStatus status;
 
     @Column(name = "reported_at", nullable = false, updatable = false)
     private LocalDateTime reportedAt;
 
+    @PrePersist
+    public void prePersist() {
+        this.reportedAt = LocalDateTime.now();
+        this.status = ReportStatus.PENDING;
+    }
+
     public Report() {}
 
-    public Report(
-            Long id,
-            ApplicationUser reportedBy,
-            ApplicationUser reportedUser,
-            Post reportedPost,
-            Comment reportedComment,
-            String reason,
-            ReportStatus status,
-            LocalDateTime reportedAt
+    public Report(Long id,
+                  ApplicationUser reportedBy,
+                  ApplicationUser reportedUser,
+                  Post reportedPost,
+                  Comment reportedComment,
+                  ReportReasonType reasonType,
+                  String reasonDescription,
+                  ReportStatus status,
+                  LocalDateTime reportedAt
     ) {
         this.id = id;
         this.reportedBy = reportedBy;
         this.reportedUser = reportedUser;
         this.reportedPost = reportedPost;
         this.reportedComment = reportedComment;
-        this.reason = reason;
+        this.reasonType = reasonType;
+        this.reasonDescription = reasonDescription;
         this.status = status;
         this.reportedAt = reportedAt;
     }
@@ -111,12 +123,20 @@ public class Report {
         this.reportedComment = reportedComment;
     }
 
-    public String getReason() {
-        return reason;
+    public ReportReasonType getReasonType() {
+        return reasonType;
     }
 
-    public void setReason(String reason) {
-        this.reason = reason;
+    public void setReasonType(ReportReasonType reasonType) {
+        this.reasonType = reasonType;
+    }
+
+    public String getReasonDescription() {
+        return reasonDescription;
+    }
+
+    public void setReasonDescription(String reasonDescription) {
+        this.reasonDescription = reasonDescription;
     }
 
     public ReportStatus getStatus() {
