@@ -9,6 +9,8 @@ import com.x.backend.exceptions.auth.*;
 import com.x.backend.exceptions.email.EmailFailedToSentException;
 import com.x.backend.exceptions.user.UserNotFoundByEmailException;
 import com.x.backend.models.user.ApplicationUser;
+import com.x.backend.models.user.auth.EmailVerificationToken;
+import com.x.backend.models.user.auth.PasswordRecoveryToken;
 import com.x.backend.models.user.auth.RefreshToken;
 import com.x.backend.repositories.*;
 import com.x.backend.security.password.PasswordEncodingConfig;
@@ -40,6 +42,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final PrivacySettingsRepository privacySettingsRepository;
     private final PasswordHistoryRepository passwordHistoryRepository;
     private final ValidAccessTokenRepository validAccessTokenRepository;
+    private final EmailVerificationTokenRepository emailVerificationTokenRepository;
+    private final PasswordRecoveryTokenRepository passwordRecoveryTokenRepository;
 
     public AuthenticationServiceImpl(final ApplicationUserRepository userRepository,
                                      final UsernameGenerationService usernameGenerationService,
@@ -52,7 +56,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                                      final RoleRepository roleRepository,
                                      final PrivacySettingsRepository privacySettingsRepository,
                                      final PasswordHistoryRepository passwordHistoryRepository,
-                                     final ValidAccessTokenRepository validAccessTokenRepository
+                                     final ValidAccessTokenRepository validAccessTokenRepository,
+                                     final EmailVerificationTokenRepository emailVerificationTokenRepository,
+                                     final PasswordRecoveryTokenRepository passwordRecoveryTokenRepository
     ) {
         this.userRepository = userRepository;
         this.usernameGenerationService = usernameGenerationService;
@@ -66,6 +72,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         this.privacySettingsRepository = privacySettingsRepository;
         this.passwordHistoryRepository = passwordHistoryRepository;
         this.validAccessTokenRepository = validAccessTokenRepository;
+        this.emailVerificationTokenRepository = emailVerificationTokenRepository;
+        this.passwordRecoveryTokenRepository = passwordRecoveryTokenRepository;
     }
 
     private ApplicationUser getUserByUsername(String username) {
@@ -86,7 +94,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         UserRegistrationManager.initializePrivacySettings(user, privacySettingsRepository);
 
-        return BaseApiResponse.success(new StartRegistrationResponse(user.getUsername()), "Registration started, username generated.");
+        StartRegistrationResponse res = new StartRegistrationResponse(user.getUsername());
+        return BaseApiResponse.success(res, "Registration started, username generated.");
     }
 
     @Override
@@ -97,16 +106,23 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new EmailAlreadyVerifiedException(user.getEmail());
         }
 
-        String code = CodeGenerator.generateVerificationCode();
+        String rawCode = SecureCodeManager.generateCode();
+        String hashedCode = SecureCodeManager.encode(rawCode, passwordEncodingConfig.passwordEncoder());
         Instant expiry = Instant.now().plusSeconds(300);
 
-        user.setVerificationCode(code);
-        user.setVerificationCodeExpiry(expiry);
-        userRepository.save(user);
+        EmailVerificationToken emailVerificationToken = new EmailVerificationToken();
+        emailVerificationToken.setHashedCode(hashedCode);
+        emailVerificationToken.setExpiry(expiry);
+        emailVerificationToken.setUser(user);
 
-        EmailDispatcher.sendVerificationEmail(mailService, user.getEmail(), user.getFullName(), code);
+        emailVerificationTokenRepository.deleteByUser_Username(req.username());
+        emailVerificationTokenRepository.save(emailVerificationToken);
 
-        return BaseApiResponse.success(new SendVerificationEmailResponse(expiry), "Verification code sent via email.");
+        EmailDispatcher.sendVerificationEmail(mailService, user.getEmail(), user.getFullName(), rawCode);
+
+        SendVerificationEmailResponse res = new SendVerificationEmailResponse(expiry);
+
+        return BaseApiResponse.success(res, "Verification code sent via email.");
     }
 
     @Override
@@ -117,16 +133,28 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new EmailAlreadyVerifiedException(user.getEmail());
         }
 
-        EmailVerificationGuard.checkThrottleLimit(user.getVerificationCodeExpiry());
+        EmailVerificationToken oldEmailVerificationToken = emailVerificationTokenRepository
+                .findByUser_Username(req.username())
+                .orElseThrow(EmailVerificationTokenNotFoundException::new);
 
-        String code = CodeGenerator.generateVerificationCode();
+        if (oldEmailVerificationToken != null) {
+            EmailResendGuard.checkThrottleLimit(oldEmailVerificationToken.getExpiry());
+        }
+
+        String rawCode = SecureCodeManager.generateCode();
+        String hashedCode = SecureCodeManager.encode(rawCode, passwordEncodingConfig.passwordEncoder());
         Instant expiry = Instant.now().plusSeconds(300);
 
-        user.setVerificationCode(code);
-        user.setVerificationCodeExpiry(expiry);
-        userRepository.save(user);
+        EmailVerificationToken newEmailVerificationToken = new EmailVerificationToken();
+        newEmailVerificationToken.setHashedCode(hashedCode);
+        newEmailVerificationToken.setExpiry(expiry);
+        newEmailVerificationToken.setUser(user);
+        emailVerificationTokenRepository.save(newEmailVerificationToken);
 
-        EmailDispatcher.sendVerificationEmail(mailService, user.getEmail(), user.getFullName(), code);
+        emailVerificationTokenRepository.deleteByUser_Username(req.username());
+        emailVerificationTokenRepository.save(newEmailVerificationToken);
+
+        EmailDispatcher.sendVerificationEmail(mailService, user.getEmail(), user.getFullName(), rawCode);
 
         SendVerificationEmailResponse res = new SendVerificationEmailResponse(expiry);
         return BaseApiResponse.success(res, "New verification code sent via email.");
@@ -140,11 +168,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new EmailAlreadyVerifiedException(user.getEmail());
         }
 
-        EmailVerificationGuard.validateCode(user, req.verificationCode());
+        EmailVerificationToken emailVerificationToken = emailVerificationTokenRepository.findByUser_Username(req.username())
+                .orElseThrow(VerificationCodeNotFoundException::new);
+
+        if (emailVerificationToken.getExpiry().isBefore(Instant.now())) {
+            throw new ExpiredVerificationCodeException("Expired email verification code.");
+        }
+
+        if (!SecureCodeManager.matches(req.verificationCode(), emailVerificationToken.getHashedCode(), passwordEncodingConfig.passwordEncoder())) {
+            throw new InvalidVerificationCodeException("Invalid email verification code.");
+        }
 
         user.setEnabled(true);
-        user.setVerificationCode(null);
-        user.setVerificationCodeExpiry(null);
+        emailVerificationTokenRepository.delete(emailVerificationToken);
         userRepository.save(user);
 
         return BaseApiResponse.success("Email verification completed successfully.");
@@ -198,14 +234,20 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public BaseApiResponse<SendPasswordRecoveryEmailResponse> sendPasswordRecoveryEmail(SendPasswordRecoveryEmailRequest req) throws EmailFailedToSentException {
         ApplicationUser user = getUserByEmail(req.email());
 
-        String code = CodeGenerator.generatePasswordRecoveryCode();
+        String rawCode = SecureCodeManager.generateCode();
+        String hashedCode = SecureCodeManager.encode(rawCode, passwordEncodingConfig.passwordEncoder());
         Instant expiry = Instant.now().plusSeconds(300);
 
-        user.setPasswordRecoveryCode(code);
-        user.setPasswordRecoveryCodeExpiry(expiry);
-        userRepository.save(user);
+        PasswordRecoveryToken passwordRecoveryToken = new PasswordRecoveryToken();
+        passwordRecoveryToken.setHashedCode(hashedCode);
+        passwordRecoveryToken.setExpiry(expiry);
+        passwordRecoveryToken.setUser(user);
+        passwordRecoveryTokenRepository.save(passwordRecoveryToken);
 
-        EmailDispatcher.sendPasswordRecoveryEmail(mailService, user.getEmail(), user.getFullName(), code);
+        passwordRecoveryTokenRepository.deleteByUser_Username(user.getUsername());
+        passwordRecoveryTokenRepository.save(passwordRecoveryToken);
+
+        EmailDispatcher.sendPasswordRecoveryEmail(mailService, user.getEmail(), user.getFullName(), rawCode);
 
         SendPasswordRecoveryEmailResponse res = new SendPasswordRecoveryEmailResponse(expiry);
         return BaseApiResponse.success(res, "Password recovery code sent via email.");
@@ -215,16 +257,26 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public BaseApiResponse<SendPasswordRecoveryEmailResponse> resendPasswordRecoveryEmail(SendPasswordRecoveryEmailRequest req) throws EmailFailedToSentException {
         ApplicationUser user = getUserByEmail(req.email());
 
-        EmailVerificationGuard.checkThrottleLimit(user.getPasswordRecoveryCodeExpiry());
+        PasswordRecoveryToken oldPasswordRecoveryToken = passwordRecoveryTokenRepository
+                .findByUser_Username(user.getUsername())
+                .orElseThrow(PasswordRecoveryTokenNotFoundException::new);
 
-        String code = CodeGenerator.generatePasswordRecoveryCode();
+        EmailResendGuard.checkThrottleLimit(oldPasswordRecoveryToken.getExpiry());
+
+        String rawCode = SecureCodeManager.generateCode();
+        String hashedCode = SecureCodeManager.encode(rawCode, passwordEncodingConfig.passwordEncoder());
         Instant expiry = Instant.now().plusSeconds(300);
 
-        user.setPasswordRecoveryCode(code);
-        user.setPasswordRecoveryCodeExpiry(expiry);
-        userRepository.save(user);
+        PasswordRecoveryToken newPasswordRecoveryToken = new PasswordRecoveryToken();
+        newPasswordRecoveryToken.setHashedCode(hashedCode);
+        newPasswordRecoveryToken.setExpiry(expiry);
+        newPasswordRecoveryToken.setUser(user);
+        passwordRecoveryTokenRepository.save(newPasswordRecoveryToken);
 
-        EmailDispatcher.sendPasswordRecoveryEmail(mailService, user.getEmail(), user.getFullName(), code);
+        passwordRecoveryTokenRepository.deleteByUser_Username(user.getUsername());
+        passwordRecoveryTokenRepository.save(newPasswordRecoveryToken);
+
+        EmailDispatcher.sendPasswordRecoveryEmail(mailService, user.getEmail(), user.getFullName(), rawCode);
 
         SendPasswordRecoveryEmailResponse res = new SendPasswordRecoveryEmailResponse(expiry);
         return BaseApiResponse.success(res, "New password recovery code sent via email.");
@@ -234,20 +286,27 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public BaseApiResponse<String> recoverPassword(RecoverPasswordRequest req) {
         ApplicationUser user = getUserByEmail(req.email());
 
-        EmailVerificationGuard.validateCode(user, req.passwordRecoveryCode());
+        PasswordRecoveryToken token = passwordRecoveryTokenRepository.findByUser_Username(user.getUsername())
+                .orElseThrow(VerificationCodeNotFoundException::new);
+
+        if (token.getExpiry().isBefore(Instant.now())) {
+            throw new ExpiredPasswordRecoveryCodeException("Expired password recovery code.");
+        }
+
+        if (!SecureCodeManager.matches(req.passwordRecoveryCode(), token.getHashedCode(), passwordEncodingConfig.passwordEncoder())) {
+            throw new InvalidPasswordRecoveryCodeException("Invalid password recovery code.");
+        }
 
         if (!req.newPassword().equals(req.newPasswordAgain())) {
             throw new PasswordDoesNotMatchException("New passwords do not match.");
         }
 
         PasswordSecurityHandler.checkPasswordReuse(user, req.newPassword(), passwordEncodingConfig, passwordHistoryRepository);
+
         String encodedPassword = PasswordSecurityHandler.encodePassword(req.newPassword(), passwordEncodingConfig);
-
         user.setPassword(encodedPassword);
-        user.setPasswordRecoveryCode(null);
-        user.setPasswordRecoveryCodeExpiry(null);
+        passwordRecoveryTokenRepository.delete(token);
         userRepository.save(user);
-
         PasswordSecurityHandler.storePasswordHistory(user, encodedPassword, passwordHistoryRepository);
 
         return BaseApiResponse.success("Password reset successfully.");

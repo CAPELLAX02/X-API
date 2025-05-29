@@ -10,9 +10,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.security.auth.Subject;
 import java.security.Principal;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -33,7 +31,8 @@ import java.util.Set;
                 @UniqueConstraint(name = "uq_nickname", columnNames = "nickname")
         }
 )
-public class ApplicationUser implements UserDetails, Principal {
+public class ApplicationUser
+        implements UserDetails, Principal {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -118,20 +117,6 @@ public class ApplicationUser implements UserDetails, Principal {
     @Column(name = "enabled", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean enabled;
 
-    @JsonIgnore
-    @Column(name = "verification_code")
-    private String verificationCode;
-
-    @Column(name = "verification_code_expiry")
-    private Instant verificationCodeExpiry;
-
-    @JsonIgnore
-    @Column(name = "password_recovery_code")
-    private String passwordRecoveryCode;
-
-    @Column(name = "password_recovery_code_expiry")
-    private Instant passwordRecoveryCodeExpiry;
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return new HashSet<>(this.authorities);
@@ -190,11 +175,7 @@ public class ApplicationUser implements UserDetails, Principal {
             Set<ApplicationUser> following,
             Set<ApplicationUser> followers,
             Set<Role> authorities,
-            boolean enabled,
-            String verificationCode,
-            Instant verificationCodeExpiry,
-            String passwordRecoveryCode,
-            Instant passwordRecoveryCodeExpiry
+            boolean enabled
     ) {
         this.id = id;
         this.email = email;
@@ -217,10 +198,6 @@ public class ApplicationUser implements UserDetails, Principal {
         this.followers = followers;
         this.authorities = authorities;
         this.enabled = enabled;
-        this.verificationCode = verificationCode;
-        this.verificationCodeExpiry = verificationCodeExpiry;
-        this.passwordRecoveryCode = passwordRecoveryCode;
-        this.passwordRecoveryCodeExpiry = passwordRecoveryCodeExpiry;
     }
 
     public Long getId() {
@@ -377,38 +354,6 @@ public class ApplicationUser implements UserDetails, Principal {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
-    }
-
-    public String getVerificationCode() {
-        return verificationCode;
-    }
-
-    public void setVerificationCode(String verificationCode) {
-        this.verificationCode = verificationCode;
-    }
-
-    public Instant getVerificationCodeExpiry() {
-        return verificationCodeExpiry;
-    }
-
-    public void setVerificationCodeExpiry(Instant verificationCodeExpiry) {
-        this.verificationCodeExpiry = verificationCodeExpiry;
-    }
-
-    public String getPasswordRecoveryCode() {
-        return passwordRecoveryCode;
-    }
-
-    public void setPasswordRecoveryCode(String passwordRecoveryCode) {
-        this.passwordRecoveryCode = passwordRecoveryCode;
-    }
-
-    public Instant getPasswordRecoveryCodeExpiry() {
-        return passwordRecoveryCodeExpiry;
-    }
-
-    public void setPasswordRecoveryCodeExpiry(Instant passwordRecoveryCodeExpiry) {
-        this.passwordRecoveryCodeExpiry = passwordRecoveryCodeExpiry;
     }
 
     @Override

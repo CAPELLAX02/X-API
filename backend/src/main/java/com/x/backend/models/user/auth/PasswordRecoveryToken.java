@@ -7,44 +7,39 @@ import java.time.Instant;
 
 @Entity
 @Table(
-        name = "email_verification_tokens",
+        name = "password_recovery_tokens",
         uniqueConstraints = {
                 @UniqueConstraint(
-                        name = "uq_email_verification_user",
+                        name = "uq_password_recovery_user",
                         columnNames = { "user_id" }
                 )
         },
         indexes = {
-                @Index(name = "idx_email_verification_user", columnList = "user_id"),
-                @Index(name = "idx_email_verification_expiry", columnList = "expiry")
+                @Index(name = "idx_password_recovery_user", columnList = "user_id"),
+                @Index(name = "idx_password_recovery_expiry", columnList = "expiry")
         }
 )
-public class EmailVerificationTokens {
+public class PasswordRecoveryToken {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "hashed_code", nullable = false, length = 225)
+    @Column(name = "hashed_code", nullable = false, length = 255)
     private String hashedCode;
 
     @Column(name = "expiry", nullable = false)
     private Instant expiry;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(
-            name = "user_id",
-            nullable = false,
-            unique = true,
-            referencedColumnName = "user_id"
-    )
+    @JoinColumn(name = "user_id", nullable = false, unique = true, referencedColumnName = "user_id")
     private ApplicationUser user;
 
-    public EmailVerificationTokens() {}
+    public PasswordRecoveryToken() {}
 
-    public EmailVerificationTokens(String hashedCode,
-                                   Instant expiry,
-                                   ApplicationUser user
+    public PasswordRecoveryToken(String hashedCode,
+                                 Instant expiry,
+                                 ApplicationUser user
     ) {
         this.hashedCode = hashedCode;
         this.expiry = expiry;
