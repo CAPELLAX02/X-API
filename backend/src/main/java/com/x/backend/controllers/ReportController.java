@@ -1,11 +1,16 @@
 package com.x.backend.controllers;
 
+import com.x.backend.dto.report.request.CreateReportRequest;
+import com.x.backend.models.user.ApplicationUser;
 import com.x.backend.services.user.report.ReportService;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.x.backend.utils.api.BaseApiResponse;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/reports")
+@RequestMapping("/report")
 public class ReportController {
 
     private final ReportService reportService;
@@ -14,6 +19,37 @@ public class ReportController {
         this.reportService = reportService;
     }
 
-    // TODO
+    @PostMapping("/user/{id}")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<BaseApiResponse<String>> reportUser(
+            @AuthenticationPrincipal ApplicationUser reporterUser,
+            @PathVariable("id") Long reportedUserId,
+            @RequestBody CreateReportRequest req
+    ) {
+        BaseApiResponse<String> res = reportService.reportUser(reporterUser.getUsername(), reportedUserId, req);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
+
+    @PostMapping("/post/{id}")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<BaseApiResponse<String>> reportPost(
+            @AuthenticationPrincipal ApplicationUser reporterUser,
+            @PathVariable("id") Long reportedPostId,
+            @RequestBody CreateReportRequest req
+    ) {
+        BaseApiResponse<String> res = reportService.reportPost(reporterUser.getUsername(), reportedPostId, req);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
+
+    @PostMapping("/comment/{id}")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<BaseApiResponse<String>> reportComment(
+            @AuthenticationPrincipal ApplicationUser reporterUser,
+            @PathVariable("id") Long reportedCommentId,
+            @RequestBody CreateReportRequest req
+    ) {
+        BaseApiResponse<String> res = reportService.reportComment(reporterUser.getUsername(), reportedCommentId, req);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
 
 }
