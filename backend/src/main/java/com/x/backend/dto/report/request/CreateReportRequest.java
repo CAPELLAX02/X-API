@@ -14,7 +14,7 @@ public record CreateReportRequest(
         Long reportedCommentId,
 
         @NotNull(message = "Report reason is required.")
-        ReportReasonType reportReason,
+        ReportReasonType reportReasonType,
 
         @Size(max = 500, message = "Report reason description must be at most 500 characters.")
         String reportReasonDescription

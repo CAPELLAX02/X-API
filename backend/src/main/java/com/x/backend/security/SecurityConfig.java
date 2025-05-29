@@ -227,6 +227,13 @@ public class SecurityConfig {
                         // Revoke Vote Poll
                         .requestMatchers(HttpMethod.DELETE,"/posts/{postId}/poll/revoke").authenticated()
 
+                        // Report User
+                        .requestMatchers(HttpMethod.POST,  "/report/user/{id}").authenticated()
+                        // Report Post
+                        .requestMatchers(HttpMethod.POST,  "/report/post/{id}").authenticated()
+                        // Report Comment
+                        .requestMatchers(HttpMethod.POST,  "/report/comment/{id}").authenticated()
+
                         // WebSocket Connection Permission
                         .requestMatchers("/ws/**").permitAll()
 

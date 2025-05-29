@@ -1,17 +1,14 @@
 package com.x.backend.services.user.report;
 
 import com.x.backend.dto.report.request.CreateReportRequest;
-import com.x.backend.dto.report.response.ReportResponse;
-import com.x.backend.models.user.enums.ReportStatus;
-
-import java.util.List;
+import com.x.backend.utils.api.BaseApiResponse;
 
 public interface ReportService {
 
-    void createReport(String reporterUsername, CreateReportRequest req);
+    BaseApiResponse<String> reportUser(String reporterUsername, Long reportedUserId, CreateReportRequest req);
 
-    List<ReportResponse> getReports(String reporterUsername);
+    BaseApiResponse<String> reportPost(String reporterUsername, Long reportedPostId, CreateReportRequest req);
 
-    void updateReportStatus(Long reportId, ReportStatus newStatus);
+    BaseApiResponse<String> reportComment(String reporterUsername, Long reportedCommentId, CreateReportRequest req);
 
 }
