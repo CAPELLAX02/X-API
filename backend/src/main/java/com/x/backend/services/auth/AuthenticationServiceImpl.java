@@ -238,13 +238,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String hashedCode = SecureCodeManager.encode(rawCode, passwordEncodingConfig.passwordEncoder());
         Instant expiry = Instant.now().plusSeconds(300);
 
+        passwordRecoveryTokenRepository.deleteByUser_Username(user.getUsername());
+
         PasswordRecoveryToken passwordRecoveryToken = new PasswordRecoveryToken();
         passwordRecoveryToken.setHashedCode(hashedCode);
         passwordRecoveryToken.setExpiry(expiry);
         passwordRecoveryToken.setUser(user);
-        passwordRecoveryTokenRepository.save(passwordRecoveryToken);
-
-        passwordRecoveryTokenRepository.deleteByUser_Username(user.getUsername());
         passwordRecoveryTokenRepository.save(passwordRecoveryToken);
 
         EmailDispatcher.sendPasswordRecoveryEmail(mailService, user.getEmail(), user.getFullName(), rawCode);
@@ -267,20 +266,20 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String hashedCode = SecureCodeManager.encode(rawCode, passwordEncodingConfig.passwordEncoder());
         Instant expiry = Instant.now().plusSeconds(300);
 
-        PasswordRecoveryToken newPasswordRecoveryToken = new PasswordRecoveryToken();
-        newPasswordRecoveryToken.setHashedCode(hashedCode);
-        newPasswordRecoveryToken.setExpiry(expiry);
-        newPasswordRecoveryToken.setUser(user);
-        passwordRecoveryTokenRepository.save(newPasswordRecoveryToken);
-
         passwordRecoveryTokenRepository.deleteByUser_Username(user.getUsername());
-        passwordRecoveryTokenRepository.save(newPasswordRecoveryToken);
+
+        PasswordRecoveryToken newPasswordRecoveryCode = new PasswordRecoveryToken();
+        newPasswordRecoveryCode.setHashedCode(hashedCode);
+        newPasswordRecoveryCode.setExpiry(expiry);
+        newPasswordRecoveryCode.setUser(user);
+        passwordRecoveryTokenRepository.save(newPasswordRecoveryCode);
 
         EmailDispatcher.sendPasswordRecoveryEmail(mailService, user.getEmail(), user.getFullName(), rawCode);
 
         SendPasswordRecoveryEmailResponse res = new SendPasswordRecoveryEmailResponse(expiry);
         return BaseApiResponse.success(res, "New password recovery code sent via email.");
     }
+
 
     @Override
     public BaseApiResponse<String> recoverPassword(RecoverPasswordRequest req) {

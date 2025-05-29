@@ -9,7 +9,7 @@ import java.time.Instant;
 @Table(
         name = "email_verification_tokens",
         uniqueConstraints = {
-        w        @UniqueConstraint(
+                @UniqueConstraint(
                         name = "uq_email_verification_user",
                         columnNames = { "user_id" }
                 )
