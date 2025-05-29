@@ -6,12 +6,6 @@ import jakarta.validation.constraints.Size;
 
 public record CreateReportRequest(
 
-        @NotNull(message = "At least one of 'reportedUserId', 'reportedPostId', or 'reportedCommentId' must be provided.")
-        Long reportedUserId,
-
-        Long reportedPostId,
-
-        Long reportedCommentId,
 
         @NotNull(message = "Report reason is required.")
         ReportReasonType reportReasonType,
@@ -20,9 +14,4 @@ public record CreateReportRequest(
         String reportReasonDescription
 
 ) {
-
-    public boolean hasValidTarget() {
-        return reportedUserId != null || reportedPostId != null || reportedCommentId != null;
-    }
-
 }

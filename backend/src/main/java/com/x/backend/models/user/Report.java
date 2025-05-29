@@ -41,7 +41,7 @@ public class Report {
     private Comment reportedComment;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "reason_type", nullable = false)
+    @Column(name = "reason_type")
     private ReportReasonType reasonType;
 
     @Column(name = "reason_description", length = 500)

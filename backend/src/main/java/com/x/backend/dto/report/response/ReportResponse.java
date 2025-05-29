@@ -12,7 +12,7 @@ public record ReportResponse(
         String reportedUser,
         Long reportedPostId,
         Long reportedCommentId,
-        ReportReasonType reasonType,
+        ReportReasonType reportReasonType,
         String reasonDescription,
         ReportStatus reportStatus,
         LocalDateTime reportedAt
