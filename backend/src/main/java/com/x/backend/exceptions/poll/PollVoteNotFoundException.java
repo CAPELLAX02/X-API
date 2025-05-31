@@ -2,8 +2,8 @@ package com.x.backend.exceptions.poll;
 
 import com.x.backend.exceptions.BaseNotFoundException;
 
-public class PollVoteBaseNotFoundException extends BaseNotFoundException {
-    public PollVoteBaseNotFoundException() {
+public class PollVoteNotFoundException extends BaseNotFoundException {
+    public PollVoteNotFoundException() {
         super("Poll vote not found");
     }
 }

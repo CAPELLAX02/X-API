@@ -2,8 +2,8 @@ package com.x.backend.exceptions.user;
 
 import com.x.backend.exceptions.BaseNotFoundException;
 
-public class UserBaseNotFoundByIdException extends BaseNotFoundException {
-    public UserBaseNotFoundByIdException(Long id) {
+public class UserNotFoundByIdException extends BaseNotFoundException {
+    public UserNotFoundByIdException(Long id) {
         super("User with ID: " + id + " not found.");
     }
 }

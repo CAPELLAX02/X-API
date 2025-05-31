@@ -2,7 +2,7 @@ package com.x.backend.services.post;
 
 import com.x.backend.exceptions.post.PostAlreadyBookmarkedException;
 import com.x.backend.exceptions.post.PostHaveNotBookmarkedException;
-import com.x.backend.exceptions.post.PostBaseNotFoundException;
+import com.x.backend.exceptions.post.PostNotFoundException;
 import com.x.backend.utils.api.BaseApiResponse;
 
 /**
@@ -21,7 +21,7 @@ public interface PostBookmarkService {
      * @param postId   the ID of the post to be bookmarked
      * @return success message if bookmarked successfully
      * @throws PostAlreadyBookmarkedException if the user has already bookmarked the post
-     * @throws PostBaseNotFoundException if the post with the given ID does not exist
+     * @throws PostNotFoundException if the post with the given ID does not exist
      */
     BaseApiResponse<String> bookmarkPost(String username, Long postId);
 
@@ -32,7 +32,7 @@ public interface PostBookmarkService {
      * @param postId   the ID of the post to remove the bookmark from
      * @return success message if bookmark is removed
      * @throws PostHaveNotBookmarkedException if the user has not bookmarked the post
-     * @throws PostBaseNotFoundException if the post with the given ID does not exist
+     * @throws PostNotFoundException if the post with the given ID does not exist
      */
     BaseApiResponse<String> removeBookmark(String username, Long postId);
 
@@ -42,7 +42,7 @@ public interface PostBookmarkService {
      * @param username the username of the user
      * @param postId   the ID of the post
      * @return {@code true} if the post is bookmarked by the user, otherwise {@code false}
-     * @throws PostBaseNotFoundException if the post with the given ID does not exist
+     * @throws PostNotFoundException if the post with the given ID does not exist
      */
     BaseApiResponse<Boolean> hasUserBookmarked(String username, Long postId);
 
@@ -51,7 +51,7 @@ public interface PostBookmarkService {
      *
      * @param postId the ID of the post
      * @return total bookmark count
-     * @throws PostBaseNotFoundException if the post with the given ID does not exist
+     * @throws PostNotFoundException if the post with the given ID does not exist
      */
     BaseApiResponse<Long> getBookmarkCount(Long postId);
 

@@ -2,7 +2,7 @@ package com.x.backend.services.like;
 
 import com.x.backend.exceptions.post.PostAlreadyLikedException;
 import com.x.backend.exceptions.post.PostHaveNotLikedException;
-import com.x.backend.exceptions.post.PostBaseNotFoundException;
+import com.x.backend.exceptions.post.PostNotFoundException;
 import com.x.backend.models.user.ApplicationUser;
 import com.x.backend.models.post.Like;
 import com.x.backend.models.post.Post;
@@ -34,7 +34,7 @@ public class PostLikeServiceImpl implements PostLikeService {
     public BaseApiResponse<String> likePost(String username, Long postId) {
         ApplicationUser user = userService.getUserByUsername(username);
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new PostBaseNotFoundException(postId));
+                .orElseThrow(() -> new PostNotFoundException(postId));
 
         if (likeRepository.existsByUserAndPost(user, post)) {
             throw new PostAlreadyLikedException();
@@ -52,7 +52,7 @@ public class PostLikeServiceImpl implements PostLikeService {
     public BaseApiResponse<String> unlikePost(String username, Long postId) {
         ApplicationUser user = userService.getUserByUsername(username);
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new PostBaseNotFoundException(postId));
+                .orElseThrow(() -> new PostNotFoundException(postId));
 
         if (!likeRepository.existsByUserAndPost(user, post)) {
             throw new PostHaveNotLikedException();
@@ -65,7 +65,7 @@ public class PostLikeServiceImpl implements PostLikeService {
     @Override
     public BaseApiResponse<Long> getLikeCount(Long postId) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new PostBaseNotFoundException(postId));
+                .orElseThrow(() -> new PostNotFoundException(postId));
         long count = likeRepository.countByPost(post);
         return BaseApiResponse.success(count, "Post like count retrieved.");
     }

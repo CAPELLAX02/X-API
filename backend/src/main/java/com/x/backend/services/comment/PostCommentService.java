@@ -3,8 +3,8 @@ package com.x.backend.services.comment;
 import com.x.backend.dto.comment.request.CreateCommentRequest;
 import com.x.backend.dto.comment.request.EditCommentRequest;
 import com.x.backend.dto.comment.response.CommentResponse;
-import com.x.backend.exceptions.post.CommentBaseNotFoundException;
-import com.x.backend.exceptions.post.PostBaseNotFoundException;
+import com.x.backend.exceptions.post.CommentNotFoundException;
+import com.x.backend.exceptions.post.PostNotFoundException;
 import com.x.backend.utils.api.BaseApiResponse;
 import org.springframework.security.access.AccessDeniedException;
 
@@ -37,7 +37,7 @@ public interface PostCommentService {
      * @param postId   the ID of the post to comment on
      * @param req      the request body containing the content of the comment
      * @return a response containing the created comment
-     * @throws PostBaseNotFoundException if the target post is not found
+     * @throws PostNotFoundException if the target post is not found
      * @throws AccessDeniedException if the user is not allowed to comment
      */
     BaseApiResponse<CommentResponse> createComment(String username, Long postId, CreateCommentRequest req);
@@ -49,7 +49,7 @@ public interface PostCommentService {
      * @param commentId the ID of the comment to be edited
      * @param req       the request body containing new content
      * @return a response containing the updated comment
-     * @throws CommentBaseNotFoundException if the comment does not exist
+     * @throws CommentNotFoundException if the comment does not exist
      * @throws AccessDeniedException if the user is not the comment author
      */
     BaseApiResponse<CommentResponse> editComment(String username, Long commentId, EditCommentRequest req);
@@ -60,7 +60,7 @@ public interface PostCommentService {
      * @param username  the user attempting to delete
      * @param commentId the ID of the comment to be deleted
      * @return a confirmation response
-     * @throws CommentBaseNotFoundException if the comment does not exist
+     * @throws CommentNotFoundException if the comment does not exist
      * @throws AccessDeniedException if the user is not the comment author
      */
     BaseApiResponse<String> deleteComment(String username, Long commentId);
@@ -70,7 +70,7 @@ public interface PostCommentService {
      *
      * @param postId the ID of the post whose comments are to be fetched
      * @return a list of comments sorted by creation time (descending)
-     * @throws PostBaseNotFoundException if the post does not exist
+     * @throws PostNotFoundException if the post does not exist
      */
     BaseApiResponse<List<CommentResponse>> getCommentsByPost(Long postId);
 

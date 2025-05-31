@@ -3,8 +3,8 @@ package com.x.backend.services.comment;
 import com.x.backend.dto.comment.request.CreateSubCommentRequest;
 import com.x.backend.dto.comment.request.EditSubCommentRequest;
 import com.x.backend.dto.comment.response.SubCommentResponse;
-import com.x.backend.exceptions.post.CommentBaseNotFoundException;
-import com.x.backend.exceptions.post.PostBaseNotFoundException;
+import com.x.backend.exceptions.post.CommentNotFoundException;
+import com.x.backend.exceptions.post.PostNotFoundException;
 import com.x.backend.models.post.Post;
 import com.x.backend.models.post.comment.Comment;
 import com.x.backend.models.post.comment.SubComment;
@@ -49,8 +49,8 @@ public class PostSubCommentServiceImpl implements PostSubCommentService {
     @Override
     public BaseApiResponse<SubCommentResponse> createSubComment(String username, Long postId, Long parentCommentId, CreateSubCommentRequest req) {
         ApplicationUser subCommentAuthor = userService.getUserByUsername(username);
-        Post post = postRepository.findById(postId).orElseThrow(() -> new PostBaseNotFoundException(postId));
-        Comment parentComment = commentRepository.findById(parentCommentId).orElseThrow(() -> new CommentBaseNotFoundException(parentCommentId));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
+        Comment parentComment = commentRepository.findById(parentCommentId).orElseThrow(() -> new CommentNotFoundException(parentCommentId));
 
         validateReplyPermission(subCommentAuthor, post);
 
@@ -70,7 +70,7 @@ public class PostSubCommentServiceImpl implements PostSubCommentService {
     @Override
     public BaseApiResponse<SubCommentResponse> editSubComment(String username, Long subCommentId, EditSubCommentRequest req) {
         ApplicationUser subCommentAuthor = userService.getUserByUsername(username);
-        SubComment subComment = subCommentRepository.findById(subCommentId).orElseThrow(() -> new CommentBaseNotFoundException(subCommentId));
+        SubComment subComment = subCommentRepository.findById(subCommentId).orElseThrow(() -> new CommentNotFoundException(subCommentId));
 
         if (!subComment.getAuthor().getId().equals(subCommentAuthor.getId())) {
             throw new AccessDeniedException("You do not have permission to edit this subcomment");
@@ -88,7 +88,7 @@ public class PostSubCommentServiceImpl implements PostSubCommentService {
     @Override
     public BaseApiResponse<String> deleteSubComment(String username, Long subCommentId) {
         ApplicationUser subCommentAuthor = userService.getUserByUsername(username);
-        SubComment subComment = subCommentRepository.findById(subCommentId).orElseThrow(() -> new CommentBaseNotFoundException(subCommentId));
+        SubComment subComment = subCommentRepository.findById(subCommentId).orElseThrow(() -> new CommentNotFoundException(subCommentId));
 
         if (!subComment.getAuthor().getId().equals(subCommentAuthor.getId())) {
             throw new AccessDeniedException("You do not have permission to delete this subcomment");

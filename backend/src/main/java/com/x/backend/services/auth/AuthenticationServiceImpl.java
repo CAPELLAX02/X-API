@@ -7,7 +7,7 @@ import com.x.backend.dto.auth.response.SendVerificationEmailResponse;
 import com.x.backend.dto.auth.response.StartRegistrationResponse;
 import com.x.backend.exceptions.auth.*;
 import com.x.backend.exceptions.email.EmailFailedToSentException;
-import com.x.backend.exceptions.user.UserBaseNotFoundByEmailException;
+import com.x.backend.exceptions.user.UserNotFoundByEmailException;
 import com.x.backend.models.user.ApplicationUser;
 import com.x.backend.models.user.auth.EmailVerificationToken;
 import com.x.backend.models.user.auth.PasswordRecoveryToken;
@@ -82,7 +82,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private ApplicationUser getUserByEmail(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserBaseNotFoundByEmailException(email));
+                .orElseThrow(() -> new UserNotFoundByEmailException(email));
     }
 
     @Override
@@ -135,7 +135,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         EmailVerificationToken oldEmailVerificationToken = emailVerificationTokenRepository
                 .findByUser_Username(req.username())
-                .orElseThrow(EmailVerificationTokenBaseNotFoundException::new);
+                .orElseThrow(EmailVerificationTokenNotFoundException::new);
 
         if (oldEmailVerificationToken != null) {
             EmailResendGuard.checkThrottleLimit(oldEmailVerificationToken.getExpiry());
@@ -169,7 +169,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
 
         EmailVerificationToken emailVerificationToken = emailVerificationTokenRepository.findByUser_Username(req.username())
-                .orElseThrow(VerificationCodeBaseNotFoundException::new);
+                .orElseThrow(VerificationCodeNotFoundException::new);
 
         if (emailVerificationToken.getExpiry().isBefore(Instant.now())) {
             throw new ExpiredVerificationCodeException("Expired email verification code.");
@@ -258,7 +258,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         PasswordRecoveryToken oldPasswordRecoveryToken = passwordRecoveryTokenRepository
                 .findByUser_Username(user.getUsername())
-                .orElseThrow(PasswordRecoveryTokenBaseNotFoundException::new);
+                .orElseThrow(PasswordRecoveryTokenNotFoundException::new);
 
         EmailResendGuard.checkThrottleLimit(oldPasswordRecoveryToken.getExpiry());
 
@@ -286,7 +286,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         ApplicationUser user = getUserByEmail(req.email());
 
         PasswordRecoveryToken token = passwordRecoveryTokenRepository.findByUser_Username(user.getUsername())
-                .orElseThrow(VerificationCodeBaseNotFoundException::new);
+                .orElseThrow(VerificationCodeNotFoundException::new);
 
         if (token.getExpiry().isBefore(Instant.now())) {
             throw new ExpiredPasswordRecoveryCodeException("Expired password recovery code.");
@@ -357,7 +357,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public BaseApiResponse<AuthTokenResponse> refreshToken(RefreshTokenRequest req) {
-        RefreshToken token = refreshTokenRepository.findByToken(req.refreshToken()).orElseThrow(RefreshTokenBaseNotFoundException::new);
+        RefreshToken token = refreshTokenRepository.findByToken(req.refreshToken()).orElseThrow(RefreshTokenNotFoundException::new);
 
         if (token.getExpiryDate().isBefore(Instant.now())) {
             refreshTokenRepository.delete(token);

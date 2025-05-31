@@ -4,7 +4,7 @@ import com.x.backend.dto.post.request.CreatePostRequest;
 import com.x.backend.dto.post.request.PostInteractionContext;
 import com.x.backend.dto.post.response.PostResponse;
 import com.x.backend.exceptions.image.MaxImageLimitExceededException;
-import com.x.backend.exceptions.post.PostBaseNotFoundException;
+import com.x.backend.exceptions.post.PostNotFoundException;
 import com.x.backend.models.image.Image;
 import com.x.backend.models.user.ApplicationUser;
 import com.x.backend.models.post.poll.Poll;
@@ -86,7 +86,7 @@ public class PostServiceImpl implements PostService {
         post.setScheduledDate(req.scheduledDate());
 
         if (req.replyToPostId() != null) {
-            Post parentPost = postRepository.findById(req.replyToPostId()).orElseThrow(() -> new PostBaseNotFoundException(req.replyToPostId()));
+            Post parentPost = postRepository.findById(req.replyToPostId()).orElseThrow(() -> new PostNotFoundException(req.replyToPostId()));
 
             validatePostViewPermission(author, parentPost);
 
@@ -161,7 +161,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public BaseApiResponse<PostResponse> getPostByIdWithAccessControl(Long postId, String currentUsername) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new PostBaseNotFoundException(postId));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
         ApplicationUser viewer = (currentUsername != null)
                 ? userService.getUserByUsername(currentUsername)
                 : null;

@@ -2,7 +2,7 @@ package com.x.backend.services.like;
 
 import com.x.backend.exceptions.post.CommentAlreadyLikedException;
 import com.x.backend.exceptions.post.CommentHaveNotLikedException;
-import com.x.backend.exceptions.post.CommentBaseNotFoundException;
+import com.x.backend.exceptions.post.CommentNotFoundException;
 import com.x.backend.models.user.ApplicationUser;
 import com.x.backend.models.post.comment.Comment;
 import com.x.backend.repositories.CommentRepository;
@@ -28,7 +28,7 @@ public class CommentLikeServiceImpl implements CommentLikeService {
     @Override
     public BaseApiResponse<String> likeComment(String authenticatedUsername, Long commentId) {
         ApplicationUser authenticatedUser = userService.getUserByUsername(authenticatedUsername);
-        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new CommentBaseNotFoundException(commentId));
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new CommentNotFoundException(commentId));
 
         if (comment.getLikes().contains(authenticatedUser)) throw new CommentAlreadyLikedException();
 
@@ -41,7 +41,7 @@ public class CommentLikeServiceImpl implements CommentLikeService {
     @Override
     public BaseApiResponse<String> unlikeComment(String authenticatedUsername, Long commentId) {
         ApplicationUser authenticatedUser = userService.getUserByUsername(authenticatedUsername);
-        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new CommentBaseNotFoundException(commentId));
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new CommentNotFoundException(commentId));
 
         if (!comment.getLikes().contains(authenticatedUser)) throw new CommentHaveNotLikedException();
 
@@ -53,7 +53,7 @@ public class CommentLikeServiceImpl implements CommentLikeService {
 
     @Override
     public BaseApiResponse<Long> countCommentLikes(Long commentId) {
-        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new CommentBaseNotFoundException(commentId));
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new CommentNotFoundException(commentId));
         Long commentLikeCount = (long) comment.getLikes().size();
 
         return BaseApiResponse.success(commentLikeCount, "Comment like count retrieved");

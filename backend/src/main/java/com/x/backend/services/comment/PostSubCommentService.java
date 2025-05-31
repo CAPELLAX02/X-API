@@ -3,8 +3,8 @@ package com.x.backend.services.comment;
 import com.x.backend.dto.comment.request.CreateSubCommentRequest;
 import com.x.backend.dto.comment.request.EditSubCommentRequest;
 import com.x.backend.dto.comment.response.SubCommentResponse;
-import com.x.backend.exceptions.post.CommentBaseNotFoundException;
-import com.x.backend.exceptions.post.PostBaseNotFoundException;
+import com.x.backend.exceptions.post.CommentNotFoundException;
+import com.x.backend.exceptions.post.PostNotFoundException;
 import com.x.backend.utils.api.BaseApiResponse;
 import org.springframework.security.access.AccessDeniedException;
 
@@ -32,8 +32,8 @@ public interface PostSubCommentService {
      * @param commentId  the parent comment ID
      * @param req        the request payload containing content
      * @return a response containing the created subcomment
-     * @throws CommentBaseNotFoundException if the parent comment does not exist
-     * @throws PostBaseNotFoundException if the post does not exist
+     * @throws CommentNotFoundException if the parent comment does not exist
+     * @throws PostNotFoundException if the post does not exist
      * @throws AccessDeniedException if the user is not allowed to reply
      */
     BaseApiResponse<SubCommentResponse> createSubComment(String username, Long postId, Long commentId, CreateSubCommentRequest req);
@@ -45,7 +45,7 @@ public interface PostSubCommentService {
      * @param subCommentId  the ID of the subcomment to be edited
      * @param req           the request payload containing new content
      * @return a response containing the updated subcomment
-     * @throws CommentBaseNotFoundException if the subcomment does not exist
+     * @throws CommentNotFoundException if the subcomment does not exist
      * @throws AccessDeniedException if the user is not the author
      */
     BaseApiResponse<SubCommentResponse> editSubComment(String username, Long subCommentId, EditSubCommentRequest req);
@@ -56,7 +56,7 @@ public interface PostSubCommentService {
      * @param username      the user attempting the deletion
      * @param subCommentId  the ID of the subcomment to be deleted
      * @return a confirmation response
-     * @throws CommentBaseNotFoundException if the subcomment does not exist
+     * @throws CommentNotFoundException if the subcomment does not exist
      * @throws AccessDeniedException if the user is not the author
      */
     BaseApiResponse<String> deleteSubComment(String username, Long subCommentId);

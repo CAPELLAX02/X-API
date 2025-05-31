@@ -2,8 +2,8 @@ package com.x.backend.exceptions.user;
 
 import com.x.backend.exceptions.BaseNotFoundException;
 
-public class PrivacySettingsBaseNotFoundException extends BaseNotFoundException {
-    public PrivacySettingsBaseNotFoundException() {
+public class PrivacySettingsNotFoundException extends BaseNotFoundException {
+    public PrivacySettingsNotFoundException() {
         super("Privacy Settings not found.");
     }
 }

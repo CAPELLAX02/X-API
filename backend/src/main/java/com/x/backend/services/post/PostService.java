@@ -3,7 +3,7 @@ package com.x.backend.services.post;
 import com.x.backend.dto.post.request.CreatePostRequest;
 import com.x.backend.dto.post.response.PostResponse;
 import com.x.backend.exceptions.image.MaxImageLimitExceededException;
-import com.x.backend.exceptions.post.PostBaseNotFoundException;
+import com.x.backend.exceptions.post.PostNotFoundException;
 import com.x.backend.utils.api.BaseApiResponse;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.multipart.MultipartFile;
@@ -51,7 +51,7 @@ public interface PostService {
      * @param postId          the unique ID of the post
      * @param currentUsername the currently authenticated user's username (nullable for guests)
      * @return the post if access is allowed, otherwise throws {@code AccessDeniedException}
-     * @throws PostBaseNotFoundException if the post does not exist
+     * @throws PostNotFoundException if the post does not exist
      * @throws AccessDeniedException if access is not permitted
      */
     BaseApiResponse<PostResponse> getPostByIdWithAccessControl(Long postId, String currentUsername);

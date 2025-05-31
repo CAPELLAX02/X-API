@@ -4,8 +4,8 @@ import com.x.backend.dto.message.request.SendMessageRequest;
 import com.x.backend.dto.message.response.MessageResponse;
 import com.x.backend.exceptions.message.MessageAlreadyMarkedAsReadException;
 import com.x.backend.exceptions.message.MessageHaveNotMarkedAsReadException;
-import com.x.backend.exceptions.message.MessageBaseNotFoundException;
-import com.x.backend.exceptions.user.UserBaseNotFoundByIdException;
+import com.x.backend.exceptions.message.MessageNotFoundException;
+import com.x.backend.exceptions.user.UserNotFoundByIdException;
 import com.x.backend.models.message.Conversation;
 import com.x.backend.models.message.Message;
 import com.x.backend.models.message.MessageRead;
@@ -52,11 +52,11 @@ public class MessageServiceImpl implements MessageService {
     }
 
     private Message getMessageById(Long messageId) {
-        return messageRepository.findById(messageId).orElseThrow(() -> new MessageBaseNotFoundException(messageId));
+        return messageRepository.findById(messageId).orElseThrow(() -> new MessageNotFoundException(messageId));
     }
 
     private ApplicationUser getUserById(Long userId) {
-        return applicationUserRepository.findById(userId).orElseThrow(() -> new UserBaseNotFoundByIdException(userId));
+        return applicationUserRepository.findById(userId).orElseThrow(() -> new UserNotFoundByIdException(userId));
     }
 
     private ApplicationUser getUserByUsername(String username) {
@@ -85,7 +85,7 @@ public class MessageServiceImpl implements MessageService {
         Message replyTo = null;
         if (req.replyToMessageId() != null) {
             replyTo = messageRepository.findById(req.replyToMessageId())
-                    .orElseThrow(() -> new MessageBaseNotFoundException(req.replyToMessageId()));
+                    .orElseThrow(() -> new MessageNotFoundException(req.replyToMessageId()));
         }
 
         // Create message

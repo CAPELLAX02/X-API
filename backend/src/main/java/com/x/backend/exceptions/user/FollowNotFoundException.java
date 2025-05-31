@@ -2,8 +2,8 @@ package com.x.backend.exceptions.user;
 
 import com.x.backend.exceptions.BaseNotFoundException;
 
-public class FollowBaseNotFoundException extends BaseNotFoundException {
-    public FollowBaseNotFoundException(Long id) {
+public class FollowNotFoundException extends BaseNotFoundException {
+    public FollowNotFoundException(Long id) {
         super("Follow with ID: " + id + " not found.");
     }
 }

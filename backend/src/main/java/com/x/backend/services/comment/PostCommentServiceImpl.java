@@ -3,8 +3,8 @@ package com.x.backend.services.comment;
 import com.x.backend.dto.comment.request.CreateCommentRequest;
 import com.x.backend.dto.comment.request.EditCommentRequest;
 import com.x.backend.dto.comment.response.CommentResponse;
-import com.x.backend.exceptions.post.CommentBaseNotFoundException;
-import com.x.backend.exceptions.post.PostBaseNotFoundException;
+import com.x.backend.exceptions.post.CommentNotFoundException;
+import com.x.backend.exceptions.post.PostNotFoundException;
 import com.x.backend.models.post.Post;
 import com.x.backend.models.post.comment.Comment;
 import com.x.backend.models.user.ApplicationUser;
@@ -41,7 +41,7 @@ public class PostCommentServiceImpl implements PostCommentService {
     @Override
     public BaseApiResponse<CommentResponse> createComment(String username, Long postId, CreateCommentRequest req) {
         ApplicationUser commentAuthor = userService.getUserByUsername(username);
-        Post post = postRepository.findById(postId).orElseThrow(() -> new PostBaseNotFoundException(postId));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
 
         validateReplyPermission(commentAuthor, post);
 
@@ -60,7 +60,7 @@ public class PostCommentServiceImpl implements PostCommentService {
     @Override
     public BaseApiResponse<CommentResponse> editComment(String username, Long commentId, EditCommentRequest req) {
         ApplicationUser commentAuthor = userService.getUserByUsername(username);
-        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new CommentBaseNotFoundException(commentId));
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new CommentNotFoundException(commentId));
 
         if (!comment.getAuthor().getId().equals(commentAuthor.getId())) {
             throw new AccessDeniedException("You do not have permission to edit this comment");
@@ -79,7 +79,7 @@ public class PostCommentServiceImpl implements PostCommentService {
     public BaseApiResponse<String> deleteComment(String username, Long commentId) {
         ApplicationUser commentAuthor = userService.getUserByUsername(username);
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentBaseNotFoundException(commentId));
+                .orElseThrow(() -> new CommentNotFoundException(commentId));
 
         if (!comment.getAuthor().getId().equals(commentAuthor.getId())) {
             throw new AccessDeniedException("You do not have permission to delete this comment");
@@ -95,7 +95,7 @@ public class PostCommentServiceImpl implements PostCommentService {
 
     @Override
     public BaseApiResponse<List<CommentResponse>> getCommentsByPost(Long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new PostBaseNotFoundException(postId));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
         List<Comment> comments = commentRepository.findAllByPostOrderByCreatedAtDesc(post);
 
         List<CommentResponse> commentResponses = comments.stream()
