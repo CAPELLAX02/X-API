@@ -1,4 +1,4 @@
-package com.x.backend.dto.post.response;
+package com.x.backend.dto.poll.response;
 
 import java.time.LocalDateTime;
 import java.util.List;

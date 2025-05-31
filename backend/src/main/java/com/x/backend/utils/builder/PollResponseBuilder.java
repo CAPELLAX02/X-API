@@ -1,8 +1,8 @@
 package com.x.backend.utils.builder;
 
 import com.x.backend.dto.post.request.PostInteractionContext;
-import com.x.backend.dto.post.response.PollOptionResponse;
-import com.x.backend.dto.post.response.PollResponse;
+import com.x.backend.dto.poll.response.PollOptionResponse;
+import com.x.backend.dto.poll.response.PollResponse;
 import com.x.backend.models.post.poll.Poll;
 import com.x.backend.models.post.poll.PollVote;
 import org.springframework.stereotype.Component;

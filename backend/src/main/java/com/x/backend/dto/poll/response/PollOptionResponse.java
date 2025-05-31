@@ -1,4 +1,4 @@
-package com.x.backend.dto.post.response;
+package com.x.backend.dto.poll.response;
 
 public record PollOptionResponse(
 

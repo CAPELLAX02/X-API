@@ -1,5 +1,6 @@
 package com.x.backend.dto.post.response;
 
+import com.x.backend.dto.poll.response.PollResponse;
 import com.x.backend.models.post.enums.Audience;
 import com.x.backend.models.post.enums.ReplyRestriction;
 
