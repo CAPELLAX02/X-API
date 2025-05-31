@@ -1,22 +1,24 @@
 package com.x.backend.services.user.block;
 
+import com.x.backend.utils.api.BaseApiResponse;
+
 import java.util.List;
 
 public interface UserBlockService {
 
 
-    void blockUser(String blockerUsername, String blockedUsername);
+    BaseApiResponse<String> blockUser(String blockerUsername, String blockedUsername);
 
 
-    void unblockUser(String blockerUsername, String blockedUsername);
+    BaseApiResponse<String> unblockUser(String blockerUsername, String blockedUsername);
 
 
-    boolean isUserBlocked(String actorUsername, String targetUsername);
+    BaseApiResponse<Boolean> isUserBlocked(String actorUsername, String targetUsername);
 
 
-    List<String> getBlockedUsernames(String username);
+    BaseApiResponse<List<String>> getBlockedUsernames(String username);
 
 
-    List<String> getUsersBlockingMe(String username);
+    BaseApiResponse<List<String>> getUsersBlockingMe(String username);
 
 }
