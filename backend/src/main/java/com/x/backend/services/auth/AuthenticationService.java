@@ -5,7 +5,7 @@ import com.x.backend.dto.auth.response.*;
 import com.x.backend.exceptions.auth.*;
 import com.x.backend.exceptions.common.TooManyRequestsException;
 import com.x.backend.exceptions.email.EmailFailedToSentException;
-import com.x.backend.exceptions.user.UserNotFoundByEmailException;
+import com.x.backend.exceptions.user.UserBaseNotFoundByEmailException;
 import com.x.backend.utils.api.BaseApiResponse;
 
 /**
@@ -118,7 +118,7 @@ public interface AuthenticationService {
      * @param req contains:
      *            - {@code email}
      * @return code expiry timestamp
-     * @throws UserNotFoundByEmailException if the email is not associated with any account
+     * @throws UserBaseNotFoundByEmailException if the email is not associated with any account
      * @throws EmailFailedToSentException if the email fails to send
      */
     BaseApiResponse<SendPasswordRecoveryEmailResponse> sendPasswordRecoveryEmail(SendPasswordRecoveryEmailRequest req) throws EmailFailedToSentException;
@@ -130,7 +130,7 @@ public interface AuthenticationService {
      * @param req contains:
      *            - {@code email}
      * @return new code's expiry time
-     * @throws UserNotFoundByEmailException if email is not found
+     * @throws UserBaseNotFoundByEmailException if email is not found
      * @throws TooManyRequestsException if 1 minute has not passed since the last code
      * @throws EmailFailedToSentException if email delivery fails
      */
@@ -189,7 +189,7 @@ public interface AuthenticationService {
      * @param req contains:
      *            - {@code refreshToken}
      * @return new access & refresh tokens with expiration
-     * @throws RefreshTokenNotFoundException if token is not in storage
+     * @throws RefreshTokenBaseNotFoundException if token is not in storage
      * @throws InvalidOrExpiredRefreshTokenException if token has expired
      */
     BaseApiResponse<AuthTokenResponse> refreshToken(RefreshTokenRequest req);

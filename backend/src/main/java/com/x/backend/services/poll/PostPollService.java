@@ -2,7 +2,7 @@ package com.x.backend.services.poll;
 
 import com.x.backend.dto.poll.request.PollVoteRequest;
 import com.x.backend.exceptions.poll.*;
-import com.x.backend.exceptions.post.PostNotFoundException;
+import com.x.backend.exceptions.post.PostBaseNotFoundException;
 import com.x.backend.utils.api.BaseApiResponse;
 
 /**
@@ -27,8 +27,8 @@ public interface PostPollService {
      * @param req      the request body containing the {@code selectedOptionIndex}
      * @return success message upon vote submission
      *
-     * @throws PostNotFoundException           if the post with the given ID does not exist
-     * @throws PostDoesNotHaveAPollException   if the post has no associated poll
+     * @throws PostBaseNotFoundException           if the post with the given ID does not exist
+     * @throws PostDoesBaseNotHaveAPollException   if the post has no associated poll
      * @throws PollHasExpiredException         if the poll has already expired
      * @throws PollAlreadyVotedInException     if the user has already voted in the poll
      * @throws InvalidPollOptionIndexException if the provided option index is out of range
@@ -46,9 +46,9 @@ public interface PostPollService {
      * @param pollId   the ID of the poll from which to remove the user's vote
      * @return success message upon successful revocation
      *
-     * @throws PollNotFoundException       if the poll with the given ID does not exist
+     * @throws PollBaseNotFoundException       if the poll with the given ID does not exist
      * @throws PollHasExpiredException     if the poll has already expired
-     * @throws PollVoteNotFoundException   if no vote by this user exists in the poll
+     * @throws PollVoteBaseNotFoundException   if no vote by this user exists in the poll
      */
     BaseApiResponse<String> revokePollVote(String username, Long pollId);
 

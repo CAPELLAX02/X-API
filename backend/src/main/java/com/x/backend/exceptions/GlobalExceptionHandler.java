@@ -31,18 +31,18 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(BaseApiResponse.error(e.getMessage() != null ? "You do not have permission to access this resource or perform this action" : e.getMessage(), HttpStatus.FORBIDDEN));
     }
 
-    @ExceptionHandler(CustomRuntimeException.class)
-    public ResponseEntity<BaseApiResponse<String>> handleCustomRuntimeException(CustomRuntimeException e) {
+    @ExceptionHandler(BaseRuntimeException.class)
+    public ResponseEntity<BaseApiResponse<String>> handleCustomRuntimeException(BaseRuntimeException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseApiResponse.error(e.getMessage(), HttpStatus.BAD_REQUEST));
     }
 
-    @ExceptionHandler(AlreadyExistsException.class)
-    public ResponseEntity<BaseApiResponse<UserResponse>> handleAlreadyExistsException(AlreadyExistsException e) {
+    @ExceptionHandler(BaseConflictException.class)
+    public ResponseEntity<BaseApiResponse<UserResponse>> handleAlreadyExistsException(BaseConflictException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(BaseApiResponse.error(e.getMessage(), HttpStatus.CONFLICT));
     }
 
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<BaseApiResponse<String>> handleNotFoundException(NotFoundException e) {
+    @ExceptionHandler(BaseNotFoundException.class)
+    public ResponseEntity<BaseApiResponse<String>> handleNotFoundException(BaseNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(BaseApiResponse.error(e.getMessage(), HttpStatus.NOT_FOUND));
     }
 

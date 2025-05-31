@@ -1,8 +1,8 @@
 package com.x.backend.exceptions.auth;
 
-import com.x.backend.exceptions.CustomRuntimeException;
+import com.x.backend.exceptions.BaseRuntimeException;
 
-public class InvalidVerificationCodeException extends CustomRuntimeException {
+public class InvalidVerificationCodeException extends BaseRuntimeException {
     public InvalidVerificationCodeException(String message) {
         super(message);
     }

@@ -1,8 +1,8 @@
 package com.x.backend.exceptions.auth;
 
-import com.x.backend.exceptions.AlreadyExistsException;
+import com.x.backend.exceptions.BaseConflictException;
 
-public class UsernameAlreadyInUseException extends AlreadyExistsException {
+public class UsernameAlreadyInUseException extends BaseConflictException {
     public UsernameAlreadyInUseException() {
         super("Username already in use.");
     }

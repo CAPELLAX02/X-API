@@ -2,7 +2,7 @@ package com.x.backend.services.post;
 
 import com.x.backend.exceptions.post.PostAlreadyRepostedException;
 import com.x.backend.exceptions.post.PostHaveNotRepostedException;
-import com.x.backend.exceptions.post.PostNotFoundException;
+import com.x.backend.exceptions.post.PostBaseNotFoundException;
 import com.x.backend.models.user.ApplicationUser;
 import com.x.backend.models.post.Post;
 import com.x.backend.repositories.PostRepository;
@@ -28,7 +28,7 @@ public class PostRepostServiceImpl implements PostRepostService {
     @Override
     public BaseApiResponse<String> repostPost(String username, Long postId) {
         ApplicationUser user = userService.getUserByUsername(username);
-        Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new PostBaseNotFoundException(postId));
 
         if (post.getReposts().contains(user)) throw new PostAlreadyRepostedException();
 
@@ -41,7 +41,7 @@ public class PostRepostServiceImpl implements PostRepostService {
     @Override
     public BaseApiResponse<String> undoRepost(String username, Long postId) {
         ApplicationUser user = userService.getUserByUsername(username);
-        Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new PostBaseNotFoundException(postId));
 
         if (!post.getReposts().contains(user)) throw new PostHaveNotRepostedException();
 
@@ -53,7 +53,7 @@ public class PostRepostServiceImpl implements PostRepostService {
 
     @Override
     public BaseApiResponse<Long> getRepostCount(Long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new PostBaseNotFoundException(postId));
         Long repostCount = (long) post.getReposts().size();
 
         return BaseApiResponse.success(repostCount, "Repost count retrieved");
@@ -62,7 +62,7 @@ public class PostRepostServiceImpl implements PostRepostService {
     @Override
     public BaseApiResponse<Boolean> hasUserReposted(String username, Long postId) {
         ApplicationUser user = userService.getUserByUsername(username);
-        Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new PostBaseNotFoundException(postId));
         return BaseApiResponse.success(post.getReposts().contains(user));
     }
 

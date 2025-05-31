@@ -2,7 +2,7 @@ package com.x.backend.services.poll;
 
 import com.x.backend.dto.poll.request.PollVoteRequest;
 import com.x.backend.exceptions.poll.*;
-import com.x.backend.exceptions.post.PostNotFoundException;
+import com.x.backend.exceptions.post.PostBaseNotFoundException;
 import com.x.backend.models.user.ApplicationUser;
 import com.x.backend.models.post.poll.Poll;
 import com.x.backend.models.post.poll.PollOption;
@@ -42,12 +42,12 @@ public class PostPollServiceImpl implements PostPollService {
     @Override
     public BaseApiResponse<String> voteInPoll(String username, Long postId, PollVoteRequest req) {
         ApplicationUser user = userService.getUserByUsername(username);
-        Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new PostBaseNotFoundException(postId));
 
         Poll poll = post.getPoll();
 
         if (poll == null)
-            throw new PostDoesNotHaveAPollException();
+            throw new PostDoesBaseNotHaveAPollException();
 
         if (poll.getExpiresAt().isBefore(LocalDateTime.now()))
             throw new PollHasExpiredException();
@@ -77,12 +77,12 @@ public class PostPollServiceImpl implements PostPollService {
     @Override
     public BaseApiResponse<String> revokePollVote(String username, Long pollId) {
         ApplicationUser user = userService.getUserByUsername(username);
-        Poll poll = pollRepository.findById(pollId).orElseThrow(() -> new PollNotFoundException(pollId));
+        Poll poll = pollRepository.findById(pollId).orElseThrow(() -> new PollBaseNotFoundException(pollId));
 
         if (poll.getExpiresAt().isBefore(LocalDateTime.now()))
             throw new PollHasExpiredException();
 
-        PollVote existingVote = pollVoteRepository.findByPollIdAndUserId(pollId, user.getId()).orElseThrow(PollVoteNotFoundException::new);
+        PollVote existingVote = pollVoteRepository.findByPollIdAndUserId(pollId, user.getId()).orElseThrow(PollVoteBaseNotFoundException::new);
         pollVoteRepository.delete(existingVote);
 
         return BaseApiResponse.success("Poll vote revoked successfully.");

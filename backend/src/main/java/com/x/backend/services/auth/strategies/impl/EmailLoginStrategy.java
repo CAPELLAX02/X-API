@@ -3,7 +3,7 @@ package com.x.backend.services.auth.strategies.impl;
 import com.x.backend.dto.auth.request.LoginRequest;
 import com.x.backend.exceptions.auth.InvalidLoginCredentialsException;
 import com.x.backend.exceptions.auth.PasswordNotSetYetException;
-import com.x.backend.exceptions.user.UserNotFoundByEmailException;
+import com.x.backend.exceptions.user.UserBaseNotFoundByEmailException;
 import com.x.backend.models.user.ApplicationUser;
 import com.x.backend.repositories.ApplicationUserRepository;
 import com.x.backend.services.auth.strategies.LoginStrategy;
@@ -32,7 +32,7 @@ public class EmailLoginStrategy implements LoginStrategy {
     @Transactional
     public ApplicationUser authenticate(LoginRequest req) {
         ApplicationUser user = applicationUserRepository.findByEmail(req.email())
-                .orElseThrow(() -> new UserNotFoundByEmailException(req.email()));
+                .orElseThrow(() -> new UserBaseNotFoundByEmailException(req.email()));
         if (user.getPassword() == null) {
             throw new PasswordNotSetYetException();
         }

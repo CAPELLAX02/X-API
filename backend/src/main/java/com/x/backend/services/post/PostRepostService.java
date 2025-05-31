@@ -2,7 +2,7 @@ package com.x.backend.services.post;
 
 import com.x.backend.exceptions.post.PostAlreadyRepostedException;
 import com.x.backend.exceptions.post.PostHaveNotRepostedException;
-import com.x.backend.exceptions.post.PostNotFoundException;
+import com.x.backend.exceptions.post.PostBaseNotFoundException;
 import com.x.backend.utils.api.BaseApiResponse;
 
 /**
@@ -21,7 +21,7 @@ public interface PostRepostService {
      * @param postId   the ID of the post to repost
      * @return success message if repost is added successfully
      * @throws PostAlreadyRepostedException if the user has already reposted the post
-     * @throws PostNotFoundException if the post with the given ID does not exist
+     * @throws PostBaseNotFoundException if the post with the given ID does not exist
      */
     BaseApiResponse<String> repostPost(String username, Long postId);
 
@@ -32,7 +32,7 @@ public interface PostRepostService {
      * @param postId   the ID of the post to undo the repost for
      * @return success message if the repost is successfully removed
      * @throws PostHaveNotRepostedException if the user has not reposted the post
-     * @throws PostNotFoundException if the post with the given ID does not exist
+     * @throws PostBaseNotFoundException if the post with the given ID does not exist
      */
     BaseApiResponse<String> undoRepost(String username, Long postId);
 
@@ -41,7 +41,7 @@ public interface PostRepostService {
      *
      * @param postId the ID of the post
      * @return the count of reposts for the post
-     * @throws PostNotFoundException if the post with the given ID does not exist
+     * @throws PostBaseNotFoundException if the post with the given ID does not exist
      */
     BaseApiResponse<Long> getRepostCount(Long postId);
 
@@ -51,7 +51,7 @@ public interface PostRepostService {
      * @param username the username of the user
      * @param postId   the ID of the post
      * @return {@code true} if the user has reposted the post, {@code false} otherwise
-     * @throws PostNotFoundException if the post with the given ID does not exist
+     * @throws PostBaseNotFoundException if the post with the given ID does not exist
      */
     BaseApiResponse<Boolean> hasUserReposted(String username, Long postId);
 

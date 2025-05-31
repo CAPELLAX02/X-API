@@ -1,8 +1,8 @@
 package com.x.backend.exceptions.post;
 
-import com.x.backend.exceptions.AlreadyExistsException;
+import com.x.backend.exceptions.BaseConflictException;
 
-public class PostHaveNotRepostedException extends AlreadyExistsException {
+public class PostHaveNotRepostedException extends BaseConflictException {
     public PostHaveNotRepostedException() {
         super("You haven't reposted the post.");
     }

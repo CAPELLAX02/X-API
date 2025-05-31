@@ -2,7 +2,7 @@ package com.x.backend.services.user.privacy;
 
 import com.x.backend.dto.user.request.UpdatePrivacySettingsRequest;
 import com.x.backend.dto.user.response.PrivacySettingsResponse;
-import com.x.backend.exceptions.user.PrivacySettingsNotFoundException;
+import com.x.backend.exceptions.user.PrivacySettingsBaseNotFoundException;
 import com.x.backend.models.user.ApplicationUser;
 import com.x.backend.models.user.PrivacySettings;
 import com.x.backend.repositories.PrivacySettingsRepository;
@@ -32,7 +32,7 @@ public class PrivacySettingsServiceImpl implements PrivacySettingsService {
     @Override
     public BaseApiResponse<PrivacySettingsResponse> getPrivacySettingsForCurrentUser(String username) {
         ApplicationUser user = userService.getUserByUsername(username);
-        PrivacySettings privacySettings = privacySettingsRepository.findByUser(user).orElseThrow(PrivacySettingsNotFoundException::new);
+        PrivacySettings privacySettings = privacySettingsRepository.findByUser(user).orElseThrow(PrivacySettingsBaseNotFoundException::new);
 
         PrivacySettingsResponse res = privacySettingsResponseBuilder.buildPrivacySettingsResponse(privacySettings);
         return BaseApiResponse.success(res, "Privacy Settings of the current user retrieved.");
@@ -41,7 +41,7 @@ public class PrivacySettingsServiceImpl implements PrivacySettingsService {
     @Override
     public BaseApiResponse<PrivacySettingsResponse> updatePrivacySettingsForCurrentUser(String username, UpdatePrivacySettingsRequest req) {
         ApplicationUser user = userService.getUserByUsername(username);
-        PrivacySettings privacySettings = privacySettingsRepository.findByUser(user).orElseThrow(PrivacySettingsNotFoundException::new);
+        PrivacySettings privacySettings = privacySettingsRepository.findByUser(user).orElseThrow(PrivacySettingsBaseNotFoundException::new);
 
         privacySettings.setMessagePrivacy(req.messagePrivacy());
         privacySettings.setMentionPrivacy(req.mentionPrivacy());

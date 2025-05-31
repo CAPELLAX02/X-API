@@ -1,9 +1,9 @@
 package com.x.backend.services.user.report;
 
 import com.x.backend.dto.report.request.CreateReportRequest;
-import com.x.backend.exceptions.post.CommentNotFoundException;
-import com.x.backend.exceptions.post.PostNotFoundException;
-import com.x.backend.exceptions.user.UserNotFoundByIdException;
+import com.x.backend.exceptions.post.CommentBaseNotFoundException;
+import com.x.backend.exceptions.post.PostBaseNotFoundException;
+import com.x.backend.exceptions.user.UserBaseNotFoundByIdException;
 import com.x.backend.models.post.Post;
 import com.x.backend.models.post.comment.Comment;
 import com.x.backend.models.user.ApplicationUser;
@@ -44,7 +44,7 @@ public class ReportServiceImpl implements ReportService {
                 .orElseThrow(() -> new UsernameNotFoundException(reporterUsername));
 
         ApplicationUser reportedUser = userRepository.findById(reportedUserId)
-                .orElseThrow(() -> new UserNotFoundByIdException(reportedUserId));
+                .orElseThrow(() -> new UserBaseNotFoundByIdException(reportedUserId));
 
         Report report = new Report();
         report.setReportedBy(reporterUser);
@@ -64,7 +64,7 @@ public class ReportServiceImpl implements ReportService {
                 .orElseThrow(() -> new UsernameNotFoundException(reporterUsername));
 
         Post postToBeReported = postRepository.findById(reportedPostId)
-                .orElseThrow(() -> new PostNotFoundException(reportedPostId));
+                .orElseThrow(() -> new PostBaseNotFoundException(reportedPostId));
 
         Report report = new Report();
         report.setReportedBy(reporterUser);
@@ -85,7 +85,7 @@ public class ReportServiceImpl implements ReportService {
                 .orElseThrow(() -> new UsernameNotFoundException(reporterUsername));
 
         Comment commentToBeReported = commentRepository.findById(reportedCommentId)
-                .orElseThrow(() -> new CommentNotFoundException(reportedCommentId));
+                .orElseThrow(() -> new CommentBaseNotFoundException(reportedCommentId));
 
         Report report = new Report();
         report.setReportedBy(reporterUser);

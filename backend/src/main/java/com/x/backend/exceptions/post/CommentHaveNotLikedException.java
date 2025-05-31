@@ -1,8 +1,8 @@
 package com.x.backend.exceptions.post;
 
-import com.x.backend.exceptions.CustomRuntimeException;
+import com.x.backend.exceptions.BaseRuntimeException;
 
-public class CommentHaveNotLikedException extends CustomRuntimeException {
+public class CommentHaveNotLikedException extends BaseRuntimeException {
     public CommentHaveNotLikedException() {
         super("You haven't liked this comment.");
     }
