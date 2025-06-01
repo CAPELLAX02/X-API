@@ -2,8 +2,8 @@ package com.x.backend.services.image;
 
 import com.x.backend.dto.image.response.ImageResponse;
 import com.x.backend.models.user.ApplicationUser;
-import com.x.backend.models.image.Image;
-import com.x.backend.models.image.enums.ImageType;
+import com.x.backend.models.media.Image;
+import com.x.backend.models.media.enums.ImageType;
 import com.x.backend.repositories.ApplicationUserRepository;
 import com.x.backend.repositories.ImageRepository;
 import com.x.backend.services.user.UserService;

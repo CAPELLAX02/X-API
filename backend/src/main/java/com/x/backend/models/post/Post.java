@@ -2,7 +2,7 @@ package com.x.backend.models.post;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.x.backend.models.post.comment.Comment;
-import com.x.backend.models.image.Image;
+import com.x.backend.models.media.Image;
 import com.x.backend.models.post.poll.Poll;
 import com.x.backend.models.user.ApplicationUser;
 import com.x.backend.models.post.enums.Audience;

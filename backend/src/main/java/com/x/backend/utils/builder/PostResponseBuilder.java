@@ -2,7 +2,7 @@ package com.x.backend.utils.builder;
 
 import com.x.backend.dto.post.request.PostInteractionContext;
 import com.x.backend.dto.post.response.PostResponse;
-import com.x.backend.models.image.Image;
+import com.x.backend.models.media.Image;
 import com.x.backend.models.post.Post;
 import org.springframework.stereotype.Component;
 

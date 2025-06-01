@@ -1,7 +1,7 @@
 package com.x.backend.services.image;
 
-import com.x.backend.models.image.Image;
-import com.x.backend.models.image.enums.ImageType;
+import com.x.backend.models.media.Image;
+import com.x.backend.models.media.enums.ImageType;
 import com.x.backend.repositories.ImageRepository;
 import com.x.backend.utils.builder.ImageResponseBuilder;
 import org.springframework.stereotype.Service;

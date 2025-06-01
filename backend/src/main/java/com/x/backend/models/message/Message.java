@@ -1,7 +1,7 @@
 package com.x.backend.models.message;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.x.backend.models.image.Image;
+import com.x.backend.models.media.Image;
 import com.x.backend.models.user.ApplicationUser;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;

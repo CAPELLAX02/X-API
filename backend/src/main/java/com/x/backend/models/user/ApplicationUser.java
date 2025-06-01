@@ -1,7 +1,7 @@
 package com.x.backend.models.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.x.backend.models.image.Image;
+import com.x.backend.models.media.Image;
 import com.x.backend.models.user.auth.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;

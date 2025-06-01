@@ -1,4 +1,4 @@
-package com.x.backend.models.image.enums;
+package com.x.backend.models.media.enums;
 
 public enum ImageType {
 

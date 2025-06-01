@@ -1,6 +1,6 @@
-package com.x.backend.models.image;
+package com.x.backend.models.media;
 
-import com.x.backend.models.image.enums.ImageType;
+import com.x.backend.models.media.enums.ImageType;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;

@@ -1,8 +1,8 @@
 package com.x.backend.services.image;
 
 import com.x.backend.exceptions.image.FailedToUploadImageException;
-import com.x.backend.models.image.Image;
-import com.x.backend.models.image.enums.ImageType;
+import com.x.backend.models.media.Image;
+import com.x.backend.models.media.enums.ImageType;
 import com.x.backend.repositories.ImageRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
