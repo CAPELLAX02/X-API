@@ -30,50 +30,50 @@ import java.util.List;
 @Transactional
 public class AuthenticationServiceImpl implements AuthenticationService {
 
-    private final ApplicationUserRepository userRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
-    private final UsernameGenerationService usernameGenerationService;
-    private final MailService mailService;
-    private final PasswordEncodingConfig passwordEncodingConfig;
-    private final List<LoginStrategy> loginStrategies;
-    private final JwtService jwtService;
-    private final UserService userService;
-    private final RoleRepository roleRepository;
-    private final PrivacySettingsRepository privacySettingsRepository;
-    private final PasswordHistoryRepository passwordHistoryRepository;
-    private final ValidAccessTokenRepository validAccessTokenRepository;
+    private final ApplicationUserRepository        userRepository;
+    private final RefreshTokenRepository           refreshTokenRepository;
+    private final UsernameGenerationService        usernameGenerationService;
+    private final MailService                      mailService;
+    private final PasswordEncodingConfig           passwordEncodingConfig;
+    private final List<LoginStrategy>              loginStrategies;
+    private final JwtService                       jwtService;
+    private final UserService                      userService;
+    private final RoleRepository                   roleRepository;
+    private final PrivacySettingsRepository        privacySettingsRepository;
+    private final PasswordHistoryRepository        passwordHistoryRepository;
+    private final ValidAccessTokenRepository       validAccessTokenRepository;
     private final EmailVerificationTokenRepository emailVerificationTokenRepository;
-    private final PasswordRecoveryTokenRepository passwordRecoveryTokenRepository;
+    private final PasswordRecoveryTokenRepository  passwordRecoveryTokenRepository;
 
-    public AuthenticationServiceImpl(final ApplicationUserRepository userRepository,
-                                     final UsernameGenerationService usernameGenerationService,
-                                     final MailService mailService,
-                                     final PasswordEncodingConfig passwordEncoderConfig,
-                                     final List<LoginStrategy> loginStrategies,
-                                     final JwtService jwtService,
-                                     final RefreshTokenRepository refreshTokenRepository,
-                                     final UserService userService,
-                                     final RoleRepository roleRepository,
-                                     final PrivacySettingsRepository privacySettingsRepository,
-                                     final PasswordHistoryRepository passwordHistoryRepository,
-                                     final ValidAccessTokenRepository validAccessTokenRepository,
+    public AuthenticationServiceImpl(final ApplicationUserRepository        userRepository,
+                                     final UsernameGenerationService        usernameGenerationService,
+                                     final MailService                      mailService,
+                                     final PasswordEncodingConfig           passwordEncoderConfig,
+                                     final List<LoginStrategy>              loginStrategies,
+                                     final JwtService                       jwtService,
+                                     final RefreshTokenRepository           refreshTokenRepository,
+                                     final UserService                      userService,
+                                     final RoleRepository                   roleRepository,
+                                     final PrivacySettingsRepository        privacySettingsRepository,
+                                     final PasswordHistoryRepository        passwordHistoryRepository,
+                                     final ValidAccessTokenRepository       validAccessTokenRepository,
                                      final EmailVerificationTokenRepository emailVerificationTokenRepository,
-                                     final PasswordRecoveryTokenRepository passwordRecoveryTokenRepository
+                                     final PasswordRecoveryTokenRepository  passwordRecoveryTokenRepository
     ) {
-        this.userRepository = userRepository;
-        this.usernameGenerationService = usernameGenerationService;
-        this.mailService = mailService;
-        this.passwordEncodingConfig = passwordEncoderConfig;
-        this.loginStrategies = loginStrategies;
-        this.jwtService = jwtService;
-        this.refreshTokenRepository = refreshTokenRepository;
-        this.userService = userService;
-        this.roleRepository = roleRepository;
-        this.privacySettingsRepository = privacySettingsRepository;
-        this.passwordHistoryRepository = passwordHistoryRepository;
-        this.validAccessTokenRepository = validAccessTokenRepository;
+        this.userRepository                   = userRepository;
+        this.usernameGenerationService        = usernameGenerationService;
+        this.mailService                      = mailService;
+        this.passwordEncodingConfig           = passwordEncoderConfig;
+        this.loginStrategies                  = loginStrategies;
+        this.jwtService                       = jwtService;
+        this.refreshTokenRepository           = refreshTokenRepository;
+        this.userService                      = userService;
+        this.roleRepository                   = roleRepository;
+        this.privacySettingsRepository        = privacySettingsRepository;
+        this.passwordHistoryRepository        = passwordHistoryRepository;
+        this.validAccessTokenRepository       = validAccessTokenRepository;
         this.emailVerificationTokenRepository = emailVerificationTokenRepository;
-        this.passwordRecoveryTokenRepository = passwordRecoveryTokenRepository;
+        this.passwordRecoveryTokenRepository  = passwordRecoveryTokenRepository;
     }
 
     private ApplicationUser getUserByUsername(String username) {
@@ -121,7 +121,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         EmailDispatcher.sendVerificationEmail(mailService, user.getEmail(), user.getFullName(), rawCode);
 
         SendVerificationEmailResponse res = new SendVerificationEmailResponse(expiry);
-
         return BaseApiResponse.success(res, "Verification code sent via email.");
     }
 
