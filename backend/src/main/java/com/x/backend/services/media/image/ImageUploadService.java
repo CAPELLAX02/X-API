@@ -1,4 +1,4 @@
-package com.x.backend.services.image;
+package com.x.backend.services.media.image;
 
 import com.x.backend.exceptions.image.FailedToUploadImageException;
 import com.x.backend.models.media.Image;

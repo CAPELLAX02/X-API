@@ -2,7 +2,7 @@ package com.x.backend.controllers;
 
 import com.x.backend.dto.image.response.ImageResponse;
 import com.x.backend.models.user.ApplicationUser;
-import com.x.backend.services.image.UserImageServiceImpl;
+import com.x.backend.services.media.image.UserImageServiceImpl;
 import com.x.backend.utils.api.BaseApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

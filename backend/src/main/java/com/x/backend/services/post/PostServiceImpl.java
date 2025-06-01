@@ -14,7 +14,7 @@ import com.x.backend.models.post.Post;
 import com.x.backend.repositories.PollOptionRepository;
 import com.x.backend.repositories.PollRepository;
 import com.x.backend.repositories.PostRepository;
-import com.x.backend.services.image.PostImageService;
+import com.x.backend.services.media.image.PostImageService;
 import com.x.backend.services.user.UserService;
 import com.x.backend.utils.api.BaseApiResponse;
 import com.x.backend.utils.builder.PostResponseBuilder;
