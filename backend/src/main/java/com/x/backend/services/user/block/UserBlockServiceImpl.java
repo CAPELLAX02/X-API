@@ -77,7 +77,7 @@ public class UserBlockServiceImpl implements UserBlockService {
     }
 
     @Override
-    public BaseApiResponse<List<String>> getBlockedUsernames(String username) {
+    public BaseApiResponse<List<String>> getBlockedUsers(String username) {
         ApplicationUser user = getUserByUsername(username);
 
         List<String> blockedUsernames = userBlockRepository

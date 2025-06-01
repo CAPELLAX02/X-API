@@ -234,6 +234,17 @@ public class SecurityConfig {
                         // Report Comment
                         .requestMatchers(HttpMethod.POST,  "/report/comment/{id}").authenticated()
 
+                        // Block User
+                        .requestMatchers(HttpMethod.POST,  "/users/{username}/block").authenticated()
+                        // Unblock User
+                        .requestMatchers(HttpMethod.DELETE,"/users/{username}/unblock").authenticated()
+                        // Is User Blocked
+                        .requestMatchers(HttpMethod.GET,   "/users/{username}/is-blocked").authenticated()
+                        // Get Blocked Users
+                        .requestMatchers(HttpMethod.GET,   "/users/blocked").authenticated()
+                        // Get Users Who Blocked Me
+                        .requestMatchers(HttpMethod.GET,   "/users/blocked-me").authenticated()
+
                         // WebSocket Connection Permission
                         .requestMatchers("/ws/**").permitAll()
 

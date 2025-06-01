@@ -16,7 +16,7 @@ public interface UserBlockService {
     BaseApiResponse<Boolean> isUserBlocked(String actorUsername, String targetUsername);
 
 
-    BaseApiResponse<List<String>> getBlockedUsernames(String username);
+    BaseApiResponse<List<String>> getBlockedUsers(String username);
 
 
     BaseApiResponse<List<String>> getUsersBlockingMe(String username);
