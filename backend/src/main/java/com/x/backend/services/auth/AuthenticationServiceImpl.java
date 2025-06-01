@@ -95,7 +95,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         UserRegistrationManager.initializePrivacySettings(user, privacySettingsRepository);
 
         StartRegistrationResponse res = new StartRegistrationResponse(user.getUsername());
-        return BaseApiResponse.success(res, "Registration started, username generated.");
+        return BaseApiResponse.successCreated(res, "Registration started, username generated.");
     }
 
     @Override
@@ -121,7 +121,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         EmailDispatcher.sendVerificationEmail(mailService, user.getEmail(), user.getFullName(), rawCode);
 
         SendVerificationEmailResponse res = new SendVerificationEmailResponse(expiry);
-        return BaseApiResponse.success(res, "Verification code sent via email.");
+        return BaseApiResponse.successAccepted(res, "Verification code sent via email.");
     }
 
     @Override
@@ -156,7 +156,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         EmailDispatcher.sendVerificationEmail(mailService, user.getEmail(), user.getFullName(), rawCode);
 
         SendVerificationEmailResponse res = new SendVerificationEmailResponse(expiry);
-        return BaseApiResponse.success(res, "New verification code sent via email.");
+        return BaseApiResponse.successAccepted(res, "New verification code sent via email.");
     }
 
     @Override
@@ -182,7 +182,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         emailVerificationTokenRepository.delete(emailVerificationToken);
         userRepository.save(user);
 
-        return BaseApiResponse.success("Email verification completed successfully.");
+        return BaseApiResponse.successOk("Email verification completed successfully.");
     }
 
     @Override
@@ -196,7 +196,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setPhone(req.phoneNumber());
         userRepository.save(user);
 
-        return BaseApiResponse.success("Phone number set as " + req.phoneNumber() + " successfully.");
+        return BaseApiResponse.successOk("Phone number set as " + req.phoneNumber() + " successfully.");
     }
 
     @Override
@@ -210,7 +210,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setPhone(req.newPhoneNumber());
         userRepository.save(user);
 
-        return BaseApiResponse.success("Phone number changed as " + req.newPhoneNumber() + " successfully.");
+        return BaseApiResponse.successOk("Phone number changed as " + req.newPhoneNumber() + " successfully.");
     }
 
     @Override
@@ -226,7 +226,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         PasswordSecurityHandler.storePasswordHistory(user, encodedPassword, passwordHistoryRepository);
         userRepository.save(user);
 
-        return BaseApiResponse.success("Password set successfully.");
+        return BaseApiResponse.successOk("Password set successfully.");
     }
 
     @Override
@@ -248,7 +248,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         EmailDispatcher.sendPasswordRecoveryEmail(mailService, user.getEmail(), user.getFullName(), rawCode);
 
         SendPasswordRecoveryEmailResponse res = new SendPasswordRecoveryEmailResponse(expiry);
-        return BaseApiResponse.success(res, "Password recovery code sent via email.");
+        return BaseApiResponse.successAccepted(res, "Password recovery code sent via email.");
     }
 
     @Override
@@ -276,9 +276,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         EmailDispatcher.sendPasswordRecoveryEmail(mailService, user.getEmail(), user.getFullName(), rawCode);
 
         SendPasswordRecoveryEmailResponse res = new SendPasswordRecoveryEmailResponse(expiry);
-        return BaseApiResponse.success(res, "New password recovery code sent via email.");
+        return BaseApiResponse.successAccepted(res, "New password recovery code sent via email.");
     }
-
 
     @Override
     public BaseApiResponse<String> recoverPassword(RecoverPasswordRequest req) {
@@ -307,7 +306,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         userRepository.save(user);
         PasswordSecurityHandler.storePasswordHistory(user, encodedPassword, passwordHistoryRepository);
 
-        return BaseApiResponse.success("Password reset successfully.");
+        return BaseApiResponse.successOk("Password reset successfully.");
     }
 
     @Override
@@ -327,7 +326,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setPassword(encoded); userRepository.save(user);
         PasswordSecurityHandler.storePasswordHistory(user, encoded, passwordHistoryRepository);
 
-        return BaseApiResponse.success("Password changed successfully.");
+        return BaseApiResponse.successOk("Password changed successfully.");
     }
 
     @Override
@@ -351,7 +350,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         refreshTokenRepository.deleteByUser(user);
 
         AuthTokenResponse res = TokenIssuanceService.generateAndStoreTokens(user, jwtService, validAccessTokenRepository, refreshTokenRepository);
-        return BaseApiResponse.success(res, "Logged in successfully.");
+        return BaseApiResponse.successOk(res, "Logged in successfully.");
     }
 
     @Override
@@ -367,7 +366,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         AccessTokenRegistry.revokeAll(user, validAccessTokenRepository);
 
         AuthTokenResponse res = TokenIssuanceService.generateAndStoreTokens(user, jwtService, validAccessTokenRepository, refreshTokenRepository);
-        return BaseApiResponse.success(res, "Refreshed token successfully.");
+        return BaseApiResponse.successOk(res, "Refreshed token successfully.");
     }
 
     @Override
@@ -377,7 +376,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         refreshTokenRepository.deleteByUser(user);
         AccessTokenRegistry.revokeAll(user, validAccessTokenRepository);
 
-        return BaseApiResponse.success("Logged out successfully.");
+        return BaseApiResponse.successOk("Logged out successfully.");
     }
 
 }
