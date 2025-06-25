@@ -9,7 +9,7 @@ import java.time.Instant;
 @Table(
         name = "password_history",
         indexes = {
-                @Index(name = "idx_user_id", columnList = "user", unique = true),
+                @Index(name = "idx_user_id", columnList = "user_id", unique = true),
         }
 )
 public class PasswordHistory {
