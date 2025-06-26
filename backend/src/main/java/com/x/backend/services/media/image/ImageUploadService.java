@@ -21,7 +21,10 @@ import java.util.UUID;
 public abstract class ImageUploadService {
 
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-    private static final List<String> SUPPORTED_EXTENSIONS = List.of(".jpg", ".jpeg", ".png", ".gif", ".webp");
+
+    private static final List<String> SUPPORTED_EXTENSIONS = List.of(
+            ".jpg", ".jpeg", ".png", ".gif", ".webp"
+    );
 
     protected final ImageRepository imageRepository;
 

@@ -51,3 +51,7 @@ rsa:
 image:
   upload:
     dir: ./backend/images
+
+video:
+  upload:
+    dir: ./backend/videos
