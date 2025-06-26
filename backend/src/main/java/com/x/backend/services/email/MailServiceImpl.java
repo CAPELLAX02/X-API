@@ -3,6 +3,7 @@ package com.x.backend.services.email;
 import com.x.backend.exceptions.email.EmailFailedToSentException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -10,12 +11,17 @@ import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.io.UnsupportedEncodingException;
+
 @Service
 @Transactional
 public class MailServiceImpl implements MailService {
 
     private final JavaMailSender javaMailSender;
     private final TemplateEngine templateEngine;
+
+    @Value("${spring.mail.username}")
+    private String senderEmail;
 
     public MailServiceImpl(final JavaMailSender javaMailSender,
                            final TemplateEngine templateEngine
@@ -53,9 +59,14 @@ public class MailServiceImpl implements MailService {
             mimeMessageHelper.setTo(to);
             mimeMessageHelper.setSubject(subject);
             mimeMessageHelper.setText(content, true);
+            mimeMessageHelper.setFrom(senderEmail, "X");
             javaMailSender.send(mimeMessage);
+
         } catch (MessagingException e) {
             throw new EmailFailedToSentException();
+
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
         }
     }
 

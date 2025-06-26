@@ -6,12 +6,7 @@ import jakarta.persistence.*;
 import java.time.Instant;
 
 @Entity
-@Table(
-        name = "valid_access_tokens",
-        indexes = {
-                @Index(name = "idx_user_id", columnList = "user_id")
-        }
-)
+@Table(name = "valid_access_tokens")
 public class ValidAccessToken {
 
     @Id
