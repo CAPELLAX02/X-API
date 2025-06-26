@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
+
 @Repository
 public interface ValidAccessTokenRepository extends JpaRepository<ValidAccessToken, Long> {
 
@@ -16,6 +18,11 @@ public interface ValidAccessTokenRepository extends JpaRepository<ValidAccessTok
     @Transactional
     @Query("DELETE FROM ValidAccessToken t WHERE t.user = :user")
     void deleteAllByUser(@Param("user") ApplicationUser user);
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM ValidAccessToken t WHERE t.expiresAt < :now")
+    void deleteAllByExpiresAtBefore(@Param("now") Instant now);
 
     boolean existsByJti(String jti);
 
