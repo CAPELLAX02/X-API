@@ -23,12 +23,16 @@ public class RefreshToken {
     @Column(nullable = false)
     private Instant expiryDate;
 
+    @Column(nullable = false)
+    private boolean used = false;
+
     public RefreshToken() {}
 
     public RefreshToken(String token, ApplicationUser user, Instant expiryDate) {
         this.token = token;
         this.user = user;
         this.expiryDate = expiryDate;
+        this.used = false;
     }
 
     public Long getId() {
@@ -61,6 +65,14 @@ public class RefreshToken {
 
     public void setExpiryDate(Instant expiryDate) {
         this.expiryDate = expiryDate;
+    }
+
+    public boolean isUsed() {
+        return used;
+    }
+
+    public void setUsed(boolean used) {
+        this.used = used;
     }
 
 }

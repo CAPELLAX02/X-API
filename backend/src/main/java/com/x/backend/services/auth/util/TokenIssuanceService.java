@@ -11,6 +11,8 @@ import java.time.Instant;
 
 public class TokenIssuanceService {
 
+    private static final long REFRESH_TOKEN_EXPIRATION_SECONDS = 604800; // 7 days
+
     public static AuthTokenResponse generateAndStoreTokens(ApplicationUser user,
                                                            JwtService jwtService,
                                                            ValidAccessTokenRepository validAccessTokenRepo,
@@ -23,15 +25,17 @@ public class TokenIssuanceService {
         String jti = jwtService.extractJtiFromToken(accessToken);
         AccessTokenRegistry.store(jti, user, validAccessTokenRepo);
 
-        RefreshToken existing = refreshTokenRepo.findByUser(user).orElse(null);
-        if (existing != null) {
-            existing.setToken(refreshToken);
-            existing.setExpiryDate(Instant.now().plusSeconds(604800));
+        refreshTokenRepo.findByUser(user).ifPresent(existing -> {
+            existing.setUsed(true);
             refreshTokenRepo.save(existing);
-        }
-        else {
-            refreshTokenRepo.save(new RefreshToken(refreshToken, user, Instant.now().plusSeconds(604800)));
-        }
+        });
+
+        RefreshToken newRefreshToken = new RefreshToken(
+                refreshToken,
+                user,
+                Instant.now().plusSeconds(REFRESH_TOKEN_EXPIRATION_SECONDS)
+        );
+        refreshTokenRepo.save(newRefreshToken);
 
         return new AuthTokenResponse(accessToken, refreshToken, expiresIn);
     }

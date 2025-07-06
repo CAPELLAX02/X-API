@@ -362,6 +362,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new InvalidOrExpiredRefreshTokenException();
         }
 
+        if (token.isUsed()) {
+            throw new InvalidOrExpiredRefreshTokenException();
+        }
+
+        token.setUsed(true);
+        refreshTokenRepository.save(token);
+
         ApplicationUser user = token.getUser();
         AccessTokenRegistry.revokeAll(user, validAccessTokenRepository);
 
